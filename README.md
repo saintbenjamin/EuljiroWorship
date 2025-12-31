@@ -10,6 +10,22 @@ However, its architecture is intentionally modular, and the system is designed w
 
 ---
 
+## 📚 Documentation
+
+Detailed developer-oriented documentation generated with **Sphinx (Read the Docs theme)** is available at:
+
+👉 **https://saintbenjamin.github.io/EuljiroWorship**
+
+The documentation includes:
+- Module and package references
+- Detailed API documentation extracted from docstrings
+- Internal design notes and responsibilities of each component
+
+This documentation is intended for developers and maintainers who want to
+understand or extend the internal architecture of EuljiroWorship.
+
+---
+
 ## Key Features
 
 ### 🎛 Slide Controller (GUI)
