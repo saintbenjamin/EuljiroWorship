@@ -9,7 +9,8 @@ This module runs as a small background helper process. It uses watchdog to
 monitor the project base directory for changes to the verse output file, then
 parses the content into one or more slide dictionaries.
 
-Key behaviors:
+Key behaviors
+-------------
 - If the last line looks like a structured Bible reference header, it generates
   per-verse slides with wrapped lines (`textwrap.wrap`) and style "verse".
 - Otherwise, it treats the file as a free-form emergency message and generates
@@ -17,13 +18,12 @@ Key behaviors:
 - Before overwriting the slide file, it may create a backup at
   `paths.SLIDE_BACKUP_FILE` (only if the backup file does not already exist).
 
-Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
-Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
-Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
-Telephone: +82-2-2266-3070
-E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
-Copyright (c) 2025 The Eulji-ro Presbyterian Church.
-License: MIT License with Attribution Requirement (see LICENSE file for details)
+:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
+:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
+:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
+:Telephone: +82-2-2266-3070
+:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
+:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 """
 
 import sys, os
@@ -47,17 +47,12 @@ MAX_CHARS = 50
 
 def parse_verse_output(file_path, max_chars=50):
     """
-    Parse verse_output.txt into a list of slide dictionaries.
+    Parse `verse_output.txt` into a list of slide dictionaries.
 
     The input file is interpreted as:
-    - Structured mode: If the last line matches one of the expected header forms
-      (e.g., "(<book> <chapter>장 ...", "(<book> <chapter>:<verse>, ..."),
-      the earlier lines are treated as verse body lines. Each verse line is
-      wrapped to `max_chars` and converted into style "verse" slides.
-    - Fallback mode: If no header pattern matches, the entire file is treated as
-      a free-form emergency message. Non-empty lines are grouped into slides
-      (up to 2 lines per slide or until the approximate character budget is met)
-      using style "lyrics" and a fixed church caption.
+
+    - Structured mode: If the last line matches one of the  expected header forms (e.g., "(<book> <chapter>장 ...", "(<book> <chapter>:<verse>, ..."), the earlier lines are treated as verse body lines. Each verse line is wrapped to `max_chars` and converted into style "verse" slides.
+    - Fallback mode: If no header pattern matches, the entire file is treated as a free-form emergency message. Non-empty lines are grouped into slides (up to 2 lines per slide or until the approximate character budget is met) using style "lyrics" and a fixed church caption.
 
     Notes:
         - This function does not validate that the file is a real Bible reference.

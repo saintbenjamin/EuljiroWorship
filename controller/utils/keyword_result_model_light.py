@@ -13,13 +13,12 @@ This module defines a minimal table model optimized for keyword search output:
 The model is intentionally lightweight and stateless, suitable for frequent
 replacement when running new keyword searches.
 
-Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
-Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
-Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
-Telephone: +82-2-2266-3070
-E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
-Copyright (c) 2025 The Eulji-ro Presbyterian Church.
-License: MIT License with Attribution Requirement (see LICENSE file for details)
+:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
+:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
+:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
+:Telephone: +82-2-2266-3070
+:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
+:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 """
 
 from PySide6.QtCore import Qt, QAbstractTableModel, QModelIndex
@@ -32,25 +31,31 @@ class KeywordResultTableModelLight(QAbstractTableModel):
     Lightweight table model for Bible keyword search results.
 
     This model presents search results in exactly two columns:
+
     - Column 0: Bible reference (localized book name + chapter:verse)
     - Column 1: Verse text
 
     Design notes:
+
     - Read-only model (no editing or mutation support)
     - Optimized for rapid recreation on each search
     - Tooltip role is used to expose highlighted (HTML) text for delegates
 
     Attributes:
-        results (list[dict]):
-            List of search result dictionaries.
-            Each entry is expected to contain:
-                - 'book'
-                - 'chapter'
-                - 'verse'
-                - 'text'
-                - optional 'highlighted'
-        book_names (dict[str, str]):
-            Mapping from internal book IDs to localized (Korean) book names.
+
+    results (list[dict]):
+        List of search result dictionaries.
+
+        Each entry is expected to contain:
+
+        - ``book``
+        - ``chapter``
+        - ``verse``
+        - ``text``
+        - optional ``highlighted``
+
+    book_names (dict[str, str]):
+        Mapping from internal book IDs to localized (Korean) book names.
     """
 
     def __init__(self, results):
@@ -59,13 +64,16 @@ class KeywordResultTableModelLight(QAbstractTableModel):
 
         Args:
             results (list[dict]):
-                List of search result entries.
-                Each dictionary should include at least:
-                    - book
-                    - chapter
-                    - verse
-                    - text
-                An optional 'highlighted' field may be provided for tooltip display.
+                List of search result entries. Each dictionary should include
+                at least the following keys:
+
+                - book
+                - chapter
+                - verse
+                - text
+
+                An optional ``highlighted`` field may be provided for tooltip
+                display.
 
         Returns:
             None
@@ -130,16 +138,19 @@ class KeywordResultTableModelLight(QAbstractTableModel):
         """
         Return data for the given index and role.
 
-        Supported roles:
-        - Qt.DisplayRole:
-            - Column 0: Formatted Bible reference (book chapter:verse)
-            - Column 1: Verse text
-        - Qt.ToolTipRole:
-            - Column 1: Highlighted HTML text if available, otherwise plain text
+        Supported roles are:
+
+        Qt.DisplayRole
+            Column 0 returns the formatted Bible reference (book chapter:verse).
+            Column 1 returns the verse text.
+
+        Qt.ToolTipRole
+            Column 1 returns highlighted HTML text if available;
+            otherwise, the plain verse text is returned.
 
         Args:
             index (QModelIndex):
-                Model index identifying row and column.
+                Model index identifying the row and column.
             role (Qt.ItemDataRole):
                 Requested data role.
 

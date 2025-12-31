@@ -4,17 +4,21 @@ File: EuljiroWorship/server/websocket_server.py
 
 WebSocket server for broadcasting slide data using aiohttp with resilient error handling.
 
-This module runs an aiohttp-based WebSocket server that listens for slide JSON messages
-and broadcasts them to all connected clients in real time. It includes ping/pong heartbeat,
-error isolation, and proper cleanup of zombie clients.
+This module runs an aiohttp-based WebSocket server that listens for slide JSON messages and broadcasts them to all connected clients in real time.
 
-Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
-Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
-Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
-Telephone: +82-2-2266-3070
-E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
-Copyright (c) 2025 The Eulji-ro Presbyterian Church.
-License: MIT License with Attribution Requirement (see LICENSE file for details)
+Features:
+
+- Real-time broadcast to multiple connected clients
+- Ping/pong heartbeat handling
+- Error isolation per client connection
+- Automatic cleanup of disconnected ("zombie") clients
+
+:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
+:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
+:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
+:Telephone: +82-2-2266-3070
+:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
+:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 """
 
 import json
@@ -94,8 +98,9 @@ async def broadcast(slide_dict):
 
     The payload is JSON-serialized and sent as a text frame. The function
     also performs basic client hygiene:
-      - detects and removes closed or errored ("zombie") connections
-      - removes clients that fail to receive within a short timeout
+
+        - detects and removes closed or errored ("zombie") connections
+        - removes clients that fail to receive within a short timeout
 
     Args:
         slide_dict (dict): Slide payload to broadcast. Must be JSON-serializable.

@@ -4,29 +4,32 @@ File: EuljiroWorship/controller/utils/emergency_slide_factory.py
 
 Generates slide dictionaries for emergency captions.
 
-This module defines `EmergencySlideFactory`, a utility that builds slide payloads
+This module defines ``EmergencySlideFactory``, a utility that builds slide payloads
 consumable by the slide controller / overlay pipeline.
 
 Supported inputs:
-- Bible references (parsed by `core.utils.bible_parser.parse_reference`)
+
+- Bible references (parsed by ``core.utils.bible_parser.parse_reference``)
 - Manual fallback captions and messages
-- Preset responsive readings (교독문) and hymns loaded from JSON files
+- Preset responsive readings (교독문) loaded from JSON files
+- Preset hymns loaded from JSON files
 
 Outputs:
-- A list of slide dictionaries with keys: "style", "caption", "headline"
+
+- A list of slide dictionaries with keys: ``style``, ``caption``, ``headline``
 
 Notes:
-- Bible verse text is wrapped into smaller chunks (currently width=50) to avoid
-  overly long single-slide lines.
-- Version display aliases are loaded from `paths.ALIASES_VERSION_FILE`.
 
-Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
-Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
-Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
-Telephone: +82-2-2266-3070
-E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
-Copyright (c) 2025 The Eulji-ro Presbyterian Church.
-License: MIT License with Attribution Requirement (see LICENSE file for details)
+- Bible verse text is wrapped into smaller chunks (currently ``width=50``) to avoid
+  overly long single-slide lines.
+- Version display aliases are loaded from ``paths.ALIASES_VERSION_FILE``.
+
+:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
+:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
+:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
+:Telephone: +82-2-2266-3070
+:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
+:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 """
 
 import os
@@ -44,15 +47,18 @@ class EmergencySlideFactory:
     This class converts user-facing emergency inputs into a list of slide dicts.
 
     Primary responsibilities:
-    - Detect whether the first line is a Bible reference via `parse_reference()`
-    - If a reference is valid, retrieve verses using `BibleDataLoader`
-    - Wrap long verse text into multiple slides using `textwrap.wrap`
+
+    - Detect whether the first line is a Bible reference via ``parse_reference()``
+    - If a reference is valid, retrieve verses using ``BibleDataLoader``
+    - Wrap long verse text into multiple slides using ``textwrap.wrap``
     - If not a reference, build a fallback "manual" slide payload
     - Load preset materials:
-      - Responsive readings (respo) from JSON
-      - Hymns from JSON
 
-    Slide dict schema:
+    - Responsive readings (respo) from JSON
+    - Hymns from JSON
+
+    Slide dict schema::
+
         {
             "style": str,     # e.g., "verse", "lyrics", "greet", ...
             "caption": str,   # title / reference line
@@ -194,13 +200,15 @@ class EmergencySlideFactory:
         Load a responsive reading (교독문) JSON by number and generate slides.
 
         The expected JSON format contains:
-        - "title": str (optional)
-        - "slides": list of entries, each typically containing:
-            - "speaker": str
-            - "headline": str
+
+        - ``title``: str (optional)
+        - ``slides``: list of entries, each typically containing:
+
+        - ``speaker``: str
+        - ``headline``: str
 
         For each entry, one slide is created containing a single speaker-response
-        line formatted in an HTML-like style (e.g., "<b>...</b>").
+        line formatted in an HTML-like style (e.g., ``"<b>...</b>"``).
 
         Args:
             number (int):
@@ -208,7 +216,7 @@ class EmergencySlideFactory:
 
         Returns:
             list[dict]:
-                A list of slide dictionaries (style "verse").
+                A list of slide dictionaries (style ``"verse"``).
                 If loading fails, returns a one-slide fallback with an error message.
         """
         path = os.path.join("data", "respo", f"responsive_{number:03d}.json")
@@ -243,14 +251,16 @@ class EmergencySlideFactory:
         Format responsive reading entries into a single joined string.
 
         Each entry is converted into one line using an HTML-like emphasis for the
-        speaker name:
+        speaker name::
+
             "<b>{speaker}:</b> {headline}"
 
         Args:
             slides_raw (list[dict]):
                 Raw entry list, where each entry may include:
-                - "speaker": str
-                - "headline": str
+
+                - ``speaker``: str
+                - ``headline``: str
 
         Returns:
             str:
