@@ -18,10 +18,8 @@ dependencies = [
 [tool.setuptools]
 packages = [
     "controller",
-    "controller.ui",
-    "controller.utils",
     "core",
-    "launcher"
+    "server"
 ]
 
 [build-system]
