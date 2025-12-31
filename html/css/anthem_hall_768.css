@@ -1,0 +1,217 @@
+/* Wrapper that covers the entire viewport and centers the anthem container */
+.anthem-wrapper {
+    /* Fix the wrapper to the viewport so it doesn't scroll */
+    position: fixed;
+
+    /* Pin to the top-left corner of the viewport */
+    top: 0;
+    left: 0;
+
+    /* Make the wrapper span the full viewport width */
+    width: 100vw;
+
+    /* Make the wrapper span the full viewport height */
+    height: 100vh;
+
+    /* Use flexbox for easy centering of the inner container */
+    display: flex;
+
+    /* Center the container horizontally */
+    justify-content: center;
+
+    /* Center the container vertically */
+    align-items: center;
+
+    /* Add top padding to push content down (e.g., to avoid screen-top UI/headers) */
+    /* Add left/right/bottom padding to keep content away from edges */
+    padding: 160px 60px 60px 60px;
+
+    /* Include padding in element's total width/height calculations */
+    box-sizing: border-box;
+
+    /* Ensure this layer sits above background elements */
+    z-index: 10;
+}
+
+/* Main pill-shaped container that holds anthem content */
+.anthem-container {
+    /* Establish a containing block for absolutely-positioned children (badge/logo) */
+    position: relative;
+
+    /* Use flexbox to align children inside the container */
+    display: flex;
+
+    /* Vertically align children to the center within the container */
+    align-items: center;
+
+    /* Align children starting from the left (not centered) */
+    justify-content: flex-start;
+
+    /* Green horizontal gradient background (opaque to semi-transparent) */
+    background: linear-gradient(to right, rgba(51, 164, 118, 1), rgba(51, 164, 118, 0.6));
+
+    /* Fully rounded ends (pill shape) */
+    border-radius: 9999px;
+
+    /* Inner spacing for content (top/bottom then left/right) */
+    padding: 40px 60px;
+
+    /* (Optional) If enabled, padding would be included in width/height calculations */
+    /* box-sizing: border-box; */
+
+    /* Fill the available width provided by the wrapper */
+    width: 100%;
+
+    /* Fill the available height provided by the wrapper */
+    height: 100%;
+
+    /* (Optional) If enabled, anything outside would be clipped */
+    /* overflow: hidden; */
+}
+
+/* Circular badge element positioned above the container */
+.anthem-badge {
+    /* Position relative to the nearest ancestor with position: relative (anthem-container) */
+    position: absolute;
+
+    /* Raise the badge upward so it overlaps outside the container */
+    top: -80px;
+
+    /* Anchor the badge to the left edge of the container */
+    left: 0;
+
+    /* Set badge width */
+    width: 300px;
+
+    /* Set badge height */
+    height: 300px;
+
+    /* Prevent the badge from shrinking below the intended size in flex contexts */
+    min-width: 300px;
+
+    /* Make the badge a perfect circle */
+    border-radius: 50%;
+
+    /* Red vertical gradient background (opaque to semi-transparent) */
+    background: linear-gradient(to top, rgba(235, 32, 55,  1), rgba(235, 32, 55, 0.6));
+
+    /* Use flexbox to stack badge text vertically */
+    display: flex;
+
+    /* Stack children vertically (choir caption + main caption) */
+    flex-direction: column;
+
+    /* Center children vertically within the badge */
+    justify-content: center;
+
+    /* Center children horizontally within the badge */
+    align-items: center;
+
+    /* Set text color inside the badge */
+    color: black;
+
+    /* Make badge text bold */
+    font-weight: bold;
+
+    /* (Optional) Adds right margin if badge were not absolutely positioned */
+    /* margin-right: 80px; */
+
+    /* (Optional) Controls stacking order if needed */
+    /* z-index: 2; */
+
+    /* (Optional) Adds a subtle shadow around the badge */
+    /* box-shadow: 0 0 10px rgba(0,0,0,0.3); */
+}
+
+/* Main caption text inside the badge (typically the anthem category/label) */
+.anthem-main-caption {
+    /* Set main caption font size */
+    font-size: 64px;
+
+    /* Set line height for readability */
+    line-height: 1.4;
+
+    /* Make the text bold */
+    font-weight: bold;
+
+    /* Center-align the text within its box */
+    text-align: center;
+
+    /* Add inner padding around the caption text */
+    padding: 10px;
+}
+
+/* Choir caption text inside the badge (typically the choir name) */
+.anthem-choir-caption {
+    /* Set choir caption font size */
+    font-size: 56px;
+
+    /* Slightly tighter line height */
+    line-height: 1.2;
+
+    /* Make the text bold */
+    font-weight: bold;
+
+    /* Center-align the text */
+    text-align: center;
+
+    /* Slight transparency for visual hierarchy */
+    opacity: 0.9;
+}
+
+/* Church logo positioned to overlap above the badge */
+.anthem-logo {
+    /* Position relative to the nearest positioned ancestor (anthem-container) */
+    position: absolute;
+
+    /* Raise the logo upward above the badge/container */
+    top: -120px;
+
+    /* Place the logo horizontally near the badge area */
+    left: 70px;
+
+    /* Shift left by half its own width to center around the left coordinate */
+    transform: translateX(-50%);
+
+    /* Set logo height while preserving aspect ratio */
+    height: 120px;
+
+    /* Ensure the logo appears above the badge and other elements */
+    z-index: 3;
+
+    /* Allow clicks to pass through (logo should not block interactions) */
+    pointer-events: none;
+}
+
+/* Main headline text area (the anthem title) */
+.anthem-headline {
+    /* Set headline font size */
+    font-size: 100px;
+
+    /* Make the headline bold */
+    font-weight: bold;
+
+    /* Set headline text color */
+    color: black;
+
+    /* Allow wrapping onto multiple lines */
+    white-space: normal;
+
+    /* Prefer not to break words in the middle (especially for Korean) */
+    word-break: keep-all;
+
+    /* Allow breaking long words if needed to prevent overflow */
+    overflow-wrap: break-word;
+
+    /* Set line height for large text readability */
+    line-height: 1.3;
+
+    /* Let the headline take the full available width inside the container */
+    width: 100%;
+
+    /* Center-align the headline text */
+    text-align: center;
+
+    /* Add right padding to avoid touching the container edge */
+    padding-right: 20px;
+}

@@ -1,0 +1,266 @@
+{
+  "Genesis": {
+    "ko": "창세기",
+    "en": "Genesis"
+  },
+  "Exodus": {
+    "ko": "출애굽기",
+    "en": "Exodus"
+  },
+  "Leviticus": {
+    "ko": "레위기",
+    "en": "Leviticus"
+  },
+  "Numbers": {
+    "ko": "민수기",
+    "en": "Numbers"
+  },
+  "Deuteronomy": {
+    "ko": "신명기",
+    "en": "Deuteronomy"
+  },
+  "Joshua": {
+    "ko": "여호수아",
+    "en": "Joshua"
+  },
+  "Judges": {
+    "ko": "사사기",
+    "en": "Judges"
+  },
+  "Ruth": {
+    "ko": "룻기",
+    "en": "Ruth"
+  },
+  "1Samuel": {
+    "ko": "사무엘상",
+    "en": "1 Samuel"
+  },
+  "2Samuel": {
+    "ko": "사무엘하",
+    "en": "2 Samuel"
+  },
+  "1Kings": {
+    "ko": "열왕기상",
+    "en": "1 Kings"
+  },
+  "2Kings": {
+    "ko": "열왕기하",
+    "en": "2 Kings"
+  },
+  "1Chronicles": {
+    "ko": "역대상",
+    "en": "1 Chronicles"
+  },
+  "2Chronicles": {
+    "ko": "역대하",
+    "en": "2 Chronicles"
+  },
+  "Ezra": {
+    "ko": "에스라",
+    "en": "Ezra"
+  },
+  "Nehemiah": {
+    "ko": "느헤미야",
+    "en": "Nehemiah"
+  },
+  "Esther": {
+    "ko": "에스더",
+    "en": "Esther"
+  },
+  "Job": {
+    "ko": "욥기",
+    "en": "Job"
+  },
+  "Psalms": {
+    "ko": "시편",
+    "en": "Psalms"
+  },
+  "Proverbs": {
+    "ko": "잠언",
+    "en": "Proverbs"
+  },
+  "Ecclesiastes": {
+    "ko": "전도서",
+    "en": "Ecclesiastes"
+  },
+  "SongofSolomon": {
+    "ko": "아가",
+    "en": "Song of Solomon"
+  },
+  "Isaiah": {
+    "ko": "이사야",
+    "en": "Isaiah"
+  },
+  "Jeremiah": {
+    "ko": "예레미야",
+    "en": "Jeremiah"
+  },
+  "Lamentations": {
+    "ko": "예레미야 애가",
+    "en": "Lamentations"
+  },
+  "Ezekiel": {
+    "ko": "에스겔",
+    "en": "Ezekiel"
+  },
+  "Daniel": {
+    "ko": "다니엘",
+    "en": "Daniel"
+  },
+  "Hosea": {
+    "ko": "호세아",
+    "en": "Hosea"
+  },
+  "Joel": {
+    "ko": "요엘",
+    "en": "Joel"
+  },
+  "Amos": {
+    "ko": "아모스",
+    "en": "Amos"
+  },
+  "Obadiah": {
+    "ko": "오바댜",
+    "en": "Obadiah"
+  },
+  "Jonah": {
+    "ko": "요나",
+    "en": "Jonah"
+  },
+  "Micah": {
+    "ko": "미가",
+    "en": "Micah"
+  },
+  "Nahum": {
+    "ko": "나훔",
+    "en": "Nahum"
+  },
+  "Habakkuk": {
+    "ko": "하박국",
+    "en": "Habakkuk"
+  },
+  "Zephaniah": {
+    "ko": "스바냐",
+    "en": "Zephaniah"
+  },
+  "Haggai": {
+    "ko": "학개",
+    "en": "Haggai"
+  },
+  "Zechariah": {
+    "ko": "스가랴",
+    "en": "Zechariah"
+  },
+  "Malachi": {
+    "ko": "말라기",
+    "en": "Malachi"
+  },
+  "Matthew": {
+    "ko": "마태복음",
+    "en": "Matthew"
+  },
+  "Mark": {
+    "ko": "마가복음",
+    "en": "Mark"
+  },
+  "Luke": {
+    "ko": "누가복음",
+    "en": "Luke"
+  },
+  "John": {
+    "ko": "요한복음",
+    "en": "John"
+  },
+  "Acts": {
+    "ko": "사도행전",
+    "en": "Acts"
+  },
+  "Romans": {
+    "ko": "로마서",
+    "en": "Romans"
+  },
+  "1Corinthians": {
+    "ko": "고린도전서",
+    "en": "1 Corinthians"
+  },
+  "2Corinthians": {
+    "ko": "고린도후서",
+    "en": "2 Corinthians"
+  },
+  "Galatians": {
+    "ko": "갈라디아서",
+    "en": "Galatians"
+  },
+  "Ephesians": {
+    "ko": "에베소서",
+    "en": "Ephesians"
+  },
+  "Philippians": {
+    "ko": "빌립보서",
+    "en": "Philippians"
+  },
+  "Colossians": {
+    "ko": "골로새서",
+    "en": "Colossians"
+  },
+  "1Thessalonians": {
+    "ko": "데살로니가전서",
+    "en": "1 Thessalonians"
+  },
+  "2Thessalonians": {
+    "ko": "데살로니가후서",
+    "en": "2 Thessalonians"
+  },
+  "1Timothy": {
+    "ko": "디모데전서",
+    "en": "1 Timothy"
+  },
+  "2Timothy": {
+    "ko": "디모데후서",
+    "en": "2 Timothy"
+  },
+  "Titus": {
+    "ko": "디도서",
+    "en": "Titus"
+  },
+  "Philemon": {
+    "ko": "빌레몬서",
+    "en": "Philemon"
+  },
+  "Hebrews": {
+    "ko": "히브리서",
+    "en": "Hebrews"
+  },
+  "James": {
+    "ko": "야고보서",
+    "en": "James"
+  },
+  "1Peter": {
+    "ko": "베드로전서",
+    "en": "1 Peter"
+  },
+  "2Peter": {
+    "ko": "베드로후서",
+    "en": "2 Peter"
+  },
+  "1John": {
+    "ko": "요한일서",
+    "en": "1 John"
+  },
+  "2John": {
+    "ko": "요한이서",
+    "en": "2 John"
+  },
+  "3John": {
+    "ko": "요한삼서",
+    "en": "3 John"
+  },
+  "Jude": {
+    "ko": "유다서",
+    "en": "Jude"
+  },
+  "Revelation": {
+    "ko": "요한계시록",
+    "en": "Revelation"
+  }
+}

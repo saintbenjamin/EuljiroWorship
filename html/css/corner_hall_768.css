@@ -1,0 +1,224 @@
+/* Full-screen container for corner-style layout */
+#container.corner {
+    /* Fix the container relative to the viewport */
+    position: fixed;
+
+    /* Anchor to the top edge */
+    top: 0;
+
+    /* Anchor to the left edge */
+    left: 0;
+
+    /* Span the full viewport width */
+    width: 100vw;
+
+    /* Span the full viewport height */
+    height: 100vh;
+
+    /* Enable flexbox for centering inner content */
+    display: flex;
+
+    /* Center content horizontally */
+    justify-content: center;
+
+    /* Center content vertically */
+    align-items: center;
+
+    /* Add top padding to account for logo, with side/bottom spacing */
+    padding: 160px 60px 60px 60px;
+
+    /* Include padding in total box size */
+    box-sizing: border-box;
+}
+
+/* Wrapper that stacks the green and red boxes vertically */
+.corner-box-wrapper {
+    /* Use flex layout */
+    display: flex;
+
+    /* Establish a positioning context for absolute children */
+    position: relative;
+
+    /* Prevent text from collapsing into a single line unintentionally */
+    white-space: nowrap;
+
+    /* Stack children vertically */
+    flex-direction: column;
+
+    /* Use full available width */
+    width: 100%;
+
+    /* Use full available height */
+    height: 100%;
+}
+
+/* Base box styling shared by green and red sections */
+.corner-box {
+    /* Establish a positioning context for inner elements */
+    position: relative;
+
+    /* Use full available width */
+    width: 100%;
+
+    /* Use full available height */
+    height: 100%;
+
+    /* Enable flex layout for centering content */
+    display: flex;
+
+    /* Stack inner content vertically */
+    flex-direction: column;
+
+    /* Center content vertically */
+    justify-content: center;
+
+    /* Center content horizontally */
+    align-items: center;
+
+    /* Include padding in size calculations */
+    box-sizing: border-box;
+
+    /* Set default text color */
+    color: black;
+}
+
+/* Upper green section containing the main headline */
+.green-box {
+    /* Take up most of the vertical space */
+    flex: 9;
+
+    /* Apply a left-to-right green gradient background */
+    background: linear-gradient(to right, rgba(51, 164, 118, 1), rgba(51, 164, 118, 0.6));
+
+    /* Round the top corners only */
+    border-radius: 20px 20px 0 0;
+
+    /* Enable flex layout */
+    display: flex;
+
+    /* Center content vertically */
+    align-items: center;
+
+    /* Center content horizontally */
+    justify-content: center;
+
+    /* Add internal spacing */
+    padding: 20px 40px;
+
+    /* Include padding in total size */
+    box-sizing: border-box;
+
+    /* Use full available width */
+    width: 100%;
+}
+
+/* Lower red section containing the caption */
+.red-box {
+    /* Take up a smaller portion of vertical space */
+    flex: 1;
+
+    /* Apply a left-to-right red gradient background */
+    background: linear-gradient(to right, rgba(235, 32, 55, 1), rgba(235, 32, 55, 0.6));
+
+    /* Round the bottom corners only */
+    border-radius: 0 0 20px 20px;
+
+    /* Enable flex layout */
+    display: flex;
+
+    /* Align items to the right vertically (note: value kept as-is) */
+    align-items: right;
+
+    /* Center content horizontally */
+    justify-content: center;
+
+    /* Add internal spacing */
+    padding: 20px 40px;
+
+    /* Include padding in total size */
+    box-sizing: border-box;
+
+    /* Use full available width */
+    width: 100%;
+}
+
+/* Main headline text inside the green box */
+.corner-headline {
+    /* Make the headline bold */
+    font-weight: bold;
+
+    /* Set large headline font size */
+    font-size: 100px;
+
+    /* Set line height for readability */
+    line-height: 1.3;
+
+    /* Allow normal line wrapping */
+    white-space: normal;
+
+    /* Prefer line breaks at word boundaries (suitable for Korean) */
+    word-break: keep-all;
+
+    /* Force line breaks only when unavoidable */
+    overflow-wrap: break-word;
+
+    /* Center-align the headline text */
+    text-align: center;
+
+    /* Use full width to define wrapping boundary */
+    width: 100%;
+
+    /* Add horizontal padding to prevent edge collisions */
+    padding: 0 40px;
+
+    /* Include padding in width calculation */
+    box-sizing: border-box;
+}
+
+/* Caption text inside the red box */
+.corner-caption {
+    /* Make the caption bold */
+    font-weight: bold;
+
+    /* Set caption font size */
+    font-size: 72px;
+
+    /* Set line height for readability */
+    line-height: 1.2;
+
+    /* Align text to the right */
+    text-align: right;
+
+    /* Use full available width */
+    width: 100%;
+
+    /* Add right padding for visual spacing */
+    padding-right: 40px;
+
+    /* Include padding in width calculation */
+    box-sizing: border-box;
+}
+
+/* Logo positioned above the corner box layout */
+.corner-logo {
+    /* Position the logo relative to the nearest positioned ancestor */
+    position: absolute;
+
+    /* Raise the logo above the box layout */
+    top: -120px;
+
+    /* Place the logo near the left edge */
+    left: 70px;
+
+    /* Offset horizontally to center the logo visually */
+    transform: translateX(-50%);
+
+    /* Set the logo height */
+    height: 120px;
+
+    /* Ensure the logo appears above other elements */
+    z-index: 3;
+
+    /* Prevent the logo from capturing mouse interactions */
+    pointer-events: none;
+}

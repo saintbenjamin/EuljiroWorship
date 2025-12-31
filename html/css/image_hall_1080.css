@@ -1,0 +1,252 @@
+/* Container for the full-screen image slide layout */
+#container.image {
+    /* Fix the container to the viewport */
+    position: fixed;
+
+    /* Anchor to the top-left corner */
+    top: 0;
+    left: 0;
+
+    /* Full viewport width */
+    width: 100vw;
+
+    /* Full viewport height */
+    height: 100vh;
+
+    /* Reserve top space for the logo area and provide side/bottom margins */
+    padding: 160px 60px 60px 60px;
+
+    /* Include padding in total box size calculations */
+    box-sizing: border-box;
+
+    /* Use flexbox to center the main box */
+    display: flex;
+
+    /* Center horizontally */
+    justify-content: center;
+
+    /* Center vertically */
+    align-items: center;
+}
+
+/* Outer box that defines the image slide's content area */
+.image-box {
+    /* Establish a positioning context for absolute children */
+    position: relative;
+
+    /* Take full available width */
+    width: 100%;
+
+    /* Prevent exceeding the available width */
+    max-width: 100%;
+
+    /* Take full available height */
+    height: 100%;
+
+    /* Prevent exceeding the available height */
+    max-height: 100%;
+}
+
+/* Background layer that fills the content box */
+.image-bg {
+    /* Cover the box using absolute positioning */
+    position: absolute;
+
+    /* Anchor to the top-left of the box */
+    top: 0;
+    left: 0;
+
+    /* Fill full width of the box */
+    width: 100%;
+
+    /* Fill full height of the box */
+    height: 100%;
+
+    /* Apply a green diagonal gradient background */
+    background: linear-gradient(
+        to bottom right, 
+        rgba(51, 164, 118, 1),
+        rgba(51, 164, 118, 0.6)
+    );
+
+    /* Round the corners */
+    border-radius: 16px;
+
+    /* Place behind text/content layers */
+    z-index: 0;
+}
+
+/* Logo that overlaps above the content box */
+.image-logo {
+    /* Position relative to the nearest positioned ancestor (.image-box) */
+    position: absolute;
+
+    /* Lift above the top edge to overlap outside the box */
+    top: -120px;
+
+    /* Horizontal anchor near the left side */
+    left: 70px;
+
+    /* Offset horizontally for visual alignment */
+    transform: translateX(-50%);
+
+    /* Fixed logo height with preserved aspect ratio */
+    height: 120px;
+
+    /* Place above background and below any higher overlays if needed */
+    z-index: 3;
+
+    /* Prevent the logo from intercepting mouse events */
+    pointer-events: none;
+}
+
+/* Main content area that centers the image */
+.image-headline {
+    /* Position above the background layer */
+    position: relative;
+
+    /* Use flex layout to center the inner content */
+    display: flex;
+
+    /* Stack children vertically if needed */
+    flex-direction: column;
+
+    /* Center content vertically */
+    justify-content: center;
+
+    /* Center content horizontally */
+    align-items: center;
+
+    /* Default text color (not used for the image itself, but kept for consistency) */
+    color: black;
+
+    /* Internal spacing around the centered content */
+    padding: 40px 60px 20px 60px;
+
+    /* Base font size (kept for consistency with other templates) */
+    font-size: 100px;
+
+    /* Line spacing (kept for consistency with other templates) */
+    line-height: 1.6;
+
+    /* Allow normal wrapping if text is ever used */
+    white-space: normal;
+
+    /* Keep Korean word units together when wrapping */
+    word-break: keep-all;
+
+    /* Allow emergency wrapping for overly long content */
+    overflow-wrap: break-word;
+
+    /* Place above the background */
+    z-index: 4;
+
+    /* Center-align content */
+    text-align: center;
+
+    /* Emphasize text if present */
+    font-weight: bold;
+
+    /* Allow content to overflow if needed */
+    overflow: visible;
+
+    /* Fill the available height to enable true vertical centering */
+    height: 100%;
+
+    /* Slight vertical shift for visual tuning */
+    transform: translateY(-5px);
+}
+
+/* Image sizing rules inside the headline area */
+.image-headline img {
+    /* Prevent the image from exceeding container width */
+    max-width: 100%;
+
+    /* Prevent the image from exceeding container height */
+    max-height: 100%;
+
+    /* Preserve aspect ratio while fitting within bounds */
+    object-fit: contain;
+}
+
+/* Caption box that sits above the main content box */
+.image-captbox {
+    /* Position relative to the nearest positioned ancestor (.image-box) */
+    position: absolute;
+
+    /* Anchor at the top edge of the box */
+    top: 0px;
+
+    /* Horizontal offset from the left edge */
+    left: 78px;
+
+    /* Move upward by its own height to overlap above the box */
+    transform: translateY(-100%);
+
+    /* Apply a red diagonal gradient background */
+    background: linear-gradient(
+        to top right, 
+        rgba(235, 32, 55, 1), 
+        rgba(235, 32, 55, 0.6)
+    );
+
+    /* Caption text color */
+    color: black;
+
+    /* No extra padding on the outer caption container */
+    padding: 0px 0px;
+
+    /* Caption box font size */
+    font-size: 56px;
+
+    /* Emphasize caption text */
+    font-weight: bold;
+
+    /* Round only the top corners */
+    border-radius: 20px 20px 0 0;
+
+    /* Place above background but below logo/headline if needed */
+    z-index: 2;
+
+    /* Prevent the caption box from intercepting mouse events */
+    pointer-events: none;
+}
+
+/* Caption text inside the caption box */
+.image-caption {
+    /* Create a positioning context for fine adjustments */
+    position: relative;
+
+    /* Allow inline layout while behaving like a box */
+    display: inline-block;
+
+    /* Include padding in total size calculations */
+    box-sizing: border-box;
+
+    /* Caption text color */
+    color: black;
+
+    /* Inner spacing to keep text away from edges */
+    padding: 20px 30px 10px 30px;
+
+    /* Caption font size */
+    font-size: 48px;
+
+    /* Line spacing for readability */
+    line-height: 1.5;
+
+    /* Prevent caption text from wrapping */
+    white-space: nowrap;
+
+    /* Ensure caption appears above the background */
+    z-index: 2;
+
+    /* Center-align the caption text within its own box */
+    text-align: center;
+
+    /* Emphasize caption text */
+    font-weight: bold;
+
+    /* Slight upward shift for visual alignment inside the red box */
+    transform: translateY(-9px);
+}

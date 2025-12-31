@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--
+  Root HTML document for the hall (sanctuary) display.
+  This version is optimized for a fixed 1080p layout.
+-->
+<html lang="ko">
+  <head>
+    <!-- Specify UTF-8 encoding to properly support Korean text -->
+    <meta charset="utf-8"/>
+
+    <!-- Page title (informational only; not visible on the display) -->
+    <title>The Eulji-ro Presbyterian Church</title>
+
+    <!-- Base styles shared across all hall overlays (1080p layout) -->
+    <link rel="stylesheet" href="css/base_hall_1080.css">
+
+    <!-- Styles for lyrics overlays in the hall display (1080p) -->
+    <link rel="stylesheet" href="css/lyrics_hall_1080.css">
+
+    <!-- Styles for Bible verse overlays in the hall display (1080p) -->
+    <link rel="stylesheet" href="css/verse_hall_1080.css">
+
+    <!-- Styles for corner-style captions in the hall display (1080p) -->
+    <link rel="stylesheet" href="css/corner_hall_1080.css">
+
+    <!-- Styles for anthem-style overlays in the hall display (1080p) -->
+    <link rel="stylesheet" href="css/anthem_hall_1080.css">
+
+    <!-- Styles for prayer overlays in the hall display (1080p) -->
+    <link rel="stylesheet" href="css/prayer_hall_1080.css">
+
+    <!-- Styles for greeting overlays in the hall display (1080p) -->
+    <link rel="stylesheet" href="css/greet_hall_1080.css">
+
+    <!-- Styles for image-based overlays in the hall display (1080p) -->
+    <link rel="stylesheet" href="css/image_hall_1080.css">
+
+    <!-- Styles for intro / opening overlays in the hall display (1080p) -->
+    <link rel="stylesheet" href="css/intro_hall_1080.css">
+  </head>
+
+  <body>
+    <!--
+      Fixed background image layer for the hall display.
+      Used for cover or introductory scenes.
+    -->
+    <div id="cover-background"></div>
+
+    <!--
+      Fixed background logo layer.
+      This remains visible behind overlay content when enabled.
+    -->
+    <div id="background-logo">
+      <img src="resources/png/euljiro_transparent.png" alt="logo" />
+    </div>
+
+    <!--
+      Main container element.
+      All dynamic overlay content is injected here by JavaScript.
+    -->
+    <div id="container"></div>
+
+    <!--
+      WebSocket client for receiving real-time commands and data
+      specific to the hall display environment.
+    -->
+    <script src="js/ws_hall.js"></script>
+
+    <!--
+      Utility functions for processing and splitting lyrics
+      before rendering in the hall layout.
+    -->
+    <script src="js/lyrics_utils_hall.js"></script>
+
+    <!--
+      Automatic text resizing logic tailored for hall layouts.
+    -->
+    <script src="js/autoshrink_hall.js"></script>
+
+    <!--
+      Rendering logic that converts incoming data into DOM elements
+      for the hall display.
+    -->
+    <script src="js/render_hall.js"></script>
+
+    <!--
+      Application entry point for the hall overlay system.
+      Initializes WebSocket connections and rendering flow.
+    -->
+    <script src="js/main_hall.js"></script>
+  </body>
+</html>

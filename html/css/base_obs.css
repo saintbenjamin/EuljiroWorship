@@ -1,0 +1,23 @@
+/* Set the box sizing model so padding and border are included in the element's total size */
+* {
+    /* Include padding and border in width/height calculations */
+    box-sizing: border-box;
+}
+
+/* Configure the base page layout: remove default margins, use a transparent background, and prevent scrolling */
+html, body {
+    /* Remove the browser's default outer margin */
+    margin: 0;
+
+    /* Make the page background transparent (useful for overlay rendering) */
+    background: transparent;
+
+    /* Hide any overflow to prevent scrollbars and scrolling */
+    overflow: hidden;
+}
+
+/* Hide the scrollbar in WebKit-based browsers (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+    /* Do not render the scrollbar UI */
+    display: none;
+}

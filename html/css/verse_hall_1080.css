@@ -1,0 +1,244 @@
+/* Full-screen verse container that centers the verse layout */
+#container.verse {
+    /* Fix the container to the viewport so it stays on screen */
+    position: fixed;
+
+    /* Anchor to the top edge of the viewport */
+    top: 0;
+
+    /* Anchor to the left edge of the viewport */
+    left: 0;
+
+    /* Span the full viewport width */
+    width: 100vw;
+
+    /* Span the full viewport height */
+    height: 100vh;
+
+    /* Add top padding to reserve space for the logo overlap, plus side/bottom margins */
+    padding: 220px 60px 60px 60px;
+
+    /* Include padding in the element's total size calculation */
+    box-sizing: border-box;
+
+    /* Use flexbox to center the inner verse box */
+    display: flex;
+
+    /* Center the inner box horizontally */
+    justify-content: center;
+
+    /* Center the inner box vertically */
+    align-items: center;
+}
+
+/* Wrapper box that provides a positioning context for background, logo, and text */
+.verse-box {
+    /* Establish a positioning context for absolutely positioned children */
+    position: relative;
+
+    /* Allow the box to span the available width */
+    width: 100%;
+
+    /* Prevent the box from exceeding the available width */
+    max-width: 100%;
+
+    /* Allow the box to span the available height */
+    height: 100%;
+
+    /* Prevent the box from exceeding the available height */
+    max-height: 100%;
+}
+
+/* Background panel that fills the verse box */
+.verse-bg {
+    /* Position the background to cover the entire verse box */
+    position: absolute;
+
+    /* Align background to the top edge of the verse box */
+    top: 0;
+
+    /* Align background to the left edge of the verse box */
+    left: 0;
+
+    /* Match the background width to the verse box */
+    width: 100%;
+
+    /* Match the background height to the verse box */
+    height: 100%;
+
+    /* Apply a green gradient background */
+    background: linear-gradient(
+        to bottom right, 
+        rgba(51, 164, 118, 1), 
+        rgba(51, 164, 118, 0.6)
+    );
+
+    /* Round the background corners */
+    border-radius: 16px;
+
+    /* Place the background behind text and overlays */
+    z-index: 0;
+}
+
+/* Church logo positioned above and overlapping the background panel */
+.verse-logo {
+    /* Position the logo relative to the verse box for precise overlap control */
+    position: absolute;
+
+    /* Raise the logo upward so it overlaps above the box */
+    top: -180px;
+
+    /* Anchor the logo near the left side of the box */
+    left: 70px;
+
+    /* Offset the logo horizontally to match the intended visual alignment */
+    transform: translateX(-70%);
+
+    /* Set a fixed logo height while preserving aspect ratio */
+    height: 180px;
+
+    /* Ensure the logo appears above other layers */
+    z-index: 3;
+
+    /* Prevent the logo from capturing mouse/touch interactions */
+    pointer-events: none;
+}
+
+/* Main verse text area centered inside the verse box */
+.verse-headline {
+    /* Keep the headline in normal document flow within the verse box */
+    position: relative;
+
+    /* Use flex layout to center the text block */
+    display: flex;
+
+    /* Stack lines vertically when wrapping occurs */
+    flex-direction: column;
+
+    /* Center content vertically inside the available space */
+    justify-content: center;
+
+    /* Center content horizontally inside the available space */
+    align-items: center;
+
+    /* Set the main text color */
+    color: black;
+
+    /* Add internal padding for breathing room */
+    padding: 40px 60px 20px 60px;
+
+    /* Use a responsive font size with bounds */
+    font-size: clamp(90px, 8vw, 110px) !important;
+
+    /* Set comfortable line spacing for multi-line verses */
+    line-height: 1.6;
+
+    /* Allow normal wrapping for long verse text */
+    white-space: normal;
+
+    /* Prefer natural Korean word-boundary line breaks */
+    word-break: keep-all;
+
+    /* Allow forced breaking only when absolutely necessary */
+    overflow-wrap: break-word;
+
+    /* Ensure the headline appears above the background */
+    z-index: 4;
+
+    /* Center-align the verse text */
+    text-align: center;
+
+    /* Emphasize verse text */
+    font-weight: bold;
+
+    /* Allow content to overflow if needed */
+    overflow: visible;
+
+    /* Use the full available height to enable vertical centering */
+    height: 100%;
+
+    /* Slightly shift the text upward for visual balance */
+    transform: translateY(-5px);
+}
+
+/* Caption box that sits above the main background panel */
+.verse-captbox {
+    /* Position the caption box relative to the verse box */
+    position: absolute;
+
+    /* Anchor the caption box to the top edge of the verse box */
+    top: 0px;
+
+    /* Anchor the caption box near the left side */
+    left: 78px;
+
+    /* Move the caption box upward so it overlaps above the panel */
+    transform: translateY(-100%);
+
+    /* Apply a red gradient background for the caption bar */
+    background: linear-gradient(
+        to top right, 
+        rgba(235, 32, 55, 1), 
+        rgba(235, 32, 55, 0.6)
+    );
+
+    /* Set caption text color */
+    color: black;
+
+    /* Keep padding at zero so the inner caption controls spacing */
+    padding: 0px 0px;
+
+    /* Use a responsive caption font size with bounds */
+    font-size: clamp(90px, 8vw, 64px) !important;
+
+    /* Emphasize caption text */
+    font-weight: bold;
+
+    /* Round only the top corners of the caption box */
+    border-radius: 20px 20px 0 0;
+
+    /* Place the caption box above the background */
+    z-index: 2;
+
+    /* Prevent the caption box from capturing mouse/touch interactions */
+    pointer-events: none;
+}
+
+/* Caption text inside the caption box */
+.verse-caption {
+    /* Keep caption positioning relative for fine adjustments */
+    position: relative;
+
+    /* Make the caption behave like a box while flowing inline */
+    display: inline-block;
+
+    /* Include padding in the caption size calculation */
+    box-sizing: border-box;
+
+    /* Set caption text color */
+    color: black;
+
+    /* Add internal padding for the caption text */
+    padding: 20px 30px 10px 30px;
+
+    /* Use a responsive caption font size with bounds */
+    font-size: clamp(90px, 8vw, 64px) !important;
+
+    /* Set line height for readability */
+    line-height: 1.5;
+
+    /* Prevent the caption from wrapping to multiple lines */
+    white-space: nowrap;
+
+    /* Ensure caption stays above the background */
+    z-index: 2;
+
+    /* Center-align caption text within its own box */
+    text-align: center;
+
+    /* Emphasize caption text */
+    font-weight: bold;
+
+    /* Slight upward shift to visually center within the caption bar */
+    transform: translateY(-9px);
+}

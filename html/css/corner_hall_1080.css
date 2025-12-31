@@ -1,0 +1,230 @@
+/* Container for the "corner" layout: fills the viewport and centers the corner box */
+#container.corner {
+    /* Fix the container relative to the viewport */
+    position: fixed;
+
+    /* Anchor to the top-left corner */
+    top: 0;
+    left: 0;
+
+    /* Full viewport width */
+    width: 100vw;
+
+    /* Full viewport height */
+    height: 100vh;
+
+    /* Enable flexbox for centering */
+    display: flex;
+
+    /* Center content horizontally */
+    justify-content: center;
+
+    /* Center content vertically */
+    align-items: center;
+
+    /* Top-heavy padding to reserve space for logo overlap, plus side/bottom breathing room */
+    padding: 220px 60px 60px 60px;
+
+    /* Include padding in total box size */
+    box-sizing: border-box;
+}
+
+/* Wrapper that stacks the green and red boxes vertically */
+.corner-box-wrapper {
+    /* Use flex layout */
+    display: flex;
+
+    /* Establish a positioning context for absolutely-positioned children (e.g., logo) */
+    position: relative;
+
+    /* Prevent unwanted wrapping for certain inline contents */
+    white-space: nowrap;
+
+    /* Stack children vertically */
+    flex-direction: column;
+
+    /* Use full available width */
+    width: 100%;
+
+    /* Use full available height */
+    height: 100%;
+}
+
+/* Main corner box that holds the stacked green/red areas */
+.corner-box {
+    /* Establish a positioning context for internal absolute elements */
+    position: relative;
+
+    /* Use full available width */
+    width: 100%;
+
+    /* Use full available height */
+    height: 100%;
+
+    /* Use flex layout for vertical stacking */
+    display: flex;
+
+    /* Stack children vertically */
+    flex-direction: column;
+
+    /* Center children vertically within the full height */
+    justify-content: center;
+
+    /* Center children horizontally */
+    align-items: center;
+
+    /* Include padding/border in size calculations */
+    box-sizing: border-box;
+
+    /* Default text color for this block */
+    color: black;
+}
+
+/* Top green area that contains the headline */
+.green-box {
+    /* Allocate most of the vertical space to the green section */
+    flex: 9;
+
+    /* Green horizontal gradient background */
+    background: linear-gradient(
+        to right,
+        rgba(51, 164, 118, 1),
+        rgba(51, 164, 118, 0.6)
+    );
+
+    /* Rounded top corners */
+    border-radius: 20px 20px 0 0;
+
+    /* Use flex layout for centering inner content */
+    display: flex;
+
+    /* Center content vertically */
+    align-items: center;
+
+    /* Center content horizontally */
+    justify-content: center;
+
+    /* Internal padding for breathing room */
+    padding: 20px 40px;
+
+    /* Include padding in total size */
+    box-sizing: border-box;
+
+    /* Ensure full width of the wrapper */
+    width: 100%;
+}
+
+/* Bottom red area that contains the caption */
+.red-box {
+    /* Allocate a smaller portion of vertical space to the red section */
+    flex: 1;
+
+    /* Red horizontal gradient background */
+    background: linear-gradient(
+        to right,
+        rgba(235, 32, 55, 1),
+        rgba(235, 32, 55, 0.6)
+    );
+
+    /* Rounded bottom corners */
+    border-radius: 0 0 20px 20px;
+
+    /* Use flex layout for alignment of caption content */
+    display: flex;
+
+    /* Attempt to align items to the right side (note: valid values are flex-start/center/flex-end) */
+    align-items: right;
+
+    /* Center content horizontally within the red bar */
+    justify-content: center;
+
+    /* Internal padding for breathing room */
+    padding: 20px 40px;
+
+    /* Include padding in total size */
+    box-sizing: border-box;
+
+    /* Ensure full width of the wrapper */
+    width: 100%;
+}
+
+/* Large headline text in the green box */
+.corner-headline {
+    /* Make the headline bold */
+    font-weight: bold;
+
+    /* Responsive headline size with lower and upper bounds */
+    font-size: clamp(90px, 8vw, 200px) !important;
+
+    /* Line spacing tuned for large typography */
+    line-height: 1.3;
+
+    /* Allow normal line wrapping */
+    white-space: normal;
+
+    /* Prefer word/phrase-level wrapping (important for Korean) */
+    word-break: keep-all;
+
+    /* Allow emergency wrapping for extremely long tokens */
+    overflow-wrap: break-word;
+
+    /* Center-align the headline text */
+    text-align: center;
+
+    /* Use full horizontal space to establish a wrapping width */
+    width: 100%;
+
+    /* Add side padding to avoid edge collisions */
+    padding: 0 40px;
+
+    /* Include padding in total size */
+    box-sizing: border-box;
+}
+
+/* Caption text in the red box */
+.corner-caption {
+    /* Make the caption bold */
+    font-weight: bold;
+
+    /* Responsive caption size with lower and upper bounds */
+    font-size: clamp(90px, 8vw, 120px) !important;
+
+    /* Slightly tighter line spacing than the headline */
+    line-height: 1.2;
+
+    /* Right-align caption text */
+    text-align: right;
+
+    /* Use full width so right alignment and padding behave predictably */
+    width: 100%;
+
+    /* Add right padding for spacing from the edge */
+    padding-right: 40px;
+
+    /* Include padding in total size */
+    box-sizing: border-box;
+}
+
+/* Church logo that overlaps above the corner box */
+.corner-logo {
+    /* Position the logo relative to the nearest positioned ancestor */
+    position: absolute;
+
+    /* Raise the logo above the top edge to create overlap */
+    top: -180px;
+
+    /* Horizontal anchor near the left edge */
+    left: 70px;
+
+    /* Offset logo horizontally for visual centering */
+    transform: translateX(-70%);
+
+    /* Fixed logo height with preserved aspect ratio */
+    height: 180px;
+
+    /* Ensure the logo appears above the boxes */
+    z-index: 3;
+
+    /* Prevent the logo from intercepting mouse/touch interactions */
+    pointer-events: none;
+}

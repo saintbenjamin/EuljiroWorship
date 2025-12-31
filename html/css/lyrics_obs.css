@@ -1,0 +1,193 @@
+/* Bottom-centered container for the compact lyrics overlay */
+#container.lyrics {
+    /* Fix the container relative to the viewport */
+    position: fixed;
+
+    /* Offset the container from the bottom edge */
+    bottom: 30px;
+
+    /* Use the horizontal center of the viewport as the anchor */
+    left: 50%;
+
+    /* Translate left by half its own width for true centering */
+    transform: translateX(-50%);
+
+    /* Place this layer behind higher-priority overlays */
+    z-index: 0;
+
+    /* Set the container width relative to the viewport */
+    width: calc(100vw - 60px);
+
+    /* Prevent the container from exceeding the viewport width */
+    max-width: calc(100vw - 60px);
+
+    /* Make the container shrink-wrap its content vertically */
+    display: inline-block;
+
+    /* Center inner content horizontally when flex is applied */
+    justify-content: center;
+
+    /* Center inner content vertically when flex is applied */
+    align-items: center;
+}
+
+/* Background panel for the lyrics overlay */
+.lyrics-bg {
+    /* Position the background absolutely to cover its parent */
+    position: absolute;
+
+    /* Anchor to the top edge */
+    top: 0;
+
+    /* Anchor to the left edge */
+    left: 0;
+
+    /* Match the full width of the parent */
+    width: 100%;
+
+    /* Match the full height of the parent */
+    height: 100%;
+
+    /* Apply a diagonal green gradient background */
+    background: linear-gradient(
+        to bottom right, 
+        rgba(51, 164, 118, 1), 
+        rgba(51, 164, 118, 0.6)
+    );
+
+    /* Round the background corners */
+    border-radius: 16px;
+
+    /* Place the background behind text and logo */
+    z-index: 0;
+}
+
+/* Church logo that overlaps above the lyrics background */
+.lyrics-logo {
+    /* Position the logo relative to the lyrics container */
+    position: absolute;
+
+    /* Lift the logo slightly above the background */
+    top: -120px;
+
+    /* Place the logo near the left side */
+    left: 70px;
+
+    /* Offset horizontally for visual centering */
+    transform: translateX(-50%);
+
+    /* Fix the logo height while preserving aspect ratio */
+    height: 120px;
+
+    /* Ensure the logo appears above the background */
+    z-index: 3;
+
+    /* Prevent the logo from capturing mouse/touch interactions */
+    pointer-events: none;
+}
+
+/* Main lyrics text inside the compact overlay */
+.lyrics-headline {
+    /* Position relative so it layers above the background */
+    position: relative;
+
+    /* Set lyrics text color */
+    color: white;
+
+    /* Add internal spacing around the lyrics text */
+    padding: 40px 60px 20px 60px;
+
+    /* Set lyrics font size */
+    font-size: 36px;
+
+    /* Set line spacing for readability */
+    line-height: 1.5;
+
+    /* Prevent the lyrics from wrapping to multiple lines */
+    white-space: nowrap;
+
+    /* Place lyrics above the background */
+    z-index: 2;
+
+    /* Center-align the lyrics text */
+    text-align: center;
+
+    /* Emphasize the lyrics text */
+    font-weight: bold;
+
+    /* Limit the maximum height of the lyrics block */
+    max-height: 150px;
+
+    /* Apply a slight upward visual adjustment */
+    transform: translateY(-16px);
+}
+
+/* Caption background box that overlaps above the lyrics panel */
+.lyrics-captbox {
+    /* Position the caption box relative to the lyrics container */
+    position: absolute;
+
+    /* Anchor to the top edge of the container */
+    top: 0;
+
+    /* Place the caption box near the left side */
+    left: 78px;
+
+    /* Move the box upward by its own height to overlap above the content */
+    transform: translateY(-100%);
+
+    /* Apply a diagonal red gradient background */
+    background: linear-gradient(
+        to top right, 
+        rgba(235, 32, 55, 1), 
+        rgba(235, 32, 55, 0.6)
+    );
+
+    /* Set caption text color */
+    color: white;
+
+    /* Set caption font size */
+    font-size: 32px;
+
+    /* Emphasize caption text */
+    font-weight: bold;
+
+    /* Round the top corners of the caption box */
+    border-radius: 20px 20px 0 0;
+
+    /* Layer above the background but below the logo */
+    z-index: 2;
+
+    /* Prevent the caption box from capturing mouse/touch interactions */
+    pointer-events: none;
+}
+
+/* Caption text rendered inside the caption box */
+.lyrics-caption {
+    /* Render the caption as a box-sized inline element */
+    display: inline-block;
+
+    /* Add internal spacing around caption text */
+    padding: 20px 30px 10px 30px;
+
+    /* Set caption font size */
+    font-size: 32px;
+
+    /* Set line spacing for readability */
+    line-height: 1.5;
+
+    /* Limit the maximum height of the caption text */
+    max-height: 75px;
+
+    /* Prevent caption text from wrapping */
+    white-space: nowrap;
+
+    /* Center-align caption text */
+    text-align: center;
+
+    /* Emphasize caption text */
+    font-weight: bold;
+
+    /* Apply a slight upward visual adjustment */
+    transform: translateY(-9px);
+}

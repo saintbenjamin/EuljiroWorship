@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!--
+  Root HTML document for the OBS browser source.
+  This file serves as the single entry point for all overlay rendering.
+-->
+<html lang="ko">
+  <head>
+    <!-- Specify UTF-8 encoding to properly support Korean text -->
+    <meta charset="utf-8"/>
+
+    <!-- Page title (mainly informational; not visible in OBS) -->
+    <title>The Eulji-ro Presbyterian Church</title>
+
+    <!-- Base styles shared across all overlay layouts -->
+    <link rel="stylesheet" href="css/base_obs.css">
+
+    <!-- Styles for lyrics (song text overlay) -->
+    <link rel="stylesheet" href="css/lyrics_obs.css">
+
+    <!-- Styles for Bible verse overlays -->
+    <link rel="stylesheet" href="css/verse_obs.css">
+
+    <!-- Styles for corner-style captions (titles, announcements) -->
+    <link rel="stylesheet" href="css/corner_obs.css">
+
+    <!-- Styles for anthem-style overlays (choir, anthem title) -->
+    <link rel="stylesheet" href="css/anthem_obs.css">
+
+    <!-- Styles for prayer overlays -->
+    <link rel="stylesheet" href="css/prayer_obs.css">
+
+    <!-- Styles for greeting overlays -->
+    <link rel="stylesheet" href="css/greet_obs.css">
+
+    <!-- Styles for image-based overlays -->
+    <link rel="stylesheet" href="css/image_obs.css">
+  </head>
+
+  <body>
+    <!--
+      Main container element.
+      All overlay content is dynamically injected into this element by JavaScript.
+    -->
+    <div id="container"></div>
+
+    <!--
+      WebSocket client for receiving real-time overlay commands and data.
+    -->
+    <script src="js/ws_obs.js"></script>
+
+    <!--
+      Automatic text resizing logic to fit content within layout bounds.
+    -->
+    <script src="js/autoshrink_obs.js"></script>
+
+    <!--
+      Rendering logic that converts incoming data into DOM elements.
+    -->
+    <script src="js/render_obs.js"></script>
+
+    <!--
+      Application entry point.
+      Initializes the overlay system and wires all components together.
+    -->
+    <script src="js/main_obs.js"></script>
+  </body>
+</html>

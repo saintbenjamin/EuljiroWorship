@@ -1,0 +1,214 @@
+/* Bottom-centered verse container that sizes to its content width */
+#container.verse {
+    /* Fix the container to the viewport */
+    position: fixed;
+
+    /* Offset the container from the bottom edge */
+    bottom: 30px;
+
+    /* Use the horizontal center of the viewport as the anchor */
+    left: 50%;
+
+    /* Shift left by half of the container width to center it */
+    transform: translateX(-50%);
+
+    /* Place the container behind higher UI layers */
+    z-index: 0;
+
+    /* Allow width to be determined by content */
+    width: auto;
+
+    /* Constrain the width to viewport width minus margins */
+    width: calc(100vw - 60px);
+
+    /* Set the maximum allowed width */
+    max-width: calc(100vw - 60px);
+
+    /* Make the container wrap tightly around its contents */
+    display: inline-block;
+}
+
+/* Gradient background panel for the verse container */
+.verse-bg {
+    /* Position the background relative to the verse container */
+    position: absolute;
+
+    /* Align background to the top edge */
+    top: 0;
+
+    /* Align background to the left edge */
+    left: 0;
+
+    /* Match background width to container */
+    width: 100%;
+
+    /* Match background height to container */
+    height: 100%;
+
+    /* Apply green diagonal gradient */
+    background: linear-gradient(
+        to bottom right, 
+        rgba(51, 164, 118, 1), 
+        rgba(51, 164, 118, 0.6)
+    );
+
+    /* Round background corners */
+    border-radius: 16px;
+
+    /* Place background below text layers */
+    z-index: 0;
+}
+
+/* Church logo overlapping the verse background */
+.verse-logo {
+    /* Position logo relative to the verse container */
+    position: absolute;
+
+    /* Raise the logo above the container */
+    top: -120px;
+
+    /* Anchor logo near the left side */
+    left: 70px;
+
+    /* Horizontally offset the logo for visual alignment */
+    transform: translateX(-50%);
+
+    /* Set fixed logo height */
+    height: 120px;
+
+    /* Ensure logo appears above background */
+    z-index: 3;
+
+    /* Prevent logo from receiving pointer events */
+    pointer-events: none;
+}
+
+/* Main verse text block */
+.verse-headline {
+    /* Keep headline in normal document flow */
+    position: relative;
+
+    /* Set text color for contrast against background */
+    color: white;
+
+    /* Add internal spacing around the text */
+    padding: 40px 60px 20px 60px;
+
+    /* Set base font size */
+    font-size: 48px;
+
+    /* Control vertical spacing between lines */
+    line-height: 1.6;
+
+    /* Allow automatic line wrapping */
+    white-space: normal;
+
+    /* Prevent unnatural word breaks in Korean */
+    word-break: keep-all;
+
+    /* Allow forced breaks only when necessary */
+    overflow-wrap: break-word;
+
+    /* Place text above background */
+    z-index: 4;
+
+    /* Center-align the verse text */
+    text-align: center;
+
+    /* Emphasize verse text */
+    font-weight: bold;
+
+    /* Limit the maximum height of the text block */
+    max-height: 200px;
+
+    /* Hide overflowing text beyond the max height */
+    overflow: hidden;
+
+    /* Slightly shift text upward for visual balance */
+    transform: translateY(-10px);
+}
+
+/* Caption bar positioned above the verse background */
+.verse-captbox {
+    /* Position caption box relative to the verse container */
+    position: absolute;
+
+    /* Anchor caption box to the top edge */
+    top: 0px;
+
+    /* Anchor caption box near the left side */
+    left: 78px;
+
+    /* Move caption box upward to overlap the background */
+    transform: translateY(-100%);
+
+    /* Apply red diagonal gradient */
+    background: linear-gradient(
+        to top right, 
+        rgba(235, 32, 55, 1), 
+        rgba(235, 32, 55, 0.6)
+    );
+
+    /* Set caption text color */
+    color: white;
+
+    /* Keep padding controlled by inner caption element */
+    padding: 0px 0px;
+
+    /* Set caption font size */
+    font-size: 32px;
+
+    /* Emphasize caption text */
+    font-weight: bold;
+
+    /* Round only the top corners */
+    border-radius: 20px 20px 0 0;
+
+    /* Place caption above background */
+    z-index: 2;
+
+    /* Prevent caption box from receiving pointer events */
+    pointer-events: none;
+}
+
+/* Caption text inside the caption bar */
+.verse-caption {
+    /* Keep caption positioning relative for fine adjustment */
+    position: relative;
+
+    /* Make inline text behave like a box */
+    display: inline-block;
+
+    /* Include padding in size calculation */
+    box-sizing: border-box;
+
+    /* Set caption text color */
+    color: white;
+
+    /* Add internal spacing around caption text */
+    padding: 20px 30px 10px 30px;
+
+    /* Set caption font size */
+    font-size: 32px;
+
+    /* Control line spacing */
+    line-height: 1.5;
+
+    /* Limit caption height */
+    max-height: 75;
+
+    /* Prevent caption from wrapping to multiple lines */
+    white-space: nowrap;
+
+    /* Place caption above background */
+    z-index: 2;
+
+    /* Center-align caption text */
+    text-align: center;
+
+    /* Emphasize caption text */
+    font-weight: bold;
+
+    /* Slight upward adjustment for visual centering */
+    transform: translateY(-9px);
+}

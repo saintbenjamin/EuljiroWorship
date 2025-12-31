@@ -1,0 +1,172 @@
+/* Wrapper that anchors the anthem UI near the bottom and allows overflow */
+.anthem-wrapper {
+    /* Fix the wrapper relative to the viewport */
+    position: fixed;
+
+    /* Place the wrapper near the bottom edge of the screen */
+    bottom: 30px;
+
+    /* Move the wrapper's anchor point to the horizontal center */
+    left: 50%;
+
+    /* Offset by half of its own width so it is truly centered */
+    transform: translateX(-50%);
+
+    /* Ensure the anthem UI appears above most other elements */
+    z-index: 10;
+
+    /* Allow child elements to visually overflow outside the wrapper box (e.g., the badge) */
+    overflow: visible;
+}
+
+/* Main pill-shaped container that holds the headline and acts as an anchor for badge/logo */
+.anthem-container {
+    /* Establish a containing block for absolutely-positioned children (badge/logo) */
+    position: relative;
+
+    /* Use flex layout for centering the headline content */
+    display: flex;
+
+    /* Center children vertically within the container */
+    align-items: center;
+
+    /* Center children horizontally within the container */
+    justify-content: center;
+
+    /* Apply a left-to-right gradient background for the pill shape */
+    background: linear-gradient(
+        to right,
+        rgba(51, 164, 118, 1),
+        rgba(51, 164, 118, 0.6)
+    );
+
+    /* Make the container a fully rounded pill */
+    border-radius: 9999px;
+
+    /* Add vertical and horizontal padding inside the pill */
+    padding: 20px 60px;
+
+    /* Fix the pill height */
+    height: 150px;
+
+    /* Ensure the pill has a minimum width so text has room */
+    min-width: 600px;
+}
+
+/* Headline text rendered inside the pill container */
+.anthem-headline {
+    /* Set the headline font size */
+    font-size: 36px;
+
+    /* Make the headline bold */
+    font-weight: bold;
+
+    /* Set headline text color */
+    color: white;
+
+    /* Center the headline text within its own box */
+    text-align: center;
+
+    /* Prevent the headline from wrapping to multiple lines */
+    white-space: nowrap;
+
+    /* Keep headline above the container background and around other stacked elements as intended */
+    z-index: 11;
+}
+
+/* Circular badge that overlaps the left side of the pill */
+.anthem-badge {
+    /* Position the badge relative to the nearest positioned ancestor (.anthem-container) */
+    position: absolute;
+
+    /* Anchor the badge to the bottom edge of the container */
+    bottom: 0;
+
+    /* Anchor the badge to the left edge of the container */
+    left: 0;
+
+    /* Shift the badge left and up so it overlaps the pill rather than sitting fully inside it */
+    transform: translate(-50%, -50%);
+
+    /* Set the badge width */
+    width: 150px;
+
+    /* Set the badge height */
+    height: 150px;
+
+    /* Make the badge perfectly circular */
+    border-radius: 50%;
+
+    /* Apply a bottom-to-top gradient for the badge background */
+    background: linear-gradient(
+        to top,
+        rgba(235, 32, 55, 1),
+        rgba(235, 32, 55, 0.6)
+    );
+
+    /* Use flex layout to center the badge captions */
+    display: flex;
+
+    /* Stack caption lines vertically */
+    flex-direction: column;
+
+    /* Center caption lines vertically within the circle */
+    justify-content: center;
+
+    /* Center caption lines horizontally within the circle */
+    align-items: center;
+
+    /* Set badge text color */
+    color: white;
+
+    /* Make badge text bold */
+    font-weight: bold;
+}
+
+/* Church logo positioned above and overlapping near the badge area */
+.anthem-logo {
+    /* Position the logo relative to the nearest positioned ancestor (.anthem-container) */
+    position: absolute;
+
+    /* Place the logo's anchor at the horizontal center of the container */
+    left: 50%;
+
+    /* Place the logo's anchor at the vertical center of the container */
+    top: 50%;
+
+    /* Offset from the anchor to fine-tune logo placement (rightward and upward) */
+    transform: translate(75%, -55%);
+
+    /* Set the logo height */
+    height: 120px;
+
+    /* Set stacking order so it renders above elements with lower z-index */
+    z-index: 2;
+
+    /* Prevent the logo from capturing mouse/touch interactions */
+    pointer-events: none;
+}
+
+/* Primary caption text inside the badge */
+.anthem-main-caption {
+    /* Set the main caption font size (inside the badge) */
+    font-size: 30px;
+
+    /* Set line height for readability */
+    line-height: 1.5;
+
+    /* Make the main caption bold */
+    font-weight: bold;
+}
+
+/* Secondary caption text inside the badge */
+.anthem-choir-caption {
+    /* Set the choir caption font size (inside the badge) */
+    font-size: 20px;
+
+    /* Set line height for readability */
+    line-height: 1.2;
+
+    /* Make the choir caption bold */
+    font-weight: bold;
+}

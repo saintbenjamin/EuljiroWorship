@@ -1,0 +1,252 @@
+/* Container for the "image" layout; spans the full viewport and centers the image panel */
+#container.image {
+    /* Fix the container relative to the viewport */
+    position: fixed;
+
+    /* Anchor to the top-left corner */
+    top: 0;
+    left: 0;
+
+    /* Full viewport width */
+    width: 100vw;
+
+    /* Full viewport height */
+    height: 100vh;
+
+    /* Add top padding to reserve space for the overlapping logo, plus side/bottom margins */
+    padding: 160px 60px 60px 60px;
+
+    /* Include padding in the total size calculations */
+    box-sizing: border-box;
+
+    /* Enable flex layout for centering the inner box */
+    display: flex;
+
+    /* Center the inner box horizontally */
+    justify-content: center;
+
+    /* Center the inner box vertically */
+    align-items: center;
+}
+
+/* Outer box that defines the main image panel area */
+.image-box {
+    /* Establish a positioning context for absolutely-positioned children */
+    position: relative;
+
+    /* Allow the box to fill the available width */
+    width: 100%;
+
+    /* Prevent exceeding the available width */
+    max-width: 100%;
+
+    /* Allow the box to fill the available height */
+    height: 100%;
+
+    /* Prevent exceeding the available height */
+    max-height: 100%;
+}
+
+/* Background layer for the image panel */
+.image-bg {
+    /* Use absolute positioning to cover the entire panel area */
+    position: absolute;
+
+    /* Pin to the top-left corner of the panel */
+    top: 0;
+    left: 0;
+
+    /* Match the full width of the panel */
+    width: 100%;
+
+    /* Match the full height of the panel */
+    height: 100%;
+
+    /* Apply a diagonal green gradient background */
+    background: linear-gradient(
+        to bottom right,
+        rgba(51, 164, 118, 1),
+        rgba(51, 164, 118, 0.6)
+    );
+
+    /* Round the panel corners */
+    border-radius: 16px;
+
+    /* Place the background behind text and other layers */
+    z-index: 0;
+}
+
+/* Church logo that overlaps above the panel */
+.image-logo {
+    /* Position relative to the nearest positioned ancestor (.image-box) */
+    position: absolute;
+
+    /* Move the logo upward so it overlaps outside the panel */
+    top: -120px;
+
+    /* Place the logo near the left edge of the panel */
+    left: 70px;
+
+    /* Offset horizontally for visual alignment */
+    transform: translateX(-50%);
+
+    /* Fix the logo height while preserving aspect ratio */
+    height: 120px;
+
+    /* Ensure the logo appears above the background and content */
+    z-index: 3;
+
+    /* Prevent the logo from intercepting mouse interactions */
+    pointer-events: none;
+}
+
+/* Main content area that centers the image within the panel */
+.image-headline {
+    /* Keep this layer in normal flow but above the background */
+    position: relative;
+
+    /* Use flex layout for centering content */
+    display: flex;
+
+    /* Stack children vertically (useful if additional elements appear) */
+    flex-direction: column;
+
+    /* Center content vertically within the panel */
+    justify-content: center;
+
+    /* Center content horizontally within the panel */
+    align-items: center;
+
+    /* Set text color (mostly irrelevant when showing an img, but kept for consistency) */
+    color: black;
+
+    /* Add padding so content does not touch the panel edges */
+    padding: 40px 60px 20px 60px;
+
+    /* Set a base font size (fallback if text is used instead of an image) */
+    font-size: 100px;
+
+    /* Set line height for readable multi-line text */
+    line-height: 1.6;
+
+    /* Allow normal wrapping for text */
+    white-space: normal;
+
+    /* Prefer word/phrase-level wrapping (good for Korean) */
+    word-break: keep-all;
+
+    /* Allow forced wrapping only when unavoidable */
+    overflow-wrap: break-word;
+
+    /* Place content above the background */
+    z-index: 4;
+
+    /* Center-align text content */
+    text-align: center;
+
+    /* Emphasize text content if present */
+    font-weight: bold;
+
+    /* Allow content to overflow if needed (e.g., shadows or overlap) */
+    overflow: visible;
+
+    /* Fill the available height so centering works reliably */
+    height: 100%;
+
+    /* Nudge the content slightly upward for visual balance */
+    transform: translateY(-5px);
+}
+
+/* Image sizing rules inside the headline area */
+.image-headline img {
+    /* Constrain the image to the panel width */
+    max-width: 100%;
+
+    /* Constrain the image to the panel height */
+    max-height: 100%;
+
+    /* Preserve aspect ratio and fit fully within the box */
+    object-fit: contain;
+}
+
+/* Caption background box that overlaps above the main panel */
+.image-captbox {
+    /* Position relative to the nearest positioned ancestor (.image-box) */
+    position: absolute;
+
+    /* Anchor to the top edge of the panel */
+    top: 0px;
+
+    /* Place the caption box near the left edge */
+    left: 78px;
+
+    /* Lift the caption box above the panel by its own height */
+    transform: translateY(-100%);
+
+    /* Apply a diagonal red gradient background */
+    background: linear-gradient(
+        to top right,
+        rgba(235, 32, 55, 1),
+        rgba(235, 32, 55, 0.6)
+    );
+
+    /* Set caption box text color */
+    color: black;
+
+    /* Keep padding explicit (even if zero) for consistent patterns */
+    padding: 0px 0px;
+
+    /* Set caption box font size */
+    font-size: 56px;
+
+    /* Emphasize caption box text */
+    font-weight: bold;
+
+    /* Round only the top corners to create a tab shape */
+    border-radius: 20px 20px 0 0;
+
+    /* Stack this above the background but below elements like the logo if needed */
+    z-index: 2;
+
+    /* Prevent the caption box from intercepting mouse interactions */
+    pointer-events: none;
+}
+
+/* Caption text styling inside the caption box */
+.image-caption {
+    /* Keep this as a positioned element for stacking/transform tweaks */
+    position: relative;
+
+    /* Make the caption behave like a box while staying inline-sized */
+    display: inline-block;
+
+    /* Include padding in the element's size calculations */
+    box-sizing: border-box;
+
+    /* Set caption text color */
+    color: black;
+
+    /* Add internal spacing around the caption text */
+    padding: 20px 30px 10px 30px;
+
+    /* Set caption font size */
+    font-size: 48px;
+
+    /* Set line height for readability */
+    line-height: 1.5;
+
+    /* Prevent caption text from wrapping */
+    white-space: nowrap;
+
+    /* Ensure caption sits above the background */
+    z-index: 2;
+
+    /* Center-align caption text */
+    text-align: center;
+
+    /* Emphasize caption text */
+    font-weight: bold;
+
+    /* Nudge caption text upward for visual alignment inside the box */
+    transform: translateY(-9px);
+}

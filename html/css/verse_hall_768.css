@@ -1,0 +1,212 @@
+/* Full-screen container for verse slides */
+#container.verse {
+    /* Fix container to the viewport */
+    position: fixed;
+
+    /* Anchor to top-left */
+    top: 0;
+    left: 0;
+
+    /* Take full viewport size */
+    width: 100vw;
+    height: 100vh;
+
+    /* Top padding reserves space for logo; sides/bottom add breathing room */
+    padding: 160px 60px 60px 60px;
+
+    /* Include padding in size calculations */
+    box-sizing: border-box;
+
+    /* Center the verse box both horizontally and vertically */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Wrapper that defines the verse content area */
+.verse-box {
+    /* Establish positioning context for children */
+    position: relative;
+
+    /* Use full available space */
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+}
+
+/* Background panel for the verse */
+.verse-bg {
+    /* Cover the entire verse box */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    /* Green gradient background */
+    background: linear-gradient(
+        to bottom right,
+        rgba(51, 164, 118, 1),
+        rgba(51, 164, 118, 0.6)
+    );
+
+    /* Rounded corners */
+    border-radius: 16px;
+
+    /* Sit behind text */
+    z-index: 0;
+}
+
+/* Church logo overlapping the top of the verse box */
+.verse-logo {
+    /* Position relative to .verse-box */
+    position: absolute;
+
+    /* Lift logo above the box */
+    top: -120px;
+
+    /* Horizontal reference point */
+    left: 70px;
+
+    /* Fine horizontal alignment */
+    transform: translateX(-50%);
+
+    /* Logo size */
+    height: 120px;
+
+    /* Above background, below headline */
+    z-index: 3;
+
+    /* Do not intercept mouse events */
+    pointer-events: none;
+}
+
+/* Main verse text */
+.verse-headline {
+    /* Keep headline within the normal document flow of the box */
+    position: relative;
+
+    /* Flex layout for vertical centering */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /* Text color */
+    color: black;
+
+    /* Inner padding for readability */
+    padding: 40px 60px 20px 60px;
+
+    /* Base font size */
+    font-size: 100px;
+
+    /* Line spacing suitable for multi-line verses */
+    line-height: 1.6;
+
+    /* Allow line breaks */
+    white-space: normal;
+
+    /* Prefer word-level breaks (Korean-friendly) */
+    word-break: keep-all;
+
+    /* Force break only if absolutely necessary */
+    overflow-wrap: break-word;
+
+    /* Ensure text appears above background and logo */
+    z-index: 4;
+
+    /* Center-align verse text */
+    text-align: center;
+
+    /* Emphasize verse */
+    font-weight: bold;
+
+    /* Allow text to extend naturally */
+    overflow: visible;
+
+    /* Fill vertical space */
+    height: 100%;
+
+    /* Slight upward visual adjustment */
+    transform: translateY(-5px);
+}
+
+/* Red caption background box above the verse */
+.verse-captbox {
+    /* Position relative to .verse-box */
+    position: absolute;
+
+    /* Anchor to top edge of the box */
+    top: 0px;
+    left: 78px;
+
+    /* Pull the box upward so it overlaps the main panel */
+    transform: translateY(-100%);
+
+    /* Red gradient background */
+    background: linear-gradient(
+        to top right,
+        rgba(235, 32, 55, 1),
+        rgba(235, 32, 55, 0.6)
+    );
+
+    /* Text color */
+    color: black;
+
+    /* No internal padding here; caption handles it */
+    padding: 0px 0px;
+
+    /* Caption font size */
+    font-size: 56px;
+
+    /* Bold caption */
+    font-weight: bold;
+
+    /* Rounded top corners only */
+    border-radius: 20px 20px 0 0;
+
+    /* Above background, below headline */
+    z-index: 2;
+
+    /* Non-interactive overlay */
+    pointer-events: none;
+}
+
+/* Caption text inside the red caption box */
+.verse-caption {
+    /* Treat caption as a box-like inline element */
+    position: relative;
+    display: inline-block;
+
+    /* Include padding in size calculations */
+    box-sizing: border-box;
+
+    /* Text color */
+    color: black;
+
+    /* Inner spacing for the caption text */
+    padding: 20px 30px 10px 30px;
+
+    /* Caption font size */
+    font-size: 48px;
+
+    /* Comfortable line spacing */
+    line-height: 1.5;
+
+    /* Keep caption on a single line */
+    white-space: nowrap;
+
+    /* Above background */
+    z-index: 2;
+
+    /* Center caption text */
+    text-align: center;
+
+    /* Emphasize caption */
+    font-weight: bold;
+
+    /* Minor vertical visual adjustment */
+    transform: translateY(-9px);
+}

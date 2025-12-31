@@ -1,0 +1,77 @@
+/* Bottom-right anchored container for the image overlay */
+#container.image {
+    /* Fix the container relative to the viewport */
+    position: fixed;
+
+    /* Offset from the bottom edge */
+    bottom: 30px;
+
+    /* Offset from the right edge */
+    right: 30px;
+
+    /* Place above background layers but below higher-priority overlays */
+    z-index: 1;
+
+    /* Use flex layout for alignment control */
+    display: flex;
+
+    /* Align content to the right */
+    justify-content: flex-end;
+
+    /* Align content to the bottom */
+    align-items: flex-end;
+
+    /* Prevent horizontal overflow beyond the viewport */
+    max-width: 100vw;
+
+    /* Prevent vertical overflow beyond the viewport */
+    max-height: 100vh;
+
+    /* Allow child elements to overflow visually if needed */
+    overflow: visible;
+}
+
+/* Wrapper that constrains and positions the displayed image */
+.image-show {
+    /* Limit the image width relative to the viewport */
+    max-width: 40vw;
+
+    /* Limit the image height relative to the viewport */
+    max-height: 40vh;
+
+    /* Use flex layout to align the image inside the box */
+    display: flex;
+
+    /* Align the image to the bottom of the box */
+    align-items: flex-end;
+
+    /* Align the image to the right of the box */
+    justify-content: flex-end;
+
+    /* Do not apply any background behind the image */
+    background: none;
+
+    /* Apply a subtle shadow around the image */
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+
+    /* Remove internal padding */
+    padding: 0;
+
+    /* Remove external margin */
+    margin: 0;
+}
+
+/* Image element styling inside the image wrapper */
+.image-show img {
+    /* Constrain the image width to the wrapper */
+    max-width: 100%;
+
+    /* Constrain the image height to the wrapper */
+    max-height: 100%;
+
+    /* Preserve aspect ratio while fitting within bounds */
+    object-fit: contain;
+
+    /* Remove default image margins */
+    margin: 0;
+}

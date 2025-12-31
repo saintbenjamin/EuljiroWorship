@@ -1,0 +1,215 @@
+/* Full-screen container for the lyrics layout */
+#container.lyrics {
+    /* Fix the container relative to the viewport */
+    position: fixed;
+
+    /* Anchor to the top-left corner */
+    top: 0;
+    left: 0;
+
+    /* Span the full viewport width */
+    width: 100vw;
+
+    /* Span the full viewport height */
+    height: 100vh;
+
+    /* Enable flexbox for centering the lyrics box */
+    display: flex;
+
+    /* Center the lyrics box horizontally */
+    justify-content: center;
+
+    /* Center the lyrics box vertically */
+    align-items: center;
+
+    /* Reserve top space for the logo and provide side/bottom margins */
+    padding: 160px 60px 60px 60px;
+
+    /* Include padding in total box size calculations */
+    box-sizing: border-box;
+}
+
+/* Outer box that defines the lyrics content area */
+.lyrics-box {
+    /* Establish a positioning context for absolute children */
+    position: relative;
+
+    /* Take full available width */
+    width: 100%;
+
+    /* Prevent exceeding the available width */
+    max-width: 100%;
+
+    /* Take full available height */
+    height: 100%;
+
+    /* Prevent exceeding the available height */
+    max-height: 100%;
+}
+
+/* Background layer for the lyrics panel */
+.lyrics-bg {
+    /* Cover the panel using absolute positioning */
+    position: absolute;
+
+    /* Anchor to the top edge */
+    top: 0;
+
+    /* Anchor to the left edge */
+    left: 0;
+
+    /* Fill the full width of the panel */
+    width: 100%;
+
+    /* Fill the full height of the panel */
+    height: 100%;
+
+    /* Apply a diagonal green gradient background */
+    background: linear-gradient(
+        to bottom right, 
+        rgba(51, 164, 118, 1), 
+        rgba(51, 164, 118, 0.6)
+    );
+
+    /* Round the panel corners */
+    border-radius: 16px;
+
+    /* Place the background behind text and other layers */
+    z-index: 0;
+}
+
+/* Logo that overlaps above the lyrics panel */
+.lyrics-logo {
+    /* Position relative to the nearest positioned ancestor (.lyrics-box) */
+    position: absolute;
+
+    /* Lift the logo above the top edge to overlap outside the panel */
+    top: -120px;
+
+    /* Place the logo near the left edge */
+    left: 70px;
+
+    /* Offset horizontally for visual alignment */
+    transform: translateX(-50%);
+
+    /* Fix the logo height while preserving aspect ratio */
+    height: 120px;
+
+    /* Ensure the logo appears above background and text */
+    z-index: 3;
+
+    /* Prevent the logo from intercepting mouse interactions */
+    pointer-events: none;
+}
+
+/* Main lyrics text area */
+.lyrics-headline {
+    /* Position above the background layer */
+    position: relative;
+
+    /* Use flex layout to center lyrics text */
+    display: flex;
+
+    /* Stack lyric lines vertically */
+    flex-direction: column;
+
+    /* Center lyrics vertically within the panel */
+    justify-content: center;
+
+    /* Center lyrics horizontally */
+    align-items: center;
+
+    /* Set lyrics text color */
+    color: black;
+
+    /* Set base font size for lyrics */
+    font-size: 128px;
+
+    /* Set line spacing between lyric lines */
+    line-height: 1.5;
+
+    /* Prevent line wrapping so each lyric stays on one line */
+    white-space: nowrap;
+
+    /* Place lyrics above the background */
+    z-index: 2;
+
+    /* Center-align lyric text */
+    text-align: center;
+
+    /* Emphasize lyric text */
+    font-weight: bold;
+
+    /* Fill the available height for proper centering */
+    height: 100%;
+
+    /* Apply a neutral vertical offset (kept for consistency) */
+    transform: translateY(0px);
+}
+
+/* Caption background box above the lyrics panel */
+.lyrics-captbox {
+    /* Position relative to the nearest positioned ancestor (.lyrics-box) */
+    position: absolute;
+
+    /* Anchor to the top edge of the panel */
+    top: 0;
+
+    /* Horizontal offset from the left edge */
+    left: 78px;
+
+    /* Move the caption box upward by its own height to overlap above the panel */
+    transform: translateY(-100%);
+
+    /* Apply a diagonal red gradient background */
+    background: linear-gradient(
+        to top right, 
+        rgba(235, 32, 55, 1), 
+        rgba(235, 32, 55, 0.6)
+    );
+
+    /* Set caption text color */
+    color: black;
+
+    /* Set caption font size */
+    font-size: 48px;
+
+    /* Emphasize caption text */
+    font-weight: bold;
+
+    /* Round only the top corners */
+    border-radius: 20px 20px 0 0;
+
+    /* Place above background but below logo if overlapping */
+    z-index: 2;
+
+    /* Prevent the caption box from intercepting mouse interactions */
+    pointer-events: none;
+}
+
+/* Caption text inside the caption box */
+.lyrics-caption {
+    /* Render the caption as a box-sized inline element */
+    display: inline-block;
+
+    /* Add internal spacing around caption text */
+    padding: 20px 30px 10px 30px;
+
+    /* Set caption font size */
+    font-size: 48px;
+
+    /* Set line spacing for readability */
+    line-height: 1.5;
+
+    /* Prevent caption text from wrapping */
+    white-space: nowrap;
+
+    /* Center-align the caption text */
+    text-align: center;
+
+    /* Emphasize caption text */
+    font-weight: bold;
+
+    /* Slight upward shift for visual alignment */
+    transform: translateY(-9px);
+}

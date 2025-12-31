@@ -1,0 +1,182 @@
+/* Full-screen wrapper for the prayer layout */
+.prayer-wrapper {
+    /* Fix the wrapper relative to the viewport */
+    position: fixed;
+
+    /* Anchor to the top-left corner */
+    top: 0;
+    left: 0;
+
+    /* Span the full viewport width */
+    width: 100vw;
+
+    /* Span the full viewport height */
+    height: 100vh;
+
+    /* Enable flexbox for centering the container */
+    display: flex;
+
+    /* Center the container horizontally */
+    justify-content: center;
+
+    /* Center the container vertically */
+    align-items: center;
+
+    /* Reserve top space for the logo and provide side/bottom margins */
+    padding: 160px 60px 60px 60px;
+
+    /* Include padding in total box size calculations */
+    box-sizing: border-box;
+
+    /* Ensure the prayer layout appears above background layers */
+    z-index: 10;
+}
+
+/* Main pill-shaped container for the prayer content */
+.prayer-container {
+    /* Establish a positioning context for absolute children */
+    position: relative;
+
+    /* Use flex layout for centering inner content */
+    display: flex;
+
+    /* Center content vertically */
+    align-items: center;
+
+    /* Center content horizontally */
+    justify-content: center;
+
+    /* Apply a horizontal green gradient background */
+    background: linear-gradient(
+        to right, 
+        rgba(51, 164, 118, 1), 
+        rgba(51, 164, 118, 0.6)
+    );
+
+    /* Create a fully rounded pill shape */
+    border-radius: 9999px;
+
+    /* Add internal spacing around the content */
+    padding: 40px 60px;
+
+    /* Allow the container to span full available width */
+    width: 100%;
+
+    /* Allow the container to span full available height */
+    height: 100%;
+}
+
+/* Main headline text displayed inside the prayer container */
+.prayer-headline {
+    /* Set headline font size */
+    font-size: 100px;
+
+    /* Emphasize the headline text */
+    font-weight: bold;
+
+    /* Set headline text color */
+    color: black;
+
+    /* Center-align the headline text */
+    text-align: center;
+
+    /* Prevent the headline from wrapping */
+    white-space: nowrap;
+
+    /* Ensure the headline appears above background elements */
+    z-index: 11;
+}
+
+/* Circular badge element that overlaps above the container */
+.prayer-badge {
+    /* Position relative to the nearest positioned ancestor (.prayer-container) */
+    position: absolute;
+
+    /* Lift the badge upward to overlap outside the container */
+    top: -80px;
+
+    /* Align the badge to the left edge of the container */
+    left: 0;
+
+    /* Set the badge width */
+    width: 300px;
+
+    /* Set the badge height */
+    height: 300px;
+
+    /* Prevent shrinking below the intended size */
+    min-width: 300px;
+
+    /* Make the badge perfectly circular */
+    border-radius: 50%;
+
+    /* Apply a vertical red gradient background */
+    background: linear-gradient(
+        to top, 
+        rgba(235, 32, 55, 1), 
+        rgba(235, 32, 55, 0.6)
+    );
+
+    /* Use flex layout to center the caption text */
+    display: flex;
+
+    /* Center content vertically within the badge */
+    justify-content: center;
+
+    /* Center content horizontally within the badge */
+    align-items: center;
+
+    /* Set badge text color */
+    color: black;
+
+    /* Emphasize badge text */
+    font-weight: bold;
+}
+
+/* Caption text displayed inside the circular prayer badge */
+.prayer-caption {
+    /* Set caption font size */
+    font-size: 64px;
+
+    /* Set line spacing for readability */
+    line-height: 1.4;
+
+    /* Emphasize the caption text */
+    font-weight: bold;
+
+    /* Center-align the caption text */
+    text-align: center;
+
+    /* Add padding to keep text away from badge edges */
+    padding: 10px;
+
+    /* Allow the caption to span full available width */
+    width: 100%;
+
+    /* Set caption text color */
+    color: black;
+}
+
+/* Church logo that overlaps above the prayer layout */
+.prayer-logo {
+    /* Position the logo relative to the prayer container */
+    position: absolute;
+
+    /* Lift the logo above the badge */
+    top: -120px;
+
+    /* Place the logo near the left edge */
+    left: 70px;
+
+    /* Offset horizontally for visual alignment */
+    transform: translateX(-50%);
+
+    /* Fix the logo height while preserving aspect ratio */
+    height: 120px;
+
+    /* Ensure the logo appears above other elements */
+    z-index: 3;
+
+    /* Prevent the logo from capturing mouse or touch interactions */
+    pointer-events: none;
+}

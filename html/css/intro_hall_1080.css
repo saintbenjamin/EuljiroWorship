@@ -1,0 +1,144 @@
+/* Full-screen container for the intro layout */
+#container.intro {
+    /* Fix the container relative to the viewport */
+    position: fixed;
+
+    /* Anchor to the top-left corner */
+    top: 0;
+    left: 0;
+
+    /* Span the full viewport width */
+    width: 100vw;
+
+    /* Span the full viewport height */
+    height: 100vh;
+
+    /* Include padding and borders in size calculations */
+    box-sizing: border-box;
+}
+
+/* Main headline text positioned near the upper-right area */
+.intro-headline {
+    /* Position the headline absolutely within the viewport */
+    position: absolute;
+
+    /* Offset from the top edge */
+    top: 180px;
+
+    /* Offset from the right edge */
+    right: 80px;
+
+    /* Responsive headline font size with wide dynamic range */
+    font-size: clamp(90px, 8vw, 250px) !important;
+
+    /* Emphasize the headline */
+    font-weight: bold;
+
+    /* Apply a white outline-style text shadow for readability */
+    text-shadow:
+        -3px  3px 3px white,
+         3px  3px 3px white,
+         3px -3px 3px white,
+        -3px -3px 3px white;
+
+    /* Set headline text color */
+    color: black;
+
+    /* Prevent the headline from wrapping */
+    white-space: nowrap;
+
+    /* Ensure the headline appears above background elements */
+    z-index: 10;
+
+    /* Right-align the headline text */
+    text-align: right;
+}
+
+/* Caption text displayed below the main headline */
+.intro-caption {
+    /* Position the caption absolutely within the viewport */
+    position: absolute;
+
+    /* Offset from the top edge to appear below the headline */
+    top: 400px;
+
+    /* Offset from the right edge */
+    right: 80px;
+
+    /* Responsive caption font size */
+    font-size: clamp(90px, 8vw, 90px) !important;
+
+    /* Emphasize the caption */
+    font-weight: bold;
+
+    /* Apply a white outline-style text shadow for readability */
+    text-shadow:
+         3px  3px 3px white,
+        -3px  3px 3px white,
+         3px -3px 3px white,
+        -3px -3px 3px white;
+
+    /* Set caption text color */
+    color: black;
+
+    /* Prevent the caption from wrapping */
+    white-space: nowrap;
+
+    /* Ensure the caption appears above background elements */
+    z-index: 10;
+
+    /* Right-align the caption text */
+    text-align: right;
+}
+
+/* Fixed message text positioned near the bottom-right area */
+.intro-fixed-message {
+    /* Position the message absolutely within the viewport */
+    position: absolute;
+
+    /* Offset from the bottom edge */
+    bottom: 80px;
+
+    /* Offset from the right edge */
+    right: 80px;
+
+    /* Responsive font size for the fixed message */
+    font-size: clamp(60px, 8vw, 60px) !important;
+
+    /* Set base font weight */
+    font-weight: normal;
+
+    /* Apply a white outline-style text shadow for readability */
+    text-shadow:
+         3px  3px 3px white,
+        -3px  3px 3px white,
+         3px -3px 3px white,
+        -3px -3px 3px white;
+
+    /* Set message text color */
+    color: black;
+
+    /* Emphasize the message text */
+    font-weight: bold;
+
+    /* Right-align the message text */
+    text-align: right;
+
+    /* Set line spacing for multi-line text */
+    line-height: 1.8;
+
+    /* Ensure the message appears above background elements */
+    z-index: 10;
+
+    /* Allow the message text to wrap across multiple lines */
+    white-space: normal;
+
+    /* Constrain the maximum line width for readability */
+    max-width: 800px;
+
+    /* Prefer word-level wrapping (important for Korean text) */
+    word-break: keep-all;
+
+    /* Allow forced wrapping only when unavoidable */
+    overflow-wrap: break-word;
+}

@@ -1,0 +1,239 @@
+/* Full-screen container for the greet layout */
+#container.greet {
+    /* Fix the container relative to the viewport */
+    position: fixed;
+
+    /* Anchor to the top-left corner */
+    top: 0;
+    left: 0;
+
+    /* Span the full viewport width */
+    width: 100vw;
+
+    /* Span the full viewport height */
+    height: 100vh;
+
+    /* Add top-heavy padding to reserve space for the logo, plus side/bottom margins */
+    padding: 160px 60px 60px 60px;
+
+    /* Include padding in total box size calculations */
+    box-sizing: border-box;
+
+    /* Enable flexbox for centering the greet box */
+    display: flex;
+
+    /* Center the greet box horizontally */
+    justify-content: center;
+
+    /* Center the greet box vertically */
+    align-items: center;
+}
+
+/* Wrapper that defines the overall greet content area */
+.greet-box {
+    /* Establish a positioning context for absolute children */
+    position: relative;
+
+    /* Allow the box to fill the available width */
+    width: 100%;
+
+    /* Prevent width from exceeding the parent */
+    max-width: 100%;
+
+    /* Allow the box to fill the available height */
+    height: 100%;
+
+    /* Prevent height from exceeding the parent */
+    max-height: 100%;
+}
+
+/* Background panel for the greet layout */
+.greet-bg {
+    /* Position the background absolutely to fill the greet box */
+    position: absolute;
+
+    /* Anchor to the top edge */
+    top: 0;
+
+    /* Anchor to the left edge */
+    left: 0;
+
+    /* Fill the full width of the greet box */
+    width: 100%;
+
+    /* Fill the full height of the greet box */
+    height: 100%;
+
+    /* Apply a diagonal green gradient background */
+    background: linear-gradient(
+        to bottom right,
+        rgba(51, 164, 118, 1),
+        rgba(51, 164, 118, 0.6)
+    );
+
+    /* Round the background corners */
+    border-radius: 16px;
+
+    /* Place the background behind text and logo */
+    z-index: 0;
+}
+
+/* Church logo that overlaps above the greet background */
+.greet-logo {
+    /* Position the logo relative to the greet box */
+    position: absolute;
+
+    /* Raise the logo above the background panel */
+    top: -120px;
+
+    /* Place the logo near the left edge */
+    left: 70px;
+
+    /* Offset horizontally to visually center the logo */
+    transform: translateX(-50%);
+
+    /* Fix the logo height while preserving aspect ratio */
+    height: 120px;
+
+    /* Ensure the logo appears above the background */
+    z-index: 3;
+
+    /* Prevent the logo from capturing mouse/touch interactions */
+    pointer-events: none;
+}
+
+/* Main headline text block inside the greet layout */
+.greet-headline {
+    /* Position relative so it layers correctly above the background */
+    position: relative;
+
+    /* Use flexbox to center multiline text content */
+    display: flex;
+
+    /* Stack text lines vertically */
+    flex-direction: column;
+
+    /* Center text vertically within the available height */
+    justify-content: center;
+
+    /* Center text horizontally */
+    align-items: center;
+
+    /* Set headline text color */
+    color: black;
+
+    /* Add internal spacing around the headline text */
+    padding: 40px 60px 20px 60px;
+
+    /* Set large headline font size */
+    font-size: 100px;
+
+    /* Increase line spacing for readability */
+    line-height: 1.6;
+
+    /* Allow normal line wrapping */
+    white-space: normal;
+
+    /* Prefer word-level wrapping (important for Korean) */
+    word-break: keep-all;
+
+    /* Allow forced wrapping only when unavoidable */
+    overflow-wrap: break-word;
+
+    /* Ensure the headline appears above background and caption box */
+    z-index: 4;
+
+    /* Center-align headline text */
+    text-align: center;
+
+    /* Emphasize the headline */
+    font-weight: bold;
+
+    /* Allow elements to overflow if needed (e.g., caption overlap) */
+    overflow: visible;
+
+    /* Fill the full height of the greet box */
+    height: 100%;
+}
+
+/* Caption background box that overlaps above the headline area */
+.greet-captbox {
+    /* Position relative to the greet box */
+    position: absolute;
+
+    /* Anchor to the top edge of the greet box */
+    top: 0px;
+
+    /* Place the caption box near the left edge */
+    left: 78px;
+
+    /* Move the box upward by its own height to overlap above the content */
+    transform: translateY(-100%);
+
+    /* Apply a diagonal red gradient background */
+    background: linear-gradient(
+        to top right,
+        rgba(235, 32, 55, 1),
+        rgba(235, 32, 55, 0.6)
+    );
+
+    /* Set caption box text color */
+    color: black;
+
+    /* Remove default padding (handled by inner caption) */
+    padding: 0px 0px;
+
+    /* Set caption box font size */
+    font-size: 56px;
+
+    /* Emphasize caption text */
+    font-weight: bold;
+
+    /* Round the top corners of the caption box */
+    border-radius: 20px 20px 0 0;
+
+    /* Layer above the background but below the headline */
+    z-index: 2;
+
+    /* Prevent the caption box from capturing mouse/touch interactions */
+    pointer-events: none;
+}
+
+/* Actual caption text rendered inside the caption box */
+.greet-caption {
+    /* Position relative for fine visual adjustment */
+    position: relative;
+
+    /* Render inline content as a box */
+    display: inline-block;
+
+    /* Include padding in size calculations */
+    box-sizing: border-box;
+
+    /* Set caption text color */
+    color: black;
+
+    /* Add internal padding around caption text */
+    padding: 20px 30px 10px 30px;
+
+    /* Set caption font size */
+    font-size: 48px;
+
+    /* Set line spacing for readability */
+    line-height: 1.5;
+
+    /* Prevent caption text from wrapping */
+    white-space: nowrap;
+
+    /* Ensure the caption appears above the background */
+    z-index: 2;
+
+    /* Center-align caption text */
+    text-align: center;
+
+    /* Emphasize caption text */
+    font-weight: bold;
+
+    /* Slight vertical adjustment for visual alignment */
+    transform: translateY(-9px);
+}

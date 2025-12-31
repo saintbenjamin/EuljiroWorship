@@ -1,0 +1,127 @@
+/* Set the default box-sizing model so width/height include padding and border */
+* {
+    /* Use border-box sizing to make layout calculations predictable */
+    box-sizing: border-box;
+}
+
+/* Base page setup: remove default margins, set background color, and disable scrolling */
+html, body {
+    /* Remove the browser's default outer margin */
+    margin: 0;
+
+    /* Set the page background color (note: not transparent) */
+    background: white;
+
+    /* Hide overflow to prevent scrollbars and scrolling */
+    overflow: hidden;
+}
+
+/* Hide scrollbars for WebKit-based browsers (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+    /* Do not render the scrollbar */
+    display: none;
+}
+
+/* Background logo container positioned in the top-right corner */
+#background-logo {
+    /* Add padding inside the logo container */
+    padding: 20px 80px 80px 0px;
+
+    /* Fix the logo container relative to the viewport */
+    position: fixed;
+
+    /* Anchor the container to the top edge */
+    top: 0;
+
+    /* Anchor the container to the right edge */
+    right: 0;
+
+    /* Set container width relative to viewport width */
+    width: 25vw;
+
+    /* Disable any centering transform adjustment */
+    transform: none;
+
+    /* Let height scale automatically based on content */
+    height: auto;
+
+    /* Place it behind foreground UI layers but above the background image */
+    z-index: 0;
+
+    /* Make the logo slightly transparent */
+    opacity: 0.8;
+
+    /* Prevent the logo area from capturing mouse/touch interactions */
+    pointer-events: none;
+
+    /* Ensure no background image is applied to this container */
+    background-image: none;
+
+    /* Remove any enforced aspect ratio so the content controls sizing */
+    aspect-ratio: unset;
+}
+
+/* Ensure the logo image scales to fill the container width */
+#background-logo img {
+    /* Make the image match the container width */
+    width: 100%;
+
+    /* Preserve aspect ratio by letting height auto-scale */
+    height: auto;
+
+    /* Render as a block element to avoid inline spacing quirks */
+    display: block;
+}
+
+/* Optional responsive rules (currently disabled by comment block) */
+/* 
+@media screen and (min-aspect-ratio: 1/1) {
+    #background-logo {
+        width: 50vw;
+        height: auto;
+    }
+}
+
+@media screen and (max-aspect-ratio: 1/1) {
+    #background-logo {
+        height: 50vh;
+        width: auto;
+    }
+} 
+*/
+
+/* Full-screen cover background layer (currently hidden) */
+#cover-background {
+    /* Fix the cover background relative to the viewport */
+    position: fixed;
+
+    /* Anchor to the bottom edge */
+    bottom: 0;
+
+    /* Anchor to the left edge */
+    left: 0;
+
+    /* Span the full viewport width */
+    width: 100vw;
+
+    /* Span the full viewport height */
+    height: 100vh;
+
+    /* Use the cover image as the background */
+    background-image: url("../resources/png/cover.png");
+
+    /* Prevent the background image from tiling */
+    background-repeat: no-repeat;
+
+    /* Scale background to full viewport width while keeping aspect ratio */
+    background-size: 100vw auto;
+
+    /* Place the image at the bottom-left corner */
+    background-position: left bottom;
+
+    /* Place behind everything else */
+    z-index: -1;
+
+    /* Hide this layer by default */
+    display: none;
+}

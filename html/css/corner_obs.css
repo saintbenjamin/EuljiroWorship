@@ -1,0 +1,182 @@
+/* Corner-style container anchored near the bottom-right of the viewport */
+#container.corner {
+    /* Fix the container relative to the viewport */
+    position: fixed;
+
+    /* Anchor the container slightly above the bottom edge */
+    bottom: 42px;
+
+    /* Anchor the container slightly inside from the right edge */
+    right: 30px;
+
+    /* Keep this layer below higher-priority overlays when needed */
+    z-index: 1;
+
+    /* Use flex layout so inner content can be aligned to the right */
+    display: flex;
+
+    /* Push children to the right end of the container */
+    justify-content: flex-end;
+
+    /* Prevent the container from exceeding the viewport width */
+    max-width: 100vw;
+}
+
+/* Wrapper that stacks the green/red boxes vertically and provides a positioning context */
+.corner-box-wrapper {
+    /* Use flexbox for vertical stacking */
+    display: flex;
+
+    /* Enable absolute-positioned children (e.g., logo) to anchor here */
+    position: relative;
+
+    /* Prevent text wrapping inside this wrapper */
+    white-space: nowrap;
+
+    /* Stack children vertically */
+    flex-direction: column;
+
+    /* Allow wrapper to fill available width */
+    width: 100%;
+
+    /* Fix total wrapper height */
+    height: 140px;
+
+    /* Ensure the UI remains readable even with short content */
+    min-width: 300px;
+}
+
+/* Base box styling applied to the inner content area */
+.corner-box {
+    /* Establish a positioning context for any absolute children inside */
+    position: relative;
+
+    /* Add inner spacing around the text */
+    padding: 20px;
+
+    /* Align text to the right by default */
+    text-align: right;
+
+    /* Treat the box as a block-level element */
+    display: block;
+
+    /* Prevent text wrapping inside the box */
+    white-space: nowrap;
+
+    /* Do not constrain the width by a max-width rule */
+    max-width: none;
+
+    /* Make the box span the wrapper width */
+    width: 100%;
+
+    /* Include padding in the element's final size */
+    box-sizing: border-box;
+
+    /* Set default text color for this box */
+    color: white;
+}
+
+/* Upper (green) area of the corner box */
+.green-box {
+    /* Allow this section to take a larger share of vertical space */
+    flex: 5;
+
+    /* Apply a left-to-right green gradient background */
+    background: linear-gradient(to right, rgba(51, 164, 118, 1), rgba(51, 164, 118, 0.6));
+
+    /* Round only the top corners */
+    border-radius: 20px 20px 0 0;
+
+    /* Use flex layout for centering inner content */
+    display: flex;
+
+    /* Center content vertically */
+    align-items: center;
+
+    /* Center content horizontally */
+    justify-content: center;
+
+    /* Include borders/padding in final size calculations */
+    box-sizing: border-box;
+}
+
+/* Lower (red) area of the corner box */
+.red-box {
+    /* Allow this section to take a smaller share of vertical space */
+    flex: 2;
+
+    /* Apply a left-to-right red gradient background */
+    background: linear-gradient(to right, rgba(235, 32, 55, 1), rgba(235, 32, 55, 0.6));
+
+    /* Round only the bottom corners */
+    border-radius: 0 0 20px 20px;
+
+    /* Use flex layout for centering inner content */
+    display: flex;
+
+    /* Center content vertically */
+    align-items: center;
+
+    /* Center content horizontally */
+    justify-content: center;
+
+    /* Include borders/padding in final size calculations */
+    box-sizing: border-box;
+}
+
+/* Logo that overlaps the corner box from the top-left side */
+.corner-logo {
+    /* Position the logo relative to .corner-box-wrapper */
+    position: absolute;
+
+    /* Lift the logo above the box */
+    top: -35px;
+
+    /* Shift the logo to the left so it overlaps outside the box */
+    left: -55px;
+
+    /* Fix logo height while preserving aspect ratio */
+    height: 120px;
+
+    /* Ensure the logo appears above the boxes */
+    z-index: 2;
+
+    /* Prevent the logo from capturing mouse/touch events */
+    pointer-events: none;
+}
+
+/* Main headline text shown in the green area */
+.corner-headline {
+    /* Make headline text bold */
+    font-weight: bold;
+
+    /* Set headline font size */
+    font-size: 35px;
+
+    /* Set line height for readability */
+    line-height: 1.2;
+
+    /* Prevent the headline from wrapping */
+    white-space: nowrap;
+
+    /* Allow horizontal scrolling if the text is too long */
+    overflow-x: auto;
+
+    /* Align headline text to the right */
+    text-align: right;
+}
+
+/* Caption text shown in the red area */
+.corner-caption {
+    /* Make caption text bold */
+    font-weight: bold;
+
+    /* Set caption font size */
+    font-size: 28px;
+
+    /* Slightly tighter line height */
+    line-height: 1.1;
+
+    /* Align caption text to the right */
+    text-align: right;
+}

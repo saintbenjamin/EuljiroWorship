@@ -1,0 +1,125 @@
+/* Set box sizing globally so padding/border are included in element dimensions */
+* {
+    /* Include padding and border in the element's total width/height calculations */
+    box-sizing: border-box;
+}
+
+/* Configure the base page: remove default margins, set background, and prevent scrolling */
+html, body {
+    /* Remove default browser margins to make layout edge-to-edge */
+    margin: 0;
+
+    /* Set the page background color (used as the base canvas color) */
+    background: white;
+
+    /* Hide overflow to prevent scrollbars and lock the viewport */
+    overflow: hidden;
+}
+
+/* Hide scrollbars for WebKit-based browsers (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+    /* Do not render the scrollbar UI */
+    display: none;
+}
+
+/* Position and size the background logo container in the top-right corner */
+#background-logo {
+    /* Add padding so the logo is inset from the edges */
+    padding: 20px 80px 80px 0px;
+
+    /* Fix the logo container relative to the viewport */
+    position: fixed;
+
+    /* Anchor to the top edge */
+    top: 0;
+
+    /* Anchor to the right edge */
+    right: 0;
+
+    /* Set responsive width based on viewport width */
+    width: 25vw;
+
+    /* Do not apply any centering transform offsets */
+    transform: none;
+
+    /* Let height be determined by content/aspect */
+    height: auto;
+
+    /* Keep the logo behind foreground UI layers */
+    z-index: 0;
+
+    /* Slightly fade the logo for a watermark effect */
+    opacity: 0.8;
+
+    /* Prevent the logo from capturing mouse interactions */
+    pointer-events: none;
+
+    /* Ensure no background image is applied on this container */
+    background-image: none;
+
+    /* Do not force a fixed aspect ratio on the container */
+    aspect-ratio: unset;
+}
+
+/* Make the logo image fill the container width while preserving aspect ratio */
+#background-logo img {
+    /* Scale the image to the container width */
+    width: 100%;
+
+    /* Preserve aspect ratio by letting height scale automatically */
+    height: auto;
+
+    /* Remove inline-image baseline gaps by rendering as a block element */
+    display: block;
+}
+
+/* 
+@media screen and (min-aspect-ratio: 1/1) {
+    #background-logo {
+        width: 50vw;
+        height: auto;
+    }
+}
+
+@media screen and (max-aspect-ratio: 1/1) {
+    #background-logo {
+        height: 50vh;
+        width: auto;
+    }
+} */
+
+/* Full-screen cover background image, anchored to the bottom-left, hidden by default */
+#cover-background {
+    /* Fix the cover background relative to the viewport */
+    position: fixed;
+
+    /* Anchor to the bottom edge */
+    bottom: 0;
+
+    /* Anchor to the left edge */
+    left: 0;
+
+    /* Span the full viewport width */
+    width: 100vw;
+
+    /* Span the full viewport height */
+    height: 100vh;
+
+    /* Set the cover image as the background */
+    background-image: url("../resources/png/cover.png");
+
+    /* Prevent the background image from tiling */
+    background-repeat: no-repeat;
+
+    /* Scale image to full viewport width while preserving its height ratio */
+    background-size: 100vw auto;
+
+    /* Place the image at the bottom-left corner */
+    background-position: left bottom;
+
+    /* Place behind everything else */
+    z-index: -1;
+
+    /* Hide this layer unless explicitly enabled */
+    display: none;
+}
