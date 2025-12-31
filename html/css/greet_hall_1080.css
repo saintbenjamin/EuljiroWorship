@@ -162,7 +162,7 @@
     position: absolute;
 
     /* Anchor to the top edge of the greet box */
-    top: 0px;
+    top: 0;
 
     /* Place the caption box near the left edge */
     left: 78px;
@@ -201,32 +201,20 @@
 
 /* Actual caption text rendered inside the caption box */
 .greet-caption {
-    /* Position relative for fine visual adjustment */
-    position: relative;
-
     /* Render inline content as a box */
     display: inline-block;
-
-    /* Include padding in size calculations */
-    box-sizing: border-box;
-
-    /* Set caption text color */
-    color: black;
 
     /* Add internal padding around caption text */
     padding: 20px 30px 10px 30px;
 
-    /* Set caption font size */
-    font-size: 48px;
+    /* Responsive font size for caption text */
+    font-size: clamp(90px, 8vw, 64px) !important;
 
     /* Set line spacing for readability */
     line-height: 1.5;
 
     /* Prevent caption text from wrapping */
     white-space: nowrap;
-
-    /* Ensure the caption appears above the background */
-    z-index: 2;
 
     /* Center-align caption text */
     text-align: center;
