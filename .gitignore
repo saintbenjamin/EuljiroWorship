@@ -1,4 +1,4 @@
 __pycache__
 .DS_Store
 verse_output.txt
-build
+docs/build
