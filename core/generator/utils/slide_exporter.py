@@ -26,28 +26,41 @@ class SlideExporter:
     """
     Convert generator-format slides into overlay-ready slide blocks.
 
-    This exporter applies style-specific transformation rules, including
-    automatic line splitting, slide segmentation, and style normalization.
+    This exporter applies style-specific transformation rules, including automatic
+    line splitting, slide segmentation, and style normalization.
 
     Supported styles and behaviors:
-    - lyrics / hymn / anthem:
-        * Lyrics are split into two-line slides using blank-line boundaries.
-        * Hymn slides are exported as "lyrics".
-        * Anthem slides preserve caption and optional choir name.
-    - verse:
-        * Each (reference, verse) pair is split by character length.
-    - respo:
-        * Each response line is exported as an individual verse-style slide.
-    - intro / blank:
-        * Passed through with minimal transformation.
-    - other styles:
-        * Passed through unchanged.
+
+    - ``lyrics`` / ``hymn`` / ``anthem``
+
+        - Lyrics are split into two-line slides using blank-line boundaries.
+        - Hymn slides are exported as ``lyrics``.
+        - Anthem slides preserve caption and optional choir name.
+
+    - ``verse``
+
+        - Each (reference, verse) pair is split by character length.
+
+    - ``respo``
+
+        - Each response line is exported as an individual ``verse``-style slide.
+
+    - ``intro`` / ``blank``
+
+        - Passed through with minimal transformation.
+
+    - Other styles
+
+        - Passed through unchanged.
 
     Args:
         settings (dict | None):
             Optional exporter settings.
+
             Supported keys:
-            - "max_chars" (int): Maximum characters per text chunk.
+
+                - ``max_chars`` (int):
+                    Maximum characters per text chunk.
     """
 
     def __init__(self, settings=None):

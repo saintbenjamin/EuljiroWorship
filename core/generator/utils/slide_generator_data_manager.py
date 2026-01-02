@@ -32,18 +32,16 @@ class SlideGeneratorDataManager:
     """
     Manage slide data exchange between JSON files and the generator table UI.
 
-    Responsibilities:
-    - Load slide JSON data into the QTableWidget
-    - Convert table rows back into structured slide dictionaries
-    - Handle style-specific preprocessing and normalization
-      (e.g., anthem choir names, verse formatting)
+    This class provides a thin data-adapter layer between JSON-based slide
+    definitions and the generator table widget. It loads slide JSON data into the
+    ``QTableWidget`` and converts table rows back into structured slide
+    dictionaries. It also performs style-specific preprocessing and normalization,
+    such as handling anthem choir names and verse formatting.
 
-    This class intentionally contains no UI logic beyond table population,
-    serving as a thin data-adapter layer.
+    This class intentionally contains no UI logic beyond table population.
 
     Args:
-        table_widget (QTableWidget):
-            The table widget used in the slide generator UI.
+        table_widget (QTableWidget): The table widget used in the slide generator UI.
     """
 
     def __init__(self, table_widget):
@@ -62,12 +60,12 @@ class SlideGeneratorDataManager:
         Load slide data from a JSON file and populate the generator table.
 
         This method:
-        - Clears the existing table
-        - Inserts rows matching the number of slides
-        - Applies style aliases to the style combo box
-        - Performs style-specific preprocessing:
-            * Merges anthem caption and choir name
-            * Formats multi-verse Bible slides for readability
+            - Clears the existing table
+            - Inserts rows matching the number of slides
+            - Applies style aliases to the style combo box
+            - Performs style-specific preprocessing:
+                * Merges anthem caption and choir name
+                * Formats multi-verse Bible slides for readability
 
         Args:
             path (str):
