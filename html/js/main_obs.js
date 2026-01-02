@@ -13,6 +13,7 @@ const renderMap = {
     prayer: renderPrayer,
     greet: renderGreet,
     image: renderImage,
+    video: renderVideo,
     blank: renderBlank,
 };
 

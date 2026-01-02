@@ -40,6 +40,7 @@ STYLE_ALIASES = {
     "intro":  "시작화면",     # Introductory screen
     "blank":  "공백화면",     # Empty screen
     "image":  "그림화면",     # Image display
+    "video":  "영상재생",     # Video display 
 }
 
 # ───── Reverse mapping: Korean → internal key ─────

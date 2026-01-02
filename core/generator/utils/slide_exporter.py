@@ -60,7 +60,7 @@ class SlideExporter:
                 If provided, "max_chars" controls the maximum number of
                 characters allowed per exported text block.
         """
-        self.max_chars = (settings or {}).get("max_chars", 50)
+        self.max_chars = (settings or {}).get("max_chars", 60)
 
     def export(self, raw_slides: list[dict]) -> list[dict]:
         """

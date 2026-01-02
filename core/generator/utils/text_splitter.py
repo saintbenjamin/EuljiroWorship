@@ -18,7 +18,7 @@ rendered as a single overlay line by splitting text into display-friendly units.
 
 import textwrap
 
-def split_by_length(text: str, max_chars: int = 50) -> list[str]:
+def split_by_length(text: str, max_chars: int = 60) -> list[str]:
     """
     Split a text string into multiple chunks constrained by a maximum character length.
 
@@ -39,7 +39,7 @@ def split_by_length(text: str, max_chars: int = 50) -> list[str]:
     Args:
         text (str): Input text to be split.
         max_chars (int): Maximum number of characters allowed per chunk.
-            Defaults to 50.
+            Defaults to 60.
 
     Returns:
         list[str]: A list of text chunks, each suitable for individual slide display.

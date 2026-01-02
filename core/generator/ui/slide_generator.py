@@ -372,7 +372,7 @@ class SlideGenerator(QMainWindow):
             "headline": ""
         })
 
-        exporter = SlideExporter(settings={"max_chars": 50})
+        exporter = SlideExporter(settings={"max_chars": 60})
         exported = exporter.export(slides)
 
         with open(paths.SLIDE_FILE, "w", encoding="utf-8") as f:

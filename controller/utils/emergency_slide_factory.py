@@ -151,7 +151,7 @@ class EmergencySlideFactory:
         If `version` is provided, it tries that version first; otherwise it iterates
         available versions and returns the first successful slide set.
 
-        Each verse is wrapped using `textwrap.wrap(..., width=50)` to avoid overly long
+        Each verse is wrapped using `textwrap.wrap(..., width=60)` to avoid overly long
         single lines, producing multiple slides per verse when needed.
 
         Args:
@@ -181,7 +181,7 @@ class EmergencySlideFactory:
                 try:
                     verse_text = self.loader.get_verse(ver, book_id, chapter, verse_num)
                     reftext = f"{self.loader.get_standard_book(book_id, 'ko')} {chapter}장 {verse_num}절 ({alias})"
-                    chunks = textwrap.wrap(verse_text.strip(), width=50)
+                    chunks = textwrap.wrap(verse_text.strip(), width=60)
                     for chunk in chunks:
                         slides.append({
                             "style": "verse",

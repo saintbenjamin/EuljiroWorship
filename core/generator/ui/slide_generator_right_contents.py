@@ -31,6 +31,7 @@ from core.generator.ui.contents.lyrics_content import LyricsContent
 from core.generator.ui.contents.prayer_content import PrayerContent
 from core.generator.ui.contents.respo_content import RespoContent
 from core.generator.ui.contents.verse_content import VerseContent
+from core.generator.ui.contents.video_content import VideoContent
 
 class SlideGeneratorRightContents(QWidget):
     """
@@ -114,6 +115,8 @@ class SlideGeneratorRightContents(QWidget):
             self.subpane = RespoContent(self, self.generator_window, caption, headline)
         elif self.style == "verse":
             self.subpane = VerseContent(self, self.generator_window, caption, headline)
+        elif self.style == "video":
+            self.subpane = VideoContent(self, self.generator_window, caption, headline)
         elif self.style == "blank":
             self.subpane = QWidget()
         else:

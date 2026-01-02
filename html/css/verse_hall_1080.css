@@ -128,7 +128,7 @@
     padding: 40px 60px 20px 60px;
 
     /* Use a responsive font size with bounds */
-    font-size: clamp(90px, 8vw, 110px) !important;
+    font-size: clamp(90px, 8vw, 90px) !important;
 
     /* Set comfortable line spacing for multi-line verses */
     line-height: 1.6;

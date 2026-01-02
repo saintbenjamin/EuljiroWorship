@@ -266,3 +266,117 @@ function renderImage(data) {
     </div>
     `;
 }
+
+/**
+ * Renders video slides (HTML5) with strict aspect-ratio preservation.
+ *
+ * - Uses data.headline as the video URL/path.
+ * - No caption/headline text is shown on screen.
+ * - Video is centered, letterboxed as needed (object-fit: contain).
+ * - Optional hover controls (play/pause, stop, -5s, +5s) appear on mouse move.
+ *
+ * @param {Object} data - Slide data containing video URL in `headline`.
+ */
+function renderVideo(data) {
+  const container = clearScreen();
+  container.className = "video";
+  container.style.display = "flex";
+
+  const src = data.headline || "";
+
+  container.innerHTML = `
+    <div class="video-box" style="
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      overflow: hidden;
+    ">
+      <video class="video-player" style="
+        width: 100%;
+        height: 100%;
+        object-fit: contain;     /* keep original aspect ratio, letterbox if needed */
+        object-position: center; /* always centered */
+        background: #000;
+      "
+        src="${src}"
+        autoplay
+        playsinline
+        preload="metadata"
+      ></video>
+
+      <div class="video-controls" style="
+        position: absolute;
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: rgba(0,0,0,0.55);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 160ms ease;
+        user-select: none;
+      ">
+        <button data-act="toggle" style="padding:8px 10px; border-radius:10px;">▶︎/❚❚</button>
+        <button data-act="stop"   style="padding:8px 10px; border-radius:10px;">■</button>
+        <button data-act="back"   style="padding:8px 10px; border-radius:10px;">-5s</button>
+        <button data-act="fwd"    style="padding:8px 10px; border-radius:10px;">+5s</button>
+      </div>
+    </div>
+  `;
+
+  const box = container.querySelector(".video-box");
+  const video = container.querySelector(".video-player");
+  const controls = container.querySelector(".video-controls");
+
+  // If autoplay is blocked, try to start on first click.
+  video.addEventListener("click", async () => {
+    try { await video.play(); } catch (_) {}
+  });
+
+  let hideTimer = null;
+  const showControls = () => {
+    controls.style.opacity = "1";
+    controls.style.pointerEvents = "auto";
+    if (hideTimer) clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+      controls.style.opacity = "0";
+      controls.style.pointerEvents = "none";
+    }, 1400);
+  };
+
+  box.addEventListener("mousemove", showControls);
+  box.addEventListener("mouseenter", showControls);
+  box.addEventListener("mouseleave", () => {
+    if (hideTimer) clearTimeout(hideTimer);
+    controls.style.opacity = "0";
+    controls.style.pointerEvents = "none";
+  });
+
+  controls.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    const act = btn.getAttribute("data-act");
+
+    try {
+      if (act === "toggle") {
+        if (video.paused) await video.play();
+        else video.pause();
+      } else if (act === "stop") {
+        video.pause();
+        video.currentTime = 0;
+      } else if (act === "back") {
+        video.currentTime = Math.max(0, (video.currentTime || 0) - 5);
+      } else if (act === "fwd") {
+        video.currentTime = Math.min(video.duration || Infinity, (video.currentTime || 0) + 5);
+      }
+    } catch (_) {}
+    showControls();
+  });
+}

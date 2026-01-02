@@ -43,9 +43,9 @@ if PROJECT_ROOT not in sys.path:
 
 from core.config import paths
 
-MAX_CHARS = 50
+MAX_CHARS = 60
 
-def parse_verse_output(file_path, max_chars=50):
+def parse_verse_output(file_path, max_chars=60):
     """
     Parse `verse_output.txt` into a list of slide dictionaries.
 

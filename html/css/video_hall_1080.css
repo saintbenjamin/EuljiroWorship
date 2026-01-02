@@ -1,0 +1,114 @@
+/* --------------------------------------------------------------------------
+   video_hall_1080.css
+   - Full-screen video slide
+   - Keeps original aspect ratio strictly
+   - Letterboxes automatically (object-fit: contain)
+   - Centers video both horizontally and vertically
+   -------------------------------------------------------------------------- */
+
+/* Container for the full-screen video slide layout */
+#container.video {
+    /* Fix the container to the viewport */
+    position: fixed;
+
+    /* Anchor to the top-left corner */
+    top: 0;
+    left: 0;
+
+    /* Full viewport size */
+    width: 100vw;
+    height: 100vh;
+
+    /* No extra margins by default (video should feel full-screen) */
+    padding: 0;
+
+    /* Include padding in total size calculations */
+    box-sizing: border-box;
+
+    /* Center the video box */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* Background behind letterbox area */
+    background: black;
+}
+
+/* Outer box that defines the video's content area */
+.video-box {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    max-width: 100%;
+    max-height: 100%;
+
+    /* Keep behind any potential overlays */
+    z-index: 0;
+
+    /* Ensure clean edge */
+    overflow: hidden;
+}
+
+/* Optional background layer (kept simple: black) */
+.video-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: black;
+
+    z-index: 0;
+}
+
+/* Main content area that centers the video */
+.video-headline {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1;
+
+    /* Safety */
+    overflow: hidden;
+}
+
+/* Video sizing rules:
+   - contain => one direction fits, the other may have empty space
+   - centered by flex parent
+*/
+.video-headline video {
+    width: 100%;
+    height: 100%;
+
+    /* Strictly preserve aspect ratio; letterbox as needed */
+    object-fit: contain;
+
+    /* Avoid selection artifacts */
+    outline: none;
+
+    /* Let the user interact if controls are enabled */
+    pointer-events: auto;
+
+    /* Some browsers paint background behind video frames */
+    background: black;
+}
+
+/* --------------------------------------------------------------------------
+   Optional: try to make controls feel less intrusive.
+   Note: cross-browser control styling is limited and inconsistent.
+   If you set controls in HTML/JS, this keeps it usable.
+   -------------------------------------------------------------------------- */
+
+/* If you wrap controls externally later, this makes hover-only UI easier */
+.video-box:hover {
+    cursor: default;
+}
