@@ -2,3 +2,4 @@ __pycache__
 .DS_Store
 verse_output.txt
 docs/build
+*.mp4
