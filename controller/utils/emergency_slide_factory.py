@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 :File: EuljiroWorship/controller/utils/emergency_slide_factory.py
+:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
+:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
+:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
+:Telephone: +82-2-2266-3070
+:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
+:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
 Generates slide dictionaries for emergency captions.
 
@@ -23,13 +29,6 @@ Notes:
 - Bible verse text is wrapped into smaller chunks (currently ``width=50``) to avoid
   overly long single-slide lines.
 - Version display aliases are loaded from ``paths.ALIASES_VERSION_FILE``.
-
-:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
-:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
-:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
-:Telephone: +82-2-2266-3070
-:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
-:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 """
 
 import os

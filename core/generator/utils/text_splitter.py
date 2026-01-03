@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
 """
 :File: EuljiroWorship/core/generator/utils/text_splitter.py
-
-Provides utility function for splitting text into chunks of specified length.
-
-This module contains a simple text segmentation helper used primarily during
-slide export. Its main purpose is to prevent excessively long lines from being
-rendered as a single overlay line by splitting text into display-friendly units.
-
 :Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
 :Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
 :Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
 :Telephone: +82-2-2266-3070
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
+
+Provides utility function for splitting text into chunks of specified length.
+
+This module contains a simple text segmentation helper used primarily during
+slide export. Its main purpose is to prevent excessively long lines from being
+rendered as a single overlay line by splitting text into display-friendly units.
 """
 
 import textwrap

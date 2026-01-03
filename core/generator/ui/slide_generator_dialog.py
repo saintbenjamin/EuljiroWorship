@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 :File: EuljiroWorship/core/generator/ui/slide_generator_dialog.py
+:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
+:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
+:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
+:Telephone: +82-2-2266-3070
+:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
+:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
 Modal dialog for editing a single slide.
 
@@ -12,13 +18,6 @@ used in the main generator, but with explicit OK/Cancel semantics.
 The dialog itself contains no slide-specific logic; it delegates all content
 handling to the embedded right-panel widget and simply returns the edited
 result when accepted.
-
-:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
-:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
-:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
-:Telephone: +82-2-2266-3070
-:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
-:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 """
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox
 

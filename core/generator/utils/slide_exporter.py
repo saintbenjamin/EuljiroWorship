@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 :File: EuljiroWorship/core/generator/utils/slide_exporter.py
+:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
+:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
+:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
+:Telephone: +82-2-2266-3070
+:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
+:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
 Slide export pipeline for converting generator slide data into
 overlay-ready slide blocks.
@@ -10,13 +16,6 @@ slide dictionaries produced by the generator UI and transforms them
 into a flattened sequence of slides suitable for real-time overlay
 display. The exporter applies style-specific rules such as line
 segmentation, verse splitting, and style normalization.
-
-:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
-:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
-:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
-:Telephone: +82-2-2266-3070
-:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
-:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 """
 
 from core.generator.utils.text_splitter import split_by_length

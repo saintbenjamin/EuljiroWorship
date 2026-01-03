@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 :File: EuljiroWorship/controller/helper/verse_interruptor.py
+:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
+:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
+:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
+:Telephone: +82-2-2266-3070
+:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
+:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
 Watches `paths.VERSE_FILE` (verse_output.txt) and converts it into slide JSON
 written to `paths.SLIDE_FILE` for real-time display by the slide controller.
@@ -17,13 +23,6 @@ Key behaviors
   style "lyrics" slides grouped by up to 2 lines (or by character budget).
 - Before overwriting the slide file, it may create a backup at
   `paths.SLIDE_BACKUP_FILE` (only if the backup file does not already exist).
-
-:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
-:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
-:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
-:Telephone: +82-2-2266-3070
-:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
-:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 """
 
 import sys, os

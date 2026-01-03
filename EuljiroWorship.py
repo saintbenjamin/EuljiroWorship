@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-:File: EuljiroWorship.py
+:File: EuljiroWorship/EuljiroWorship.py
+:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
+:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
+:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
+:Telephone: +82-2-2266-3070
+:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
+:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
 Main entry point for the EuljiroWorship application.
 
@@ -14,22 +20,11 @@ Typical usage::
 
     python EuljiroWorship.py
 
-Notes
------
-- The HTTP document root is currently set to the project root directory.
-  If your overlay/static files live under a specific subdirectory (e.g. ``web/``),
-  update ``http_cwd`` accordingly.
-- Both servers are started as subprocesses. They are terminated on normal Qt exit
-  and also via ``atexit`` as a fallback.
-- If the server subprocess exits immediately (e.g., port already in use), the
-  launcher raises a ``RuntimeError``.
+Notes:
 
-:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
-:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
-:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
-:Telephone: +82-2-2266-3070
-:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
-:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
+- The HTTP document root is currently set to the project root directory. If your overlay/static files live under a specific subdirectory (e.g. ``web/``), update ``http_cwd`` accordingly.
+- Both servers are started as subprocesses. They are terminated on normal Qt exit and also via ``atexit`` as a fallback.
+- If the server subprocess exits immediately (e.g., port already in use), the launcher raises a ``RuntimeError``.
 """
 
 import sys
