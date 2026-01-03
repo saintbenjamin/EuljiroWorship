@@ -2,16 +2,24 @@
 """
 :File: EuljiroWorship/server/websocket_server.py
 
-WebSocket server for broadcasting slide data using aiohttp with resilient error handling.
+WebSocket server for real-time slide broadcasting in EuljiroWorship.
 
-This module runs an aiohttp-based WebSocket server that listens for slide JSON messages and broadcasts them to all connected clients in real time.
+This implements an aiohttp-based WebSocket server responsible for
+real-time communication with overlay clients during worship services.
+It receives slide data as JSON messages and broadcasts them to all
+connected clients.
 
-Features:
+The server is designed to be robust in live worship environments and provides:
 
-- Real-time broadcast to multiple connected clients
-- Ping/pong heartbeat handling
+- Real-time broadcast fan-out to multiple connected clients
+- Ping/pong heartbeat handling to detect dead connections
 - Error isolation per client connection
-- Automatic cleanup of disconnected ("zombie") clients
+- Automatic cleanup of disconnected or faulty ("zombie") clients
+- Graceful shutdown with proper socket closure
+
+The WebSocket endpoint listens on ``/ws`` and expects incoming messages
+to be JSON representations of slide data, which are then forwarded to
+all connected overlay clients.
 
 :Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
 :Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
