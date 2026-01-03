@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/ui/contents/respo_content.py
+:File: EuljiroWorship/core/generator/ui/contents/respo_content.py
 
 UI content widget for editing 'respo' (responsive reading) style slides.
 

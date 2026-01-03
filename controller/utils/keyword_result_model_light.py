@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/controller/utils/keyword_result_model_light.py
+:File: EuljiroWorship/controller/utils/keyword_result_model_light.py
 
 Lightweight QAbstractTableModel for displaying Bible keyword search results.
 

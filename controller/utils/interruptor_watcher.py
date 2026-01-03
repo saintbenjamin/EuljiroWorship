@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/controller/utils/interruptor_watcher.py
+:File: EuljiroWorship/controller/utils/interruptor_watcher.py
 
 Watches `verse_output.txt` and emits a Qt signal when the emergency text is cleared.
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/controller/utils/keyword_highlight_delegate.py
+:File: EuljiroWorship/controller/utils/keyword_highlight_delegate.py
 
 QStyledItemDelegate implementation for keyword highlighting in Qt item views.
 

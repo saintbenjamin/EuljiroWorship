@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/ui/contents/greet_content.py
+:File: EuljiroWorship/core/generator/ui/contents/greet_content.py
 
 UI content widget for editing 'greet' style slides.
 

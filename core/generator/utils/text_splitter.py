@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/utils/text_splitter.py
+:File: EuljiroWorship/core/generator/utils/text_splitter.py
 
 Provides utility function for splitting text into chunks of specified length.
 

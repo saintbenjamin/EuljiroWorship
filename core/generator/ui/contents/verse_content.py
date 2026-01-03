@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/ui/contents/verse_content.py
+:File: EuljiroWorship/core/generator/ui/contents/verse_content.py
 
 UI content widget for editing 'verse' style slides.
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/controller/ui/slide_controller_ui_builder.py
+:File: EuljiroWorship/controller/ui/slide_controller_ui_builder.py
 
 Builds the user interface for the slide controller window.
 

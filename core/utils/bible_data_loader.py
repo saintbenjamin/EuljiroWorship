@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/utils/bible_data_loader.py
+:File: EuljiroWorship/core/utils/bible_data_loader.py
 
 Handles lazy loading and caching of Bible text and metadata from JSON sources.
 

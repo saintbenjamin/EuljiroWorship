@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/settings_generator.py
+:File: EuljiroWorship/core/generator/settings_generator.py
 
 Handles persistent generator settings for the Slide Generator/Controller.
 

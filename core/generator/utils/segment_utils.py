@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/utils/segment_utils.py
+:File: EuljiroWorship/core/generator/utils/segment_utils.py
 
 Utilities for segmenting slide data during export.
 

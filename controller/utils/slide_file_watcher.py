@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/controller/utils/slide_file_watcher.py
+:File: EuljiroWorship/controller/utils/slide_file_watcher.py
 
 Slide file watcher for the slide controller.
 

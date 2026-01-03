@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/settings_last_path.py
+:File: EuljiroWorship/core/generator/settings_last_path.py
 
 Handles local UI state related to the last opened slide file path.
 

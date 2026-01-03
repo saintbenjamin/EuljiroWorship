@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/controller/utils/slide_controller_data_manager.py
+:File: EuljiroWorship/controller/utils/slide_controller_data_manager.py
 
 Persistent data manager for the slide controller.
 

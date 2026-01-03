@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/controller/ui/emergency_caption_dialog.py
+:File: EuljiroWorship/controller/ui/emergency_caption_dialog.py
 
 Emergency caption input dialog (PySide6).
 

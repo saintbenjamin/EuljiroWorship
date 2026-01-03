@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/controller/utils/emergency_slide_factory.py
+:File: EuljiroWorship/controller/utils/emergency_slide_factory.py
 
 Generates slide dictionaries for emergency captions.
 

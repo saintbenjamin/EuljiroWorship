@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/plugin/controller_launcher.py
+:File: EuljiroWorship/core/plugin/controller_launcher.py
 
 Launches and manages the slide controller subprocess for integrated slide output control.
 

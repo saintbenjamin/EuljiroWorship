@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/ui/slide_generator.py
+:File: EuljiroWorship/core/generator/ui/slide_generator.py
 
 Main window class for the EuljiroWorship slide generator GUI.
 

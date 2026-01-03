@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship.py
+:File: EuljiroWorship.py
 
 Main entry point for the EuljiroWorship application.
 

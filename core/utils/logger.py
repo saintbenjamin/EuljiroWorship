@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/utils/logger.py
+:File: EuljiroWorship/core/utils/logger.py
 
 Provides error and debug logging utilities for EuljiroBible.
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/config/style_map.py
+:File: EuljiroWorship/core/config/style_map.py
 
 Defines mappings between internal slide style identifiers and
 their Korean display names used in the generator UI.

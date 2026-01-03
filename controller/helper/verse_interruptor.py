@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/controller/helper/verse_interruptor.py
+:File: EuljiroWorship/controller/helper/verse_interruptor.py
 
 Watches `paths.VERSE_FILE` (verse_output.txt) and converts it into slide JSON
 written to `paths.SLIDE_FILE` for real-time display by the slide controller.

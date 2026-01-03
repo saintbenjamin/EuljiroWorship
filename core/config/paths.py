@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/config/paths.py
+:File: EuljiroWorship/core/config/paths.py
 
 Defines core directory and file paths used across the EuljiroWorship
 and EuljiroBible systems.

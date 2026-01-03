@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/ui/settings_dialog.py
+:File: EuljiroWorship/core/generator/ui/settings_dialog.py
 
 Settings dialog for the slide generator and controller.
 

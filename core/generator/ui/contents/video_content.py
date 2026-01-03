@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/ui/contents/video_content.py
+:File: EuljiroWorship/core/generator/ui/contents/video_content.py
 
 UI content widget for editing 'video' style slides.
 

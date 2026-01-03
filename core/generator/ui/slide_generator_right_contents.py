@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/ui/slide_generator_right_contents.py
+:File: EuljiroWorship/core/generator/ui/slide_generator_right_contents.py
 
 Dynamic right-hand content panel for the slide generator UI.
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/controller/utils/emergency_caption_handler.py
+:File: EuljiroWorship/controller/utils/emergency_caption_handler.py
 
 Handles the emergency caption workflow triggered from the slide controller.
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/utils/bible_parser.py
+:File: EuljiroWorship/core/utils/bible_parser.py
 
 Parses Bible reference strings and resolves book name aliases from user input.
 

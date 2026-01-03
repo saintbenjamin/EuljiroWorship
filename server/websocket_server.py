@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/server/websocket_server.py
+:File: EuljiroWorship/server/websocket_server.py
 
 WebSocket server for broadcasting slide data using aiohttp with resilient error handling.
 

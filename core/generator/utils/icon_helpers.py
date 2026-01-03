@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/utils/icon_helpers.py
+:File: EuljiroWorship/core/generator/utils/icon_helpers.py
 
 Utility helpers for applying SVG icons to Qt widgets.
 

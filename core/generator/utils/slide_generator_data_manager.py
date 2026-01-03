@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/utils/slide_generator_data_manager.py
+:File: EuljiroWorship/core/generator/utils/slide_generator_data_manager.py
 
 Data management layer for the slide generator table UI.
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/ui/slide_generator_dialog.py
+:File: EuljiroWorship/core/generator/ui/slide_generator_dialog.py
 
 Modal dialog for editing a single slide.
 

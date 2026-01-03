@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/utils/slide_exporter.py
+:File: EuljiroWorship/core/generator/utils/slide_exporter.py
 
 Slide export pipeline for converting generator slide data into
 overlay-ready slide blocks.

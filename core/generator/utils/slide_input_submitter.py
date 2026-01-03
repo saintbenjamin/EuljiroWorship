@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/utils/slide_input_submitter.py
+:File: EuljiroWorship/core/generator/utils/slide_input_submitter.py
 
 Handles submission logic for slide input forms in the slide generator UI.
 

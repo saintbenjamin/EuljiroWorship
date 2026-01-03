@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/controller/slide_controller.py
+:File: EuljiroWorship/controller/slide_controller.py
 
 Main slide controller module for managing and broadcasting slides in real-time.
 

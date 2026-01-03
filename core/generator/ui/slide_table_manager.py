@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/core/generator/ui/slide_table_manager.py
+:File: EuljiroWorship/core/generator/ui/slide_table_manager.py
 
 Row-level table operations for the slide generator.
 

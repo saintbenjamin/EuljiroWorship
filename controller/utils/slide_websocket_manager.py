@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-File: EuljiroWorship/controller/utils/slide_websocket_manager.py
+:File: EuljiroWorship/controller/utils/slide_websocket_manager.py
 
 WebSocket manager for broadcasting slide data to overlay clients.
 
