@@ -10,7 +10,7 @@ monitor the project base directory for changes to the verse output file, then
 parses the content into one or more slide dictionaries.
 
 Key behaviors
--------------
+
 - If the last line looks like a structured Bible reference header, it generates
   per-verse slides with wrapped lines (`textwrap.wrap`) and style "verse".
 - Otherwise, it treats the file as a free-form emergency message and generates

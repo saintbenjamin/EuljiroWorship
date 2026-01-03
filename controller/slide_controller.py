@@ -9,12 +9,13 @@ used by the slide controller application. It wires together the PySide6 UI,
 file watchers, WebSocket broadcasting, and the emergency verse interruptor.
 
 Key responsibilities in this module:
+
 - Ensure the project root is importable (sys.path injection for direct execution)
 - Define `launch_interruptor()` to start the verse interruptor as a detached process
 - Define `SlideController`, the main QWidget that:
-  - loads and displays slide data
-  - sends slides via WebSocket
-  - reacts to slide file changes / emergency interruptor clear events
+    - loads and displays slide data
+    - sends slides via WebSocket
+    - reacts to slide file changes / emergency interruptor clear events
 
 :Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
 :Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
