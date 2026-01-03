@@ -60,7 +60,9 @@ html_static_path = ["_static"] if os.path.isdir(_static_dir) else []
 # - PySide6 is typically unavailable in RTD build env.
 autodoc_mock_imports = [
     "PySide6",
-    "websocket",
+    "aiohttp",
+    "websocket-client",
+    "watchdog"
 ]
 
 # Keep output stable and readable
