@@ -8,8 +8,8 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-Watches `paths.VERSE_FILE` (verse_output.txt) and converts it into slide JSON
-written to `paths.SLIDE_FILE` for real-time display by the slide controller.
+Watches ``paths.VERSE_FILE`` (verse_output.txt) and converts it into slide JSON
+written to ``paths.SLIDE_FILE`` for real-time display by the slide controller.
 
 This module runs as a small background helper process. It uses watchdog to
 monitor the project base directory for changes to the verse output file, then
@@ -18,11 +18,11 @@ parses the content into one or more slide dictionaries.
 Key behaviors
 
 - If the last line looks like a structured Bible reference header, it generates
-  per-verse slides with wrapped lines (`textwrap.wrap`) and style "verse".
+  per-verse slides with wrapped lines (``textwrap.wrap``) and style "verse".
 - Otherwise, it treats the file as a free-form emergency message and generates
   style "lyrics" slides grouped by up to 2 lines (or by character budget).
 - Before overwriting the slide file, it may create a backup at
-  `paths.SLIDE_BACKUP_FILE` (only if the backup file does not already exist).
+  ``paths.SLIDE_BACKUP_FILE`` (only if the backup file does not already exist).
 """
 
 import sys, os
@@ -46,11 +46,11 @@ MAX_CHARS = 60
 
 def parse_verse_output(file_path, max_chars=60):
     """
-    Parse `verse_output.txt` into a list of slide dictionaries.
+    Parse ``verse_output.txt`` into a list of slide dictionaries.
 
     The input file is interpreted as:
 
-    - Structured mode: If the last line matches one of the  expected header forms (e.g., "(<book> <chapter>장 ...", "(<book> <chapter>:<verse>, ..."), the earlier lines are treated as verse body lines. Each verse line is wrapped to `max_chars` and converted into style "verse" slides.
+    - Structured mode: If the last line matches one of the  expected header forms (e.g., "(<book> <chapter>장 ...", "(<book> <chapter>:<verse>, ..."), the earlier lines are treated as verse body lines. Each verse line is wrapped to ``max_chars`` and converted into style "verse" slides.
     - Fallback mode: If no header pattern matches, the entire file is treated as a free-form emergency message. Non-empty lines are grouped into slides (up to 2 lines per slide or until the approximate character budget is met) using style "lyrics" and a fixed church caption.
 
     Notes:
@@ -154,8 +154,8 @@ def backup_slide_if_not_emergency():
     """
     Create a backup copy of the current slide JSON file if no backup exists yet.
 
-    This function writes `paths.SLIDE_BACKUP_FILE` only when that file does not
-    already exist. The source is `paths.SLIDE_FILE` if it exists and can be read.
+    This function writes ``paths.SLIDE_BACKUP_FILE`` only when that file does not
+    already exist. The source is ``paths.SLIDE_FILE`` if it exists and can be read.
 
     The backup is intended to support restoration after an emergency subtitle
     session ends. The current implementation skips backup if the loaded slides
@@ -184,7 +184,7 @@ def save_slides(slides, path):
         slides (list[dict]):
             Slide dictionaries to write.
         path (str):
-            Destination JSON file path (typically `paths.SLIDE_FILE`).
+            Destination JSON file path (typically ``paths.SLIDE_FILE``).
 
     Returns:
         None
@@ -198,8 +198,8 @@ class VerseFileHandler(FileSystemEventHandler):
 
     This handler listens for filesystem modification events and, when the target
     file is modified, parses it into slides and writes the resulting JSON to
-    `paths.SLIDE_FILE`. If slides are generated, it attempts to create a backup
-    via `backup_slide_if_not_emergency()` before overwriting the slide file.
+    ``paths.SLIDE_FILE``. If slides are generated, it attempts to create a backup
+    via ``backup_slide_if_not_emergency()`` before overwriting the slide file.
     """
 
     def on_modified(self, event):
@@ -207,10 +207,10 @@ class VerseFileHandler(FileSystemEventHandler):
         Handle watchdog "modified" events for verse_output.txt.
 
         If the modified path matches the target verse file, this callback:
-        1) Parses `paths.VERSE_FILE` into slide dictionaries.
+        1) Parses ``paths.VERSE_FILE`` into slide dictionaries.
         2) If any slides were produced:
         - Creates a backup (if applicable)
-        - Writes slides to `paths.SLIDE_FILE`
+        - Writes slides to ``paths.SLIDE_FILE``
         3) Otherwise logs that no slides were generated.
 
         Args:
@@ -235,8 +235,8 @@ def start_interruptor():
     """
     Start the watchdog observer loop for verse_output.txt.
 
-    This sets up an Observer to watch `paths.BASE_DIR` (non-recursive) and uses
-    `VerseFileHandler` to react to modifications. The function then blocks the
+    This sets up an Observer to watch ``paths.BASE_DIR`` (non-recursive) and uses
+    ``VerseFileHandler`` to react to modifications. The function then blocks the
     main thread in a sleep loop until interrupted (Ctrl+C).
 
     Returns:
