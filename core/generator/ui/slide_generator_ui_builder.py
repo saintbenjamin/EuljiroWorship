@@ -16,6 +16,7 @@ It separates UI composition from application logic to keep the main window
 class (`SlideGenerator`) focused on workflow and state management.
 
 The builder assembles:
+
 - A top row of action buttons with icons (load, save, add, insert, delete, move, export)
 - A central table area for listing and managing slides
 - A label showing the current worship/session name

@@ -11,6 +11,7 @@
 Lightweight QAbstractTableModel for displaying Bible keyword search results.
 
 This module defines a minimal table model optimized for keyword search output:
+
 - Two-column layout: Bible reference and verse text
 - Designed for read-only display in QTableView
 - Supports tooltip display of highlighted (HTML-formatted) verse text

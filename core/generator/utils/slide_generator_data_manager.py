@@ -17,6 +17,7 @@ handling style-specific normalization (e.g., anthem choir names,
 Bible verse formatting).
 
 It acts as the sole translation layer between:
+
 - Persistent slide JSON files
 - The QTableWidget-based generator UI
 """

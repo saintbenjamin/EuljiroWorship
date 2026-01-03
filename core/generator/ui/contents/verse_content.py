@@ -15,6 +15,7 @@ for entering Bible references, fetching the corresponding verses from
 the internal Bible data engine, and previewing the formatted output.
 
 The widget supports:
+
 - Selecting a Bible version
 - Parsing and validating Scripture references
 - Expanding verse ranges and full chapters

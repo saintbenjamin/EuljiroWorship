@@ -11,12 +11,14 @@
 QStyledItemDelegate implementation for keyword highlighting in Qt item views.
 
 This module defines a delegate that renders cell text using QTextDocument so that:
+
 - HTML tags (e.g., <b>) are supported.
 - Newlines are rendered as multi-line content (<br>).
 - Specified keywords are highlighted by wrapping them in red <span> tags.
 - Row height can be computed from the HTML-rendered content.
 
-Typical usage:
+Typical usage::
+
     view.setItemDelegate(KeywordHighlightDelegate(keywords=["하나님", "세상"]))
 """
 

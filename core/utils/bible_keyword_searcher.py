@@ -15,6 +15,7 @@ over a single Bible version JSON file. It is designed for fast interactive
 search in both CLI and GUI contexts.
 
 Supported search modes include:
+
 - Word-based AND search
 - Whitespace-insensitive (compact) substring search
 

@@ -11,6 +11,7 @@
 Handles the emergency caption workflow triggered from the slide controller.
 
 This module coordinates the emergency caption process by:
+
 - Launching the emergency caption dialog
 - Collecting finalized slide data from the dialog
 - Writing emergency slides to the slide output JSON file

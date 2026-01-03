@@ -16,6 +16,7 @@ creating the layout, initializing interactive controls, populating the preview
 table, and installing event filters for keyboard navigation.
 
 Key responsibilities:
+
 - Create top status label and apply elided text rendering
 - Create emergency caption ON/OFF buttons and connect controller callbacks
 - Create page navigation controls (first/prev/next/last + page input)

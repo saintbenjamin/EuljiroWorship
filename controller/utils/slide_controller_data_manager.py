@@ -11,6 +11,7 @@
 Persistent data manager for the slide controller.
 
 This module manages the persistent state used by the slide controller:
+
 - Loading slide data from the active slide JSON file
 - Tracking the current slide index
 - Backing up slide data before emergency interruption
