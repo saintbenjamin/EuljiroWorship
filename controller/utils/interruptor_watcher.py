@@ -17,6 +17,7 @@ transition from **non-empty** to **empty**. When that transition occurs, it emit
 previous slide session and exit emergency mode.
 
 Key behavior:
+
 - Polls the verse file at a configurable interval (`poll_interval`)
 - Emits a signal only on the transition: non-empty → empty
 - Provides a stop mechanism for clean thread shutdown
