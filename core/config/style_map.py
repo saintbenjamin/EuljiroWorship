@@ -14,11 +14,11 @@ their Korean display names used in the generator UI.
 This module serves as the single source of truth for slide style naming
 across the system. It provides:
 
-- `STYLE_ALIASES`: Mapping from internal style keys (used in JSON/export)
+- ``STYLE_ALIASES``: Mapping from internal style keys (used in JSON/export)
   to Korean labels displayed in the UI.
-- `REVERSE_ALIASES`: Reverse lookup mapping from Korean labels back to
+- ``REVERSE_ALIASES``: Reverse lookup mapping from Korean labels back to
   internal style keys.
-- `STYLE_LIST`: Ordered list of Korean display names, primarily used
+- ``STYLE_LIST``: Ordered list of Korean display names, primarily used
   to populate dropdown menus in the slide generator table.
 
 By centralizing these mappings, the generator UI, data manager,
