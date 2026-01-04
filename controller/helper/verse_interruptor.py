@@ -8,21 +8,21 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-Watches ``paths.VERSE_FILE`` (verse_output.txt) and converts it into slide JSON
-written to ``paths.SLIDE_FILE`` for real-time display by the slide controller.
+Watches :data:`core.config.paths.VERSE_FILE` and converts it into slide ``JSON``
+written to :data:`core.config.paths.SLIDE_FILE` for real-time display by the slide controller.
 
-This module runs as a small background helper process. It uses watchdog to
-monitor the project base directory for changes to the verse output file, then
+This module runs as a small background helper process. It uses `watchdog <https://pypi.org/project/watchdog/>`_ to
+monitor the project base directory for changes to the :data:`core.config.paths.VERSE_FILE`, then
 parses the content into one or more slide dictionaries.
 
 Key behaviors
 
 - If the last line looks like a structured Bible reference header, it generates
-  per-verse slides with wrapped lines (``textwrap.wrap``) and style "verse".
+  per-verse slides with wrapped lines (`textwrap.wrap <https://docs.python.org/3/library/textwrap.html#textwrap.wrap>`_) and style "verse".
 - Otherwise, it treats the file as a free-form emergency message and generates
   style "lyrics" slides grouped by up to 2 lines (or by character budget).
 - Before overwriting the slide file, it may create a backup at
-  ``paths.SLIDE_BACKUP_FILE`` (only if the backup file does not already exist).
+  :data:`core.config.paths.SLIDE_BACKUP_FILE` (only if the backup file does not already exist).
 """
 
 import sys, os
