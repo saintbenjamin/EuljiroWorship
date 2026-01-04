@@ -18,7 +18,7 @@ This module manages the persistent state used by the slide controller:
 - Restoring slides after emergency mode is cleared
 
 It intentionally contains no UI logic and serves as a thin I/O and state
-coordination layer for SlideController.
+coordination layer for :class:`controller.slide_controller.SlideController`.
 """
 
 import json
@@ -32,6 +32,7 @@ class SlideControllerDataManager:
     Manages persistent slide data and controller state.
 
     This class is responsible for:
+
     - Loading slide data from disk
     - Keeping track of the current slide index
     - Backing up slide data before emergency interruption
@@ -68,8 +69,8 @@ class SlideControllerDataManager:
         """
         Load slides from the active slide file into memory.
 
-        On success, populates `self.slides` with parsed slide dictionaries.
-        On failure, resets the slide list to an empty list and prints an error.
+        - On success, populates ``self.slides`` with parsed slide dictionaries.
+        - On failure, resets the slide list to an empty list and prints an error.
 
         Returns:
             None
@@ -86,7 +87,8 @@ class SlideControllerDataManager:
         """
         Create a backup copy of the active slide file.
 
-        Copies `paths.SLIDE_FILE` to `paths.SLIDE_BACKUP_FILE`.
+        Copies :data:`core.config.paths.SLIDE_FILE` to :data:`core.config.paths.SLIDE_BACKUP_FILE`.
+
         This backup is used to restore slides after emergency caption mode.
 
         Returns:
@@ -101,12 +103,12 @@ class SlideControllerDataManager:
         """
         Restore slide data from the backup file if available.
 
-        Loads slides from `paths.SLIDE_BACKUP_FILE` into memory.
+        Loads slides from :data:`core.config.paths.SLIDE_BACKUP_FILE` into memory.
 
         Returns:
             bool:
-                True if backup restoration succeeded.
-                False if no backup exists or restoration failed.
+                - True if backup restoration succeeded.
+                - False if no backup exists or restoration failed.
         """
         restored = False
 
@@ -126,7 +128,7 @@ class SlideControllerDataManager:
         """
         Remove the slide backup file if it exists.
 
-        Deletes `paths.SLIDE_BACKUP_FILE` from disk to clear stale backup state.
+        Deletes :data:`core.config.paths.SLIDE_BACKUP_FILE` from disk to clear stale backup state.
 
         Returns:
             None

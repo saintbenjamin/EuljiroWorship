@@ -17,7 +17,7 @@ This module coordinates the emergency caption process by:
 - Writing emergency slides to the slide output JSON file
 
 The handler acts as a thin orchestration layer between the UI dialog
-(EmergencyCaptionDialog), the slide factory, and the slide output file.
+(:class:`controller.ui.emergency_caption_dialog.EmergencyCaptionDialog`), the slide factory, and the slide output file.
 """
 
 import json
@@ -31,12 +31,13 @@ class EmergencyCaptionHandler:
     Manages the emergency caption input and export workflow.
 
     This class is responsible for:
+
     - Opening the emergency caption dialog as a modal window
     - Retrieving finalized slide data from the dialog
     - Writing emergency slides to the slide output JSON file
 
     The handler does not perform slide parsing itself; it delegates
-    slide creation to EmergencyCaptionDialog and EmergencySlideFactory.
+    slide creation to :class:`controller.ui.emergency_caption_dialog.EmergencyCaptionDialog` and :class:`controller.utils.emergency_slide_factory.EmergencySlideFactory`.
     """
 
     def __init__(self, parent):
@@ -59,6 +60,7 @@ class EmergencyCaptionHandler:
         Launch the emergency caption dialog and export generated slides.
 
         This method:
+        
         - Opens the emergency caption dialog
         - Waits for user confirmation or cancellation
         - Retrieves finalized slide data from the dialog

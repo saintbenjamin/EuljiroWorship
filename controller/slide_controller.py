@@ -11,14 +11,15 @@
 Main slide controller module for managing and broadcasting slides in real-time.
 
 This module provides the GUI entry point and the main controller widget
-used by the slide controller application. It wires together the PySide6 UI,
+used by the slide controller application. It wires together the `PySide6 <https://pypi.org/project/PySide6/>`_ UI,
 file watchers, WebSocket broadcasting, and the emergency verse interruptor.
 
 Key responsibilities in this module:
 
 - Ensure the project root is importable (sys.path injection for direct execution)
-- Define `launch_interruptor()` to start the verse interruptor as a detached process
-- Define `SlideController`, the main QWidget that:
+- Define :func:`controller.slide_controller.launch_interruptor` to start the verse interruptor as a detached process
+- Define :class:`controller.slide_controller.SlideController`, the main `QWidget` that:
+
     - loads and displays slide data
     - sends slides via WebSocket
     - reacts to slide file changes / emergency interruptor clear events
@@ -56,12 +57,12 @@ def launch_interruptor():
     """
     Launch the verse interruptor script as a detached background process.
 
-    This starts `launcher/verse_interruptor.py` using the current Python
-    interpreter (`sys.executable`) and suppresses stdin/stdout/stderr to
+    This starts :mod:`controller.helper.verse_interruptor` using the current Python
+    interpreter (``sys.executable``) and suppresses ``stdin``/``stdout``/``stderr`` to
     avoid blocking or cluttering the controller GUI.
 
     The interruptor script is expected to watch the emergency verse output
-    file (e.g., `paths.VERSE_FILE`) and handle its own logic independently.
+    file (e.g., :data:`core.config.paths.VERSE_FILE`) and handle its own logic independently.
 
     Args:
         None
@@ -116,10 +117,11 @@ class SlideController(QWidget):
 
     def __init__(self, slide_file, ws_uri):
         """
-        Initialize the SlideController UI and subsystems.
+        Initialize the :class:`controller.slide_controller.SlideController` UI and subsystems.
 
         This sets up the window, loads slides, connects to the WebSocket server,
         builds the UI, and starts background threads for:
+
         - Watching slide file changes
         - Watching interruptor (emergency verse) clear events
 
@@ -128,7 +130,7 @@ class SlideController(QWidget):
                 Path to the slide JSON file to load.
             ws_uri (str):
                 WebSocket URI for broadcasting slide data
-                (e.g., "ws://127.0.0.1:8765/ws").
+                (e.g., ``ws://127.0.0.1:8765/ws``).
 
         Returns:
             None
@@ -241,6 +243,7 @@ class SlideController(QWidget):
         Update the UI label and table selection for the current slide.
 
         The label shows:
+
         - Current page (1-based)
         - Total pages
         - A short preview of the first line of the headline
@@ -257,10 +260,10 @@ class SlideController(QWidget):
         """
         Send the current slide to the overlay via WebSocket.
 
-        If the WebSocket is connected, the slide dict at `self.index` is sent.
+        If the WebSocket is connected, the slide dict at ``self.index`` is sent.
         If not connected, a warning is printed.
 
-        When not in emergency mode, also updates `self.data.index` so the current
+        When not in emergency mode, also updates ``self.data.index`` so the current
         position can be persisted by the data manager.
 
         Returns:
@@ -281,7 +284,7 @@ class SlideController(QWidget):
         """
         Move to the next slide if one exists.
 
-        Increments `self.index`, updates the UI label/table highlight,
+        Increments ``self.index``, updates the UI label/table highlight,
         and broadcasts the slide.
 
         Returns:
@@ -296,7 +299,7 @@ class SlideController(QWidget):
         """
         Move to the previous slide if available.
 
-        Decrements `self.index`, updates the UI label/table highlight,
+        Decrements ``self.index``, updates the UI label/table highlight,
         and broadcasts the slide.
 
         Returns:
@@ -327,7 +330,7 @@ class SlideController(QWidget):
     @Slot(list, int)
     def on_slide_changed(self, slides, index):
         """
-        Handle slide file modification events from SlideFileWatcher.
+        Handle slide file modification events from :class:`controller.utils.slide_file_watcher.SlideFileWatcher`.
 
         Replaces the internal slide list and index with the new values,
         updates the UI, and broadcasts the current slide.
@@ -349,7 +352,7 @@ class SlideController(QWidget):
     @Slot()
     def on_slide_cleared(self):
         """
-        Handle slide file cleared events from SlideFileWatcher.
+        Handle slide file cleared events from :class:`controller.utils.slide_file_watcher.SlideFileWatcher`.
 
         Attempts to restore slides from backup via the data manager.
         If restoration fails, falls back to a single blank slide.
@@ -370,10 +373,10 @@ class SlideController(QWidget):
     @Slot()
     def on_interruptor_cleared(self):
         """
-        Handle interruptor-cleared events from InterruptorWatcher.
+        Handle interruptor-cleared events from :class:`controller.utils.interruptor_watcher.InterruptorWatcher`.
 
         When the emergency verse file is cleared, this restores the previous slides
-        (via `on_slide_cleared()`) and exits emergency mode.
+        (via :meth:`on_slide_cleared`) and exits emergency mode.
 
         Returns:
             None
@@ -411,7 +414,7 @@ class SlideController(QWidget):
         """
         Enter emergency mode and generate emergency slides from user input.
 
-        Saves the current index to `index_backup`, invokes the emergency caption
+        Saves the current index to ``index_backup``, invokes the emergency caption
         handler, and if slides are returned, replaces the current slide list with
         the emergency slides starting from index 0.
 
@@ -431,7 +434,7 @@ class SlideController(QWidget):
         """
         Jump directly to a given slide index.
 
-        If the index is valid, sets `self.index`, broadcasts the slide,
+        If the index is valid, sets ``self.index``, broadcasts the slide,
         updates the table selection, scrolls it into view, and updates the label.
 
         Args:
@@ -503,8 +506,8 @@ class SlideController(QWidget):
         """
         Clear the emergency verse output file and restore normal slides.
 
-        This writes an empty string to `paths.VERSE_FILE`, clears `paths.SLIDE_FILE`,
-        then attempts restoration from backup via SlideControllerDataManager.
+        This writes an empty string to :data:`core.config.paths.VERSE_FILE`, clears :data:`core.config.paths.SLIDE_FILE`,
+        then attempts restoration from backup via :class:`controller.utils.slide_controller_data_manager.SlideControllerDataManager`.
 
         After restoration, rebuilds the table, updates the label, and scrolls
         the restored index into view.
@@ -529,9 +532,10 @@ class SlideController(QWidget):
 
     def rebuild_table(self):
         """
-        Rebuild the slide table widget using the current `self.slides`.
+        Rebuild the slide table widget using the current ``self.slides``.
 
         Each row displays:
+
         - Page number (1-based)
         - Caption
         - First line preview of headline (trimmed)
@@ -552,7 +556,7 @@ class SlideController(QWidget):
         Gracefully stop background threads and disconnect WebSocket before exit.
 
         Stops file watchers, quits threads, waits for them to finish, disconnects
-        the WebSocket manager, then delegates to QWidget.closeEvent().
+        the WebSocket manager, then delegates to ``QWidget.closeEvent()``.
 
         Args:
             event (QCloseEvent):

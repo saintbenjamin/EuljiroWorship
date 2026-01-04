@@ -18,8 +18,8 @@ Qt signals when:
 - Slide content is cleared (empty JSON), typically indicating the end of
   emergency caption mode
 
-The watcher is designed to run inside a QThread and communicate with the
-SlideController via Qt signals only.
+The watcher is designed to run inside a `QThread` and communicate with the
+:class:`controller.slide_controller.SlideController` via Qt signals only.
 """
 
 import json
@@ -36,10 +36,10 @@ class SlideFileWatcher(QObject):
     changes using the file's modified timestamp.
 
     Signals:
-        slide_changed(list, int):
+        ``slide_changed(list, int)``:
             Emitted when the slide file is updated with non-empty content.
             The second argument represents the initial slide index.
-        slide_cleared():
+        ``slide_cleared()``:
             Emitted when the slide file becomes empty, typically signaling
             the end of emergency caption mode.
     """
@@ -84,10 +84,10 @@ class SlideFileWatcher(QObject):
         This method runs an infinite polling loop while the watcher is active.
         When a file modification is detected:
 
-        - Emits `slide_changed` if the file contains slide data
-        - Emits `slide_cleared` if the file is empty
+        - Emits ``slide_changed`` if the file contains slide data
+        - Emits ``slide_cleared`` if the file is empty
 
-        This method is intended to be executed inside a QThread.
+        This method is intended to be executed inside a `QThread`.
 
         Returns:
             None

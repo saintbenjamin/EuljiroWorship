@@ -11,7 +11,7 @@
 Builds the user interface for the slide controller window.
 
 This module defines a small UI builder class that constructs and wires the
-widgets used by the SlideController main window. The builder is responsible for
+widgets used by the :class:`controller.slide_controller.SlideController` main window. The builder is responsible for
 creating the layout, initializing interactive controls, populating the preview
 table, and installing event filters for keyboard navigation.
 
@@ -37,26 +37,26 @@ from core.generator.utils.icon_helpers import set_svg_icon, get_icon_path
 
 class SlideControllerUIBuilder:
     """
-    UI builder for the SlideController main window.
+    UI builder for the :class:`controller.slide_controller.SlideController` main window.
 
-    This class encapsulates widget construction so that SlideController can keep
+    This class encapsulates widget construction so that :class:`controller.slide_controller.SlideController` can keep
     its runtime logic separate from UI layout details. The builder creates and
-    attaches widgets onto the controller instance (self.c), and wires up signals
+    attaches widgets onto the controller instance (``self.c``), and wires up signals
     to the controller's navigation and emergency-caption handlers.
 
     Notes:
         - Widgets are attached onto the controller instance as attributes
-          (e.g., controller.label, controller.table, controller.page_input).
-        - The builder assumes SlideController already loaded `slides` and `index`.
+          (e.g., ``controller.label``, ``controller.table``, ``controller.page_input``).
+        - The builder assumes :class:`controller.slide_controller.SlideController` already loaded ``slides`` and ``index``.
     """
 
     def __init__(self, controller):
         """
-        Initialize the UI builder with a SlideController instance.
+        Initialize the UI builder with a :class:`controller.slide_controller.SlideController` instance.
 
         Args:
             controller (QWidget):
-                The main SlideController instance that owns the window and runtime
+                The main :class:`controller.slide_controller.SlideController` instance that owns the window and runtime
                 logic. Widgets created by this builder are assigned as attributes
                 on this object.
 
@@ -67,9 +67,10 @@ class SlideControllerUIBuilder:
 
     def build_ui(self):
         """
-        Build and wire the full SlideController UI.
+        Build and wire the full :class:`controller.slide_controller.SlideController` UI.
 
         This method constructs:
+
         - Top status label (with elided rendering)
         - Emergency caption ON/OFF buttons
         - Page navigation row (first/prev/page/next/last)
@@ -77,9 +78,10 @@ class SlideControllerUIBuilder:
         - Event filters for global keyboard navigation
 
         Side Effects:
-            - Creates widgets and assigns them onto the controller instance.
-            - Connects widget signals to controller slots/callbacks.
-            - Installs event filters on the controller and its table.
+
+        - Creates widgets and assigns them onto the controller instance.
+        - Connects widget signals to controller slots/callbacks.
+        - Installs event filters on the controller and its table.
 
         Returns:
             None
@@ -174,7 +176,7 @@ class SlideControllerUIBuilder:
     @staticmethod
     def set_elided_label_text(label: QLabel, text: str):
         """
-        Set right-elided text on a QLabel to fit the current label width.
+        Set right-elided text on a `QLabel` to fit the current label width.
 
         This helper computes an elided string (truncated with an ellipsis) so the
         label does not overflow horizontally. Truncation occurs on the right side.

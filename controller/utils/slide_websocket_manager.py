@@ -10,7 +10,7 @@
 
 WebSocket manager for broadcasting slide data to overlay clients.
 
-This module provides a thin wrapper around the `websocket-client` library
+This module provides a thin wrapper around the `websocket-client <https://pypi.org/project/websocket-client/>`_ library
 to manage a single outbound WebSocket connection used by the slide controller.
 It is responsible for:
 
@@ -30,7 +30,7 @@ class SlideWebSocketManager:
     Manages a WebSocket connection for sending slide data to overlay systems.
 
     This class wraps a single WebSocket connection created via the
-    `websocket-client` library and provides simple methods for:
+    `websocket-client <https://pypi.org/project/websocket-client/>`_ library and provides simple methods for:
 
     - Connecting to a WebSocket server
     - Sending slide dictionaries as JSON
@@ -48,7 +48,7 @@ class SlideWebSocketManager:
         Args:
             uri (str):
                 WebSocket server URI
-                (e.g., "ws://127.0.0.1:8765/ws").
+                (e.g., ``ws://127.0.0.1:8765/ws``).
 
         Returns:
             None
@@ -79,7 +79,7 @@ class SlideWebSocketManager:
         Send a slide dictionary to the WebSocket server.
 
         The slide data is serialized to JSON using UTF-8 encoding
-        (ensure_ascii=False) before transmission.
+        (``ensure_ascii=False``) before transmission.
 
         Args:
             slide_dict (dict):

@@ -8,12 +8,12 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-Lightweight QAbstractTableModel for displaying Bible keyword search results.
+Lightweight `QAbstractTableModel` for displaying Bible keyword search results.
 
 This module defines a minimal table model optimized for keyword search output:
 
 - Two-column layout: Bible reference and verse text
-- Designed for read-only display in QTableView
+- Designed for read-only display in `QTableView`
 - Supports tooltip display of highlighted (HTML-formatted) verse text
 - Uses standard book name mapping for localized display
 
@@ -43,19 +43,19 @@ class KeywordResultTableModelLight(QAbstractTableModel):
 
     Attributes:
 
-    results (list[dict]):
-        List of search result dictionaries.
+        results (list[dict]):
+            List of search result dictionaries.
 
-        Each entry is expected to contain:
+            Each entry is expected to contain:
 
-        - ``book``
-        - ``chapter``
-        - ``verse``
-        - ``text``
-        - optional ``highlighted``
+            - ``book``
+            - ``chapter``
+            - ``verse``
+            - ``text``
+            - ``highlighted`` (optional)
 
-    book_names (dict[str, str]):
-        Mapping from internal book IDs to localized (Korean) book names.
+        book_names (dict[str, str]):
+            Mapping from internal book IDs to localized (Korean) book names.
     """
 
     def __init__(self, results):
@@ -86,7 +86,7 @@ class KeywordResultTableModelLight(QAbstractTableModel):
         """
         Load localized Bible book names from the standard book definition file.
 
-        Reads the JSON file defined by paths.STANDARD_BOOK_FILE and extracts
+        Reads the JSON file defined by :data:`core.config.paths.STANDARD_BOOK_FILE` and extracts
         Korean book names for display in the reference column.
 
         Returns:
@@ -121,6 +121,7 @@ class KeywordResultTableModelLight(QAbstractTableModel):
         Return the number of columns in the model.
 
         This model always exposes exactly two columns:
+
         - Reference
         - Verse text
 
@@ -141,12 +142,13 @@ class KeywordResultTableModelLight(QAbstractTableModel):
         Supported roles are:
 
         Qt.DisplayRole
-            Column 0 returns the formatted Bible reference (book chapter:verse).
-            Column 1 returns the verse text.
+        
+        - Column 0 returns the formatted Bible reference (book_chapter:verse).
+        - Column 1 returns the verse text.
 
         Qt.ToolTipRole
-            Column 1 returns highlighted HTML text if available;
-            otherwise, the plain verse text is returned.
+
+        - Column 1 returns highlighted HTML text if available; otherwise, the plain verse text is returned.
 
         Args:
             index (QModelIndex):

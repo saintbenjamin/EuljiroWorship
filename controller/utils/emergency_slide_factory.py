@@ -10,12 +10,12 @@
 
 Generates slide dictionaries for emergency captions.
 
-This module defines ``EmergencySlideFactory``, a utility that builds slide payloads
+This module defines :class:`controller.utils.emergency_slide_factory.EmergencySlideFactory`, a utility that builds slide payloads
 consumable by the slide controller / overlay pipeline.
 
 Supported inputs:
 
-- Bible references (parsed by ``core.utils.bible_parser.parse_reference``)
+- Bible references (parsed by :func:`core.utils.bible_parser.parse_reference`)
 - Manual fallback captions and messages
 - Preset responsive readings (교독문) loaded from JSON files
 - Preset hymns loaded from JSON files
@@ -26,9 +26,9 @@ Outputs:
 
 Notes:
 
-- Bible verse text is wrapped into smaller chunks (currently ``width=50``) to avoid
+- Bible verse text is wrapped into smaller chunks (currently ``width=60``) to avoid
   overly long single-slide lines.
-- Version display aliases are loaded from ``paths.ALIASES_VERSION_FILE``.
+- Version display aliases are loaded from :data:`core.config.paths.ALIASES_VERSION_FILE`.
 """
 
 import os
@@ -47,14 +47,13 @@ class EmergencySlideFactory:
 
     Primary responsibilities:
 
-    - Detect whether the first line is a Bible reference via ``parse_reference()``
-    - If a reference is valid, retrieve verses using ``BibleDataLoader``
-    - Wrap long verse text into multiple slides using ``textwrap.wrap``
+    - Detect whether the first line is a Bible reference via :func:`core.utils.bible_parser.parse_reference`
+    - If a reference is valid, retrieve verses using :class:`core.utils.bible_data_loader.BibleDataLoader`
+    - Wrap long verse text into multiple slides using `textwrap.wrap <https://docs.python.org/3/library/textwrap.html#textwrap.wrap>`_
     - If not a reference, build a fallback "manual" slide payload
     - Load preset materials:
-
-    - Responsive readings (respo) from JSON
-    - Hymns from JSON
+        - Responsive readings ("respo") from JSON
+        - Hymns from JSON
 
     Slide dict schema::
 
@@ -69,12 +68,12 @@ class EmergencySlideFactory:
         """
         Initialize the factory.
 
-        Loads Bible version display aliases from `paths.ALIASES_VERSION_FILE` and
-        prepares a `BibleDataLoader` instance (either the provided one or a default).
+        Loads Bible version display aliases from :data:`core.config.paths.ALIASES_VERSION_FILE` and
+        prepares a :class:`core.utils.bible_data_loader.BibleDataLoader` instance (either the provided one or a default).
 
         Args:
             bible_loader (BibleDataLoader | None):
-                Optional custom Bible loader. If None, a default `BibleDataLoader()`
+                Optional custom Bible loader. If None, a default ``BibleDataLoader()``
                 is created and used.
 
         Returns:
@@ -89,12 +88,10 @@ class EmergencySlideFactory:
         Create emergency slides from a pair of user input lines.
 
         Behavior:
-        - If `line1` is parsed as a Bible reference (e.g., "요 3:16", "요한복음 3:16"),
-        this method retrieves the verse text and returns verse-style slides.
-        - If the reference represents a full chapter request (verse_range like (1, -1)),
-        it expands the range to the chapter's maximum verse count when possible.
-        - If `line1` is NOT a valid reference, it falls back to a single manual slide
-        where `line1` becomes the caption and `line2` becomes the headline.
+
+        - If ``line1`` is parsed as a Bible reference (e.g., "요 3:16", "요한복음 3:16"), this method retrieves the verse text and returns verse-style slides.
+        - If the reference represents a full chapter request (``verse_range`` like ``(1, -1)``), it expands the range to the chapter's maximum verse count when possible.
+        - If ``line1`` is NOT a valid reference, it falls back to a single manual slide where ``line1`` becomes the caption and ``line2`` becomes the headline.
 
         Args:
             line1 (str):
@@ -146,11 +143,11 @@ class EmergencySlideFactory:
         """
         Build verse-style slides for the given Bible location and verse range.
 
-        This method attempts to retrieve verse text using `BibleDataLoader.get_verse()`.
-        If `version` is provided, it tries that version first; otherwise it iterates
+        This method attempts to retrieve verse text using :meth:`core.utils.bible_data_loader.BibleDataLoader.get_verse()`.
+        If ``version`` is provided, it tries that version first; otherwise it iterates
         available versions and returns the first successful slide set.
 
-        Each verse is wrapped using `textwrap.wrap(..., width=60)` to avoid overly long
+        Each verse is wrapped using `textwrap.wrap(..., width=60) <https://docs.python.org/3/library/textwrap.html#textwrap.wrap>`_ to avoid overly long
         single lines, producing multiple slides per verse when needed.
 
         Args:
@@ -160,7 +157,7 @@ class EmergencySlideFactory:
                 Chapter number.
             verses (list[int] | tuple[int, int]):
                 Verse numbers to include. The implementation currently uses
-                `min(verses)` and `max(verses)` to define an inclusive range.
+                ``min(verses)`` and ``max(verses)`` to define an inclusive range.
             version (str | None):
                 Preferred Bible version name. If None, tries multiple versions.
 
@@ -215,7 +212,7 @@ class EmergencySlideFactory:
 
         Returns:
             list[dict]:
-                A list of slide dictionaries (style ``"verse"``).
+                A list of slide dictionaries (style "verse").
                 If loading fails, returns a one-slide fallback with an error message.
         """
         path = os.path.join("data", "respo", f"responsive_{number:03d}.json")
@@ -278,6 +275,7 @@ class EmergencySlideFactory:
         Load a hymn JSON by number and split it into lyric slides.
 
         The expected JSON format contains:
+
         - "title": str (optional)
         - "headline": str (lyrics text, typically multi-line)
 
@@ -324,8 +322,8 @@ class EmergencySlideFactory:
         Generate slide(s) from manually provided content.
 
         Behavior:
-        - If `style` is "lyrics", the input text is split by lines and grouped
-        into 2-line chunks per slide.
+
+        - If `style` is "lyrics", the input text is split by lines and grouped into 2-line chunks per slide.
         - For all other styles, a single slide is produced as-is.
 
         Args:
