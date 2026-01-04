@@ -87,7 +87,7 @@ class SlideControllerDataManager:
         """
         Create a backup copy of the active slide file.
 
-        Copies :data:`core.config.paths.SLIDE_FILE` to :data:`core.config.paths.SLIDE_BACKUP_FILE`.
+        Copies :py:data:`core.config.paths.SLIDE_FILE` to :py:data:`core.config.paths.SLIDE_BACKUP_FILE`.
 
         This backup is used to restore slides after emergency caption mode.
 
@@ -103,7 +103,7 @@ class SlideControllerDataManager:
         """
         Restore slide data from the backup file if available.
 
-        Loads slides from :data:`core.config.paths.SLIDE_BACKUP_FILE` into memory.
+        Loads slides from :py:data:`core.config.paths.SLIDE_BACKUP_FILE` into memory.
 
         Returns:
             bool:
@@ -128,7 +128,7 @@ class SlideControllerDataManager:
         """
         Remove the slide backup file if it exists.
 
-        Deletes :data:`core.config.paths.SLIDE_BACKUP_FILE` from disk to clear stale backup state.
+        Deletes :py:data:`core.config.paths.SLIDE_BACKUP_FILE` from disk to clear stale backup state.
 
         Returns:
             None

@@ -28,7 +28,7 @@ Notes:
 
 - Bible verse text is wrapped into smaller chunks (currently ``width=60``) to avoid
   overly long single-slide lines.
-- Version display aliases are loaded from :data:`core.config.paths.ALIASES_VERSION_FILE`.
+- Version display aliases are loaded from :py:data:`core.config.paths.ALIASES_VERSION_FILE`.
 """
 
 import os
@@ -68,7 +68,7 @@ class EmergencySlideFactory:
         """
         Initialize the factory.
 
-        Loads Bible version display aliases from :data:`core.config.paths.ALIASES_VERSION_FILE` and
+        Loads Bible version display aliases from :py:data:`core.config.paths.ALIASES_VERSION_FILE` and
         prepares a :class:`core.utils.bible_data_loader.BibleDataLoader` instance (either the provided one or a default).
 
         Args:

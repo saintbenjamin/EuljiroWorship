@@ -67,7 +67,7 @@ class EmergencyCaptionDialog(QDialog):
         - Double-clicking a result fills inputs and finalizes slides.
 
     - Non-Bible emergency slide generation
-        - User chooses a slide style from :data:`core.config.style_map.STYLE_ALIASES`.
+        - User chooses a slide style from :py:data:`core.config.style_map.STYLE_ALIASES`.
         - For preset-based styles (e.g., "respo"/"hymn"), numeric inputs can load presets.
         - Otherwise, a manual slide is created from caption/headline inputs.
 
@@ -80,7 +80,7 @@ class EmergencyCaptionDialog(QDialog):
         previewed_once (bool):
             Whether the Bible-reference preview has been shown at least once.
         versions (list[str]):
-            Available Bible versions discovered from :data:`core.config.paths.BIBLE_DATA_DIR`.
+            Available Bible versions discovered from :py:data:`core.config.paths.BIBLE_DATA_DIR`.
     """
 
     def __init__(self, parent=None):

@@ -62,7 +62,7 @@ def launch_interruptor():
     avoid blocking or cluttering the controller GUI.
 
     The interruptor script is expected to watch the emergency verse output
-    file (e.g., :data:`core.config.paths.VERSE_FILE`) and handle its own logic independently.
+    file (e.g., :py:data:`core.config.paths.VERSE_FILE`) and handle its own logic independently.
 
     Args:
         None
@@ -506,7 +506,7 @@ class SlideController(QWidget):
         """
         Clear the emergency verse output file and restore normal slides.
 
-        This writes an empty string to :data:`core.config.paths.VERSE_FILE`, clears :data:`core.config.paths.SLIDE_FILE`,
+        This writes an empty string to :py:data:`core.config.paths.VERSE_FILE`, clears :py:data:`core.config.paths.SLIDE_FILE`,
         then attempts restoration from backup via :class:`controller.utils.slide_controller_data_manager.SlideControllerDataManager`.
 
         After restoration, rebuilds the table, updates the label, and scrolls

@@ -8,10 +8,10 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-Watches :data:`core.config.paths.VERSE_FILE` and emits a Qt signal when the emergency text is cleared.
+Watches :py:data:`core.config.paths.VERSE_FILE` and emits a Qt signal when the emergency text is cleared.
 
 This module defines a lightweight polling watcher used by the slide controller.
-It monitors the emergency verse file (:data:`core.config.paths.VERSE_FILE`) and detects the state
+It monitors the emergency verse file (:py:data:`core.config.paths.VERSE_FILE`) and detects the state
 transition from **non-empty** to **empty**. When that transition occurs, it emits
 ``InterruptorWatcher.interruptor_cleared``, allowing the controller to restore the
 previous slide session and exit emergency mode.
@@ -36,7 +36,7 @@ class InterruptorWatcher(QObject):
     Monitors the emergency verse output file and emits a signal when it is cleared.
 
     This watcher is designed to run inside a `QThread` loop (polling-based).
-    It reads :data:`core.config.paths.VERSE_FILE` periodically and tracks the last observed content.
+    It reads :py:data:`core.config.paths.VERSE_FILE` periodically and tracks the last observed content.
     When the file transitions from non-empty content to an empty string, it emits
     ``interruptor_cleared``.
 

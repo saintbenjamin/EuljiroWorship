@@ -86,7 +86,7 @@ class KeywordResultTableModelLight(QAbstractTableModel):
         """
         Load localized Bible book names from the standard book definition file.
 
-        Reads the JSON file defined by :data:`core.config.paths.STANDARD_BOOK_FILE` and extracts
+        Reads the JSON file defined by :py:data:`core.config.paths.STANDARD_BOOK_FILE` and extracts
         Korean book names for display in the reference column.
 
         Returns:

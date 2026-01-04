@@ -8,11 +8,11 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-Watches :data:`core.config.paths.VERSE_FILE` and converts it into slide JSON
-written to :data:`core.config.paths.SLIDE_FILE` for real-time display by the slide controller.
+Watches :py:data:`core.config.paths.VERSE_FILE` and converts it into slide JSON
+written to :py:data:`core.config.paths.SLIDE_FILE` for real-time display by the slide controller.
 
 This module runs as a small background helper process. It uses `watchdog <https://pypi.org/project/watchdog/>`_ to
-monitor the project base directory for changes to the :data:`core.config.paths.VERSE_FILE`, then
+monitor the project base directory for changes to the :py:data:`core.config.paths.VERSE_FILE`, then
 parses the content into one or more slide dictionaries.
 
 Key behaviors
@@ -22,7 +22,7 @@ Key behaviors
 - Otherwise, it treats the file as a free-form emergency message and generates
   style "lyrics" slides grouped by up to 2 lines (or by character budget).
 - Before overwriting the slide file, it may create a backup at
-  :data:`core.config.paths.SLIDE_BACKUP_FILE` (only if the backup file does not already exist).
+  :py:data:`core.config.paths.SLIDE_BACKUP_FILE` (only if the backup file does not already exist).
 """
 
 import sys, os
@@ -154,8 +154,8 @@ def backup_slide_if_not_emergency():
     """
     Create a backup copy of the current slide JSON file if no backup exists yet.
 
-    This function writes :data:`core.config.paths.SLIDE_BACKUP_FILE` only when that file does not
-    already exist. The source is :data:`core.config.paths.SLIDE_FILE` if it exists and can be read.
+    This function writes :py:data:`core.config.paths.SLIDE_BACKUP_FILE` only when that file does not
+    already exist. The source is :py:data:`core.config.paths.SLIDE_FILE` if it exists and can be read.
 
     The backup is intended to support restoration after an emergency subtitle
     session ends. The current implementation skips backup if the loaded slides
@@ -184,7 +184,7 @@ def save_slides(slides, path):
         slides (list[dict]):
             Slide dictionaries to write.
         path (str):
-            Destination JSON file path (typically :data:`core.config.paths.SLIDE_FILE`).
+            Destination JSON file path (typically :py:data:`core.config.paths.SLIDE_FILE`).
 
     Returns:
         None
@@ -194,24 +194,24 @@ def save_slides(slides, path):
 
 class VerseFileHandler(FileSystemEventHandler):
     """
-    Watchdog event handler for updates to :data:`core.config.paths.VERSE_FILE`.
+    Watchdog event handler for updates to :py:data:`core.config.paths.VERSE_FILE`.
 
     This handler listens for filesystem modification events and, when the target
     file is modified, parses it into slides and writes the resulting JSON to
-    :data:`core.config.paths.SLIDE_FILE`. If slides are generated, it attempts to create a backup
+    :py:data:`core.config.paths.SLIDE_FILE`. If slides are generated, it attempts to create a backup
     via :func:`controller.helper.verse_interruptor.backup_slide_if_not_emergency` before overwriting the slide file.
     """
 
     def on_modified(self, event):
         """
-        Handle `watchdog <https://pypi.org/project/watchdog/>`_ "modified" events for :data:`core.config.paths.VERSE_FILE`.
+        Handle `watchdog <https://pypi.org/project/watchdog/>`_ "modified" events for :py:data:`core.config.paths.VERSE_FILE`.
 
-        If the modified path matches the target :data:`core.config.paths.VERSE_FILE`, this callback:
+        If the modified path matches the target :py:data:`core.config.paths.VERSE_FILE`, this callback:
 
-        1) Parses :data:`core.config.paths.VERSE_FILE` into slide dictionaries.
+        1) Parses :py:data:`core.config.paths.VERSE_FILE` into slide dictionaries.
         2) If any slides were produced:
             - Creates a backup (if applicable)
-            - Writes slides to :data:`core.config.paths.SLIDE_FILE`
+            - Writes slides to :py:data:`core.config.paths.SLIDE_FILE`
         3) Otherwise logs that no slides were generated.
 
         Args:
@@ -234,9 +234,9 @@ class VerseFileHandler(FileSystemEventHandler):
 
 def start_interruptor():
     """
-    Start the `watchdog <https://pypi.org/project/watchdog/>`_ observer loop for :data:`core.config.paths.VERSE_FILE`.
+    Start the `watchdog <https://pypi.org/project/watchdog/>`_ observer loop for :py:data:`core.config.paths.VERSE_FILE`.
 
-    This sets up an Observer to watch :data:`core.config.paths.BASE_DIR` (non-recursive) and uses
+    This sets up an Observer to watch :py:data:`core.config.paths.BASE_DIR` (non-recursive) and uses
     :class:`controller.helper.verse_interruptor.VerseFileHandler` to react to modifications. The function then blocks the
     main thread in a sleep loop until interrupted (Ctrl+C).
 
