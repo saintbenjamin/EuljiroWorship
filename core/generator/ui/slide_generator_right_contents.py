@@ -43,17 +43,17 @@ class SlideGeneratorRightContents(QWidget):
 
     Supported slide styles:
 
-    - ``"anthem"``: Choir name and anthem title editor
-    - ``"corner"`` / ``"intro"``: Corner-style caption and headline
-    - ``"greet"``: Greeting or announcement text
-    - ``"hymn"``: Hymn editor (exported as lyrics-style slides)
-    - ``"lyrics"``: General lyrics editor with deferred line splitting
-    - ``"prayer"``: Prayer title and leader name
-    - ``"respo"``: Responsive reading editor
-    - ``"verse"``: Bible verse reference and preview editor
-    - ``"image"``: Image-based slide editor (path stored in ``headline``)
-    - ``"video"``: Video-based slide editor (path stored in ``headline``)
-    - ``"blank"``: Empty slide with no editable content
+        - ``"anthem"``: Choir name and anthem title editor
+        - ``"corner"`` / ``"intro"``: Corner-style caption and headline
+        - ``"greet"``: Greeting or announcement text
+        - ``"hymn"``: Hymn editor (exported as lyrics-style slides)
+        - ``"lyrics"``: General lyrics editor with deferred line splitting
+        - ``"prayer"``: Prayer title and leader name
+        - ``"respo"``: Responsive reading editor
+        - ``"verse"``: Bible verse reference and preview editor
+        - ``"image"``: Image-based slide editor (path stored in ``headline``)
+        - ``"video"``: Video-based slide editor (path stored in ``headline``)
+        - ``"blank"``: Empty slide with no editable content
 
     Attributes:
         style (str):
