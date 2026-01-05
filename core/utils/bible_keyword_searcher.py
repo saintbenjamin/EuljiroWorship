@@ -8,7 +8,7 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-Performs keyword-based search on Bible text files for EuljiroBible.
+Performs keyword-based search on Bible text files for EuljiroBible/EuljiroWorship.
 
 This module provides lightweight, in-memory keyword search functionality
 over a single Bible version JSON file. It is designed for fast interactive

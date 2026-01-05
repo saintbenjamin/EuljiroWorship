@@ -10,7 +10,7 @@
 
 Main window class for the EuljiroWorship slide generator GUI.
 
-This module defines the main Qt window (`SlideGenerator`) that drives the
+This module defines the main Qt window (:class:`core.generator.ui.slide_generator.SlideGenerator`) that drives the
 slide authoring workflow:
 
 - Manage a table of slides (add/insert/delete/reorder).
@@ -20,7 +20,7 @@ slide authoring workflow:
 - Open and apply persistent generator settings (fonts, paths, etc.).
 
 The generator is typically launched from the project entry point
-(`EuljiroWorship.py`) and interacts with a slide controller process
+(``EuljiroWorship.py``) and interacts with a slide controller process
 through exported JSON and the WebSocket-based overlay pipeline.
 """
 
@@ -38,9 +38,8 @@ from PySide6.QtGui import QFont
 
 from core.config import paths, style_map
 from core.generator.settings_generator import load_generator_settings
-from core.generator.settings_last_path import save_last_path, load_last_path
+from core.generator.settings_last_path import save_last_path
 from core.generator.ui.settings_dialog import SettingsDialog
-from core.generator.ui.slide_generator_dialog import SlideGeneratorDialog
 from core.generator.ui.slide_generator_ui_builder import SlideGeneratorUIBuilder
 from core.generator.ui.slide_table_manager import SlideTableManager
 from core.generator.utils.slide_exporter import SlideExporter
@@ -49,30 +48,29 @@ from core.plugin.slide_controller_launcher import SlideControllerLauncher
 
 class SlideGenerator(QMainWindow):
     """
-    Main window for the EuljiroWorship slide generator (PySide6/Qt).
+    Main window for the EuljiroWorship slide generator (`PySide6 <https://pypi.org/project/PySide6/>`_ / Qt).
 
     The generator provides a table-based slide session editor and supports:
+
     - Creating, inserting, deleting, and reordering slide rows in a table
     - Editing each slide via a style-specific modal dialog (on double-click)
     - Loading/saving slide sessions as JSON files
     - Exporting an overlay-ready JSON (prepends a blank slide for clean initial state)
     - Launching the slide controller for live output (if not already running)
 
-    Core collaborators (high-level)
-    -------------------------------
-    - SlideTableManager:
+    Core collaborators (high-level):
+
+    - :class:`core.generator.ui.slide_table_manager.SlideTableManager`:
         Owns table row operations (add/insert/delete/move) for the main table widget.
-    - SlideGeneratorDataManager:
+    - :class:`core.generator.utils.slide_generator_data_manager.SlideGeneratorDataManager`:
         Loads/saves and collects slide session data from the table.
-    - SlideExporter:
+    - :class:`core.generator.utils.slide_exporter.SlideExporter`:
         Converts the internal slide session into the overlay JSON format.
-    - SlideControllerLauncher:
+    - :class:`core.plugin.slide_controller_launcher.SlideControllerLauncher`:
         Launches the controller process/UI that pushes slides to the overlay target.
 
-    Notes
-    -----
-    - On startup, this window may show a file-open dialog to load an existing session.
-      If the user cancels, a blank session is created.
+    Note:
+        - On startup, this window may show a file-open dialog to load an existing session. If the user cancels, a blank session is created.
     """
 
     def __init__(self):
@@ -80,10 +78,10 @@ class SlideGenerator(QMainWindow):
         Construct the main generator window and initialize the UI state.
 
         This initializer:
+
         - Creates and configures the main slide table widget
         - Initializes core helper components (table manager, data manager, UI builder, launcher)
-        - Prompts the user to load an existing slide session via an OS file dialog
-        (if canceled, starts with a blank session)
+        - Prompts the user to load an existing slide session via an OS file dialog (if canceled, starts with a blank session)
 
         Args:
             None
@@ -151,7 +149,7 @@ class SlideGenerator(QMainWindow):
 
         If no previous save path exists, a timestamp-based filename is generated
         in the current working directory. The session data is collected from the
-        table via ``SlideGeneratorDataManager.collect_slide_data()`` and written
+        table via :meth:`core.generator.utils.slide_generator_data_manager.SlideGeneratorDataManager.collect_slide_data()` and written
         as UTF-8 JSON.
 
         Args:
@@ -181,8 +179,8 @@ class SlideGenerator(QMainWindow):
         Handle the Ctrl+S shortcut for saving.
 
         Behavior:
-        - If this is the first save in the current session (or no prior save path exists),
-        triggers a "save as" flow that prompts the user for a path.
+
+        - If this is the first save in the current session (or no prior save path exists), triggers a "save as" flow that prompts the user for a path.
         - Otherwise, saves to the last known path and shows a confirmation dialog.
 
         Args:
@@ -206,6 +204,7 @@ class SlideGenerator(QMainWindow):
         current working directory is used.
 
         After loading:
+
         - The table is populated via the data manager
         - The worship/session name label is updated from the filename stem
         - ``first_save_done`` is reset so the next Ctrl+S follows the intended flow
@@ -273,12 +272,12 @@ class SlideGenerator(QMainWindow):
         Save the current slide session as a JSON file.
 
         Save destination selection rules:
+
         - If ``path`` is provided, saves directly to that path.
-        - Else if ``force_dialog`` is False and ``self.last_saved_path`` exists,
-        saves to ``self.last_saved_path`` without prompting.
+        - Else if ``force_dialog`` is False and ``self.last_saved_path`` exists, saves to ``self.last_saved_path`` without prompting.
         - Otherwise, opens an OS file-save dialog and saves to the chosen path.
 
-        The slide session is collected via ``SlideGeneratorDataManager.collect_slide_data()``
+        The slide session is collected via :meth:`core.generator.utils.slide_generator_data_manager.SlideGeneratorDataManager.collect_slide_data()`
         and written as UTF-8 JSON.
 
         Args:
@@ -350,10 +349,11 @@ class SlideGenerator(QMainWindow):
         Export the current session into overlay-ready JSON and launch the controller.
 
         Steps:
+
         1) Collect slide session data from the table.
         2) Prepend a blank slide to ensure a clean initial screen.
-        3) Convert slides into overlay format via ``SlideExporter``.
-        4) Write the exported JSON to ``paths.SLIDE_FILE`` (UTF-8).
+        3) Convert slides into overlay format via :class:`core.generator.utils.slide_exporter.SlideExporter`.
+        4) Write the exported JSON to :py:data:`core.config.paths.SLIDE_FILE` (UTF-8).
         5) Launch the slide controller if it is not already running.
 
         Args:
@@ -384,11 +384,11 @@ class SlideGenerator(QMainWindow):
         Open the style-specific slide editor dialog for the selected table row.
 
         This method:
+
         - Reads the current style/caption/headline values from the table row
         - Converts the displayed style label into an internal style key
-        - Opens ``SlideGeneratorDialog`` as a modal editor
-        - If the user accepts, writes the updated values back into the table
-        and triggers a save flow
+        - Opens :class:`core.generator.ui.slide_generator_dialog.SlideGeneratorDialog` as a modal editor
+        - If the user accepts, writes the updated values back into the table and triggers a save flow
 
         Args:
             row (int):
@@ -431,6 +431,7 @@ class SlideGenerator(QMainWindow):
         Open the generator settings dialog and apply changes if accepted.
 
         If the dialog is accepted:
+
         - Settings are persisted via the dialog's save routine
         - Font settings are (intended to be) applied to the generator UI
 
@@ -449,7 +450,8 @@ class SlideGenerator(QMainWindow):
         """
         Apply the current persistent font settings to the generator UI.
 
-        Reads the generator settings and constructs a ``QFont`` using:
+        Reads the generator settings and constructs a `QFont` using:
+
         - ``font_family`` (default: "Malgun Gothic")
         - ``font_size``   (default: 24)
         - ``font_weight`` (default: "Normal"; "Bold" enables bold)

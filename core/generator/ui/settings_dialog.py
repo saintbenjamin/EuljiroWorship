@@ -10,14 +10,14 @@
 
 Settings dialog for the slide generator and controller.
 
-This module defines `SettingsDialog`, a modal dialog that allows users to
+This module defines :class:`core.generator.ui.settings_dialog.SettingsDialog`, a modal dialog that allows users to
 configure persistent UI-related settings shared by the slide generator
 (and controller), including:
 
 - Font family
 - Font size
 - Font weight
-- Output path for the emergency subtitle file (e.g., `verse_output.txt`)
+- Output path for the emergency subtitle file (e.g., ``verse_output.txt``)
 
 Settings are stored in a JSON file at a well-defined location and are
 loaded automatically when the dialog is opened.
@@ -46,20 +46,20 @@ class SettingsDialog(QDialog):
     path of the emergency subtitle output file.
 
     The dialog follows a simple lifecycle:
+
     - Load persisted settings on construction.
     - Allow the user to modify values via UI controls.
     - Persist updated settings when accepted.
 
-    Attributes
-    ----------
-    font_combo : QFontComboBox
-        Font family selector.
-    size_spin : QSpinBox
-        Font size selector.
-    weight_combo : QComboBox
-        Font weight selector.
-    path_line : QLineEdit
-        Text field for the emergency subtitle file path.
+    Attributes:
+        font_combo (QFontComboBox):
+            Font family selector.
+        size_spin (QSpinBox):
+            Font size selector.
+        weight_combo (QComboBox):
+            Font weight selector.
+        path_line (QLineEdit):
+            Text field for the emergency subtitle file path.
     """
 
     def __init__(self, parent=None):

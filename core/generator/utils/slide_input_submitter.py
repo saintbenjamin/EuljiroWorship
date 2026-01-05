@@ -10,7 +10,7 @@
 
 Handles submission logic for slide input forms in the slide generator UI.
 
-This module defines `SlideInputSubmitter`, which listens for Enter key presses
+This module defines :class:`core.generator.utils.slice_input_submitter.SlideInputSubmitter`, which listens for Enter key presses
 on specified input widgets and triggers slide generation. It allows Shift+Enter
 to insert line breaks in multi-line fields.
 """
@@ -28,21 +28,22 @@ class SlideInputSubmitter(QObject):
     "submit" trigger.
 
     Behavior rules:
+
     - Enter/Return triggers submission.
     - Shift+Enter is treated as a literal newline (i.e., it does *not* submit).
     - Widgets listed in `ignore_widgets` are excluded from Enter-submit handling.
 
-    Notes
-    -----
-    Submission is performed by calling `build_slide_func()`. If it returns a falsy value
-    (None / empty), nothing happens. If the generator exposes `save_slides_to_file`,
-    the submitter will save automatically after a successful build.
+    Note:
+
+        Submission is performed by calling ``build_slide_func()``. If it returns a falsy value
+        (None / empty), nothing happens. If the generator exposes :meth:`core.generator.ui.slide_generator.SlideGenerator.save_slides_to_file`,
+        the submitter will save automatically after a successful build.
 
     Args:
         inputs (dict[str, QWidget]): Mapping of logical input names to widget instances.
             All widgets in this mapping receive this object's event filter.
         generator (QWidget): The generator window/controller instance. If it provides
-            `save_slides_to_file(show_message: bool)`, it will be called after submission.
+            :meth:`core.generator.ui.slide_generator.SlideGenerator.save_slides_to_file`, it will be called after submission.
         build_slide_func (Callable[[], dict | list | None]): Callable that constructs
             slide data (single dict or list of dicts) from current widget state.
         ignore_widgets (list[QWidget] | None): Optional list of widgets whose Enter key
@@ -79,7 +80,7 @@ class SlideInputSubmitter(QObject):
         """
         Intercept keypress events to detect Enter-submit.
 
-        - If `obj` is in `ignore_widgets`, this filter does nothing.
+        - If ``obj`` is in ``ignore_widgets``, this filter does nothing.
         - If the key is Enter/Return:
             - Shift+Enter passes through (newline behavior).
             - Otherwise, submit and consume the key event.
@@ -108,9 +109,10 @@ class SlideInputSubmitter(QObject):
         Build and persist slide data using the registered callback.
 
         Workflow:
-        1) Call `build_slide_func()` to obtain slide data.
+
+        1) Call ``build_slide_func()`` to obtain slide data.
         2) If slide data is falsy, do nothing.
-        3) If the generator provides `save_slides_to_file`, save silently.
+        3) If the generator provides :meth:`core.generator.ui.slide_generator.SlideGenerator.save_slides_to_file`, save silently.
         4) Restore focus to the first registered input widget for fast iteration.
         """
         result = self.build_slide_func()

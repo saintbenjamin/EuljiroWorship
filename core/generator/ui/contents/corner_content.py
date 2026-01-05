@@ -8,15 +8,15 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-UI content widget for editing 'corner' style slides.
+UI content widget for editing "corner" style slides.
 
-This module defines `CornerContent`, a QWidget that provides simple text
-inputs for creating corner-style slides. A corner slide typically displays
+This module defines :class:`core.generator.ui.contents.corner_content.CornerContent`, a `QWidget` that provides simple text
+inputs for creating "corner"-style slides. A "corner" slide typically displays
 a short headline and a caption in a fixed corner position on the screen,
 and is commonly used for sermon titles, worship order sections, or brief
 section headers.
 
-The widget integrates with `SlideInputSubmitter` to support automatic
+The widget integrates with :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to support automatic
 submission and synchronization with the parent generator window.
 """
 
@@ -25,14 +25,15 @@ from core.generator.utils.slide_input_submitter import SlideInputSubmitter
 
 class CornerContent(QWidget):
     """
-    Content editor widget for 'corner' style slides.
+    Content editor widget for "corner" style slides.
 
     This widget provides input fields for:
+
     - Headline text (main title)
     - Caption text (subtitle or secondary label)
 
     The collected input is converted into a slide data dictionary
-    containing `style`, `caption`, and `headline` fields.
+    containing ``style``, ``caption``, and ``headline`` fields.
     """
 
     def __init__(self, parent, generator_window, caption: str = "", headline: str = ""):
@@ -61,11 +62,11 @@ class CornerContent(QWidget):
 
     def build_ui(self):
         """
-        Construct the UI elements for editing a corner-style slide.
+        Construct the UI elements for editing a "corner"-style slide.
 
         This method creates labeled input fields for headline and caption,
         arranges them vertically, and registers the inputs with
-        `SlideInputSubmitter` to enable automatic submission.
+        :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to enable automatic submission.
 
         Args:
             None
@@ -130,6 +131,7 @@ class CornerContent(QWidget):
         Returns:
             dict:
                 Dictionary representing the corner slide, including:
+
                 - style
                 - caption
                 - headline

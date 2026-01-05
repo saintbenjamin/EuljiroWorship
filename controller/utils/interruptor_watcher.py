@@ -89,7 +89,7 @@ class InterruptorWatcher(QObject):
         - If the content transitions from non-empty to empty, emit ``interruptor_cleared``.
         - Sleep for ``poll_interval`` seconds between polls.
 
-        Notes:
+        Note:
             - This is a polling-based watcher (not filesystem event-based).
             - Intended to be executed in a background `QThread`.
 

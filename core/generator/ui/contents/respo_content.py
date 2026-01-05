@@ -8,15 +8,15 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-UI content widget for editing 'respo' (responsive reading) style slides.
+UI content widget for editing "respo" (responsive reading) style slides.
 
-This module defines `RespoContent`, a QWidget that provides a table-based
+This module defines :class:`core.generator.ui.contents.respo_content.RespoContent`, a `QWidget` that provides a table-based
 editor for responsive readings (교독문). Each slide consists of a title
-and a sequence of speaker–response pairs, which are rendered as formatted
+and a sequence of speaker-response pairs, which are rendered as formatted
 HTML for slide output.
 
 The widget supports loading and saving responsive readings from JSON files
-stored under `data/respo/`, and integrates with `SlideInputSubmitter` for
+stored under ``data/respo/``, and integrates with :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` for
 automatic synchronization with the slide generator.
 """
 
@@ -35,12 +35,13 @@ from core.generator.utils.slide_input_submitter import SlideInputSubmitter
 
 class RespoContent(QWidget):
     """
-    Content editor widget for 'respo' (responsive reading) slides.
+    Content editor widget for "respo" (responsive reading) slides.
 
     This widget allows users to:
+
     - Select a responsive reading by number
     - Edit the title of the reading
-    - Edit speaker–response pairs using a table interface
+    - Edit speaker-response pairs using a table interface
 
     The table contents are converted into formatted HTML and exported
     as slide data for rendering.
@@ -77,6 +78,7 @@ class RespoContent(QWidget):
         Construct the UI layout for responsive reading editing.
 
         The layout includes:
+
         - A number input field with load button
         - A title input field
         - A two-column table for speaker and response text
@@ -142,8 +144,8 @@ class RespoContent(QWidget):
         Load responsive reading data from a JSON file.
 
         The JSON file is selected based on the number entered by the user
-        and must exist under the `data/respo/` directory. The loaded data
-        populates the title field and the speaker–response table.
+        and must exist under the ``data/respo/`` directory. The loaded data
+        populates the title field and the speaker-response table.
 
         Displays a warning dialog if the input is invalid or out of range.
         """
@@ -200,7 +202,7 @@ class RespoContent(QWidget):
         """
         Determine the valid range of responsive reading numbers.
 
-        Scans the `data/respo/` directory for available JSON files and
+        Scans the ``data/respo/`` directory for available JSON files and
         extracts their numeric identifiers.
 
         Returns:
@@ -221,7 +223,8 @@ class RespoContent(QWidget):
         Returns:
             dict:
                 Dictionary containing:
-                - style: 'respo'
+
+                - style: "respo"
                 - caption: title of the responsive reading
                 - headline: formatted HTML body
         """
@@ -257,7 +260,7 @@ class RespoContent(QWidget):
         Save the current responsive reading data to a JSON file.
 
         The data is written back to the file corresponding to the selected
-        responsive reading number under `data/respo/`. A warning is shown
+        responsive reading number under ``data/respo/``. A warning is shown
         if no valid number is provided.
         """
         num = self.number_input.text().strip()

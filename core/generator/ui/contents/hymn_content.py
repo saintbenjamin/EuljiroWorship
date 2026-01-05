@@ -8,15 +8,15 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-UI content widget for editing 'hymn' style slides.
+UI content widget for editing "hymn" style slides.
 
-This module defines `HymnContent`, a QWidget that provides an interface for
-editing hymn-based slides. It supports selecting a hymn by number, loading
+This module defines :class:`core.generator.ui.contents.hymn_content.HymnContent`, a `QWidget` that provides an interface for
+editing "hymn"-based slides. It supports selecting a hymn by number, loading
 its title and lyrics from local JSON files, editing the content, and saving
 updates back to the hymn database.
 
 Hymn data is stored as JSON files under a predefined directory (e.g.,
-`data/hymns/`), and this widget serves as a lightweight editor and viewer
+``data/hymns/``), and this widget serves as a lightweight editor and viewer
 for that dataset within the slide generator.
 """
 
@@ -36,9 +36,10 @@ from core.generator.utils.slide_input_submitter import SlideInputSubmitter
 
 class HymnContent(QWidget):
     """
-    Content editor widget for 'hymn' style slides.
+    Content editor widget for "hymn" style slides.
 
     This widget provides input fields and controls for:
+
     - Selecting a hymn by number
     - Viewing and editing the hymn title
     - Viewing and editing the hymn lyrics
@@ -228,6 +229,7 @@ class HymnContent(QWidget):
         Returns:
             dict:
                 Dictionary representing the hymn slide, including:
+
                 - style
                 - caption (hymn title)
                 - headline (lyrics)

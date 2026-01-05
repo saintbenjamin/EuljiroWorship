@@ -8,15 +8,15 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-UI content widget for editing 'greet' style slides.
+UI content widget for editing "greet" style slides.
 
-This module defines `GreetContent`, a QWidget that provides input fields
+This module defines :class:`core.generator.ui.contents.greet_content.GreetContent`, a `QWidget` that provides input fields
 for greeting or message-style slides. These slides are typically used for
 welcome messages, sermon titles with extended descriptions, or other
 freeform announcements.
 
 The widget supports a short caption and a multiline headline, and integrates
-with `SlideInputSubmitter` to enable automatic submission and synchronization
+with :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to enable automatic submission and synchronization
 with the parent generator window.
 """
 
@@ -25,14 +25,15 @@ from core.generator.utils.slide_input_submitter import SlideInputSubmitter
 
 class GreetContent(QWidget):
     """
-    Content editor widget for 'greet' style slides.
+    Content editor widget for "greet"-style slides.
 
     This widget provides input fields for:
+
     - Caption: A short reference or subtitle (e.g., Bible reference)
     - Headline: A multiline main message or greeting text
 
     The collected input is converted into a slide data dictionary
-    containing `style`, `caption`, and `headline` fields.
+    containing ``style``, ``caption``, and ``headline`` fields.
     """
 
     def __init__(self, parent, generator_window, caption: str = "", headline: str = ""):
@@ -61,11 +62,11 @@ class GreetContent(QWidget):
 
     def build_ui(self):
         """
-        Construct the UI elements for editing a greet-style slide.
+        Construct the UI elements for editing a "greet"-style slide.
 
         This method creates labeled input fields for caption and multiline
         headline content, arranges them vertically, and registers the inputs
-        with `SlideInputSubmitter` to enable automatic submission.
+        with :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to enable automatic submission.
 
         Args:
             None
@@ -129,6 +130,7 @@ class GreetContent(QWidget):
         Returns:
             dict:
                 Dictionary representing the greet slide, including:
+
                 - style
                 - caption
                 - headline

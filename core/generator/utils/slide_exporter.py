@@ -11,7 +11,7 @@
 Slide export pipeline for converting generator slide data into
 overlay-ready slide blocks.
 
-This module defines the SlideExporter class, which takes structured
+This module defines the :class:`core.generator.utils.slide_exporter.SlideExporter` class, which takes structured
 slide dictionaries produced by the generator UI and transforms them
 into a flattened sequence of slides suitable for real-time overlay
 display. The exporter applies style-specific rules such as line
@@ -69,7 +69,7 @@ class SlideExporter:
         Args:
             settings (dict | None):
                 Optional configuration dictionary.
-                If provided, "max_chars" controls the maximum number of
+                If provided, ``max_chars`` controls the maximum number of
                 characters allowed per exported text block.
         """
         self.max_chars = (settings or {}).get("max_chars", 60)
@@ -86,6 +86,7 @@ class SlideExporter:
             raw_slides (list[dict]):
                 List of slide dictionaries produced by the generator.
                 Each dictionary is expected to include at least:
+
                 - "style"
                 - "caption"
                 - "headline"
@@ -193,7 +194,7 @@ class SlideExporter:
         """
         Split a text string into smaller chunks by character count.
 
-        This helper delegates to `split_by_length`, using the configured
+        This helper delegates to :func:`core.generator.utils.text_splitter.split_by_length`, using the configured
         maximum character length for exported slides.
 
         Args:

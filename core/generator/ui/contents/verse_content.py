@@ -8,9 +8,9 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-UI content widget for editing 'verse' style slides.
+UI content widget for editing "verse"-style slides.
 
-This module defines `VerseContent`, a QWidget that provides an interface
+This module defines :class:`core.generator.ui.contents.verse_content.VerseContent`, a `QWidget` that provides an interface
 for entering Bible references, fetching the corresponding verses from
 the internal Bible data engine, and previewing the formatted output.
 
@@ -19,7 +19,7 @@ The widget supports:
 - Selecting a Bible version
 - Parsing and validating Scripture references
 - Expanding verse ranges and full chapters
-- Writing fetched verses to `verse_output.txt` for emergency overlay use
+- Writing fetched verses to :py:data:`core.config.paths.VERSE_FILE` for emergency overlay use
 """
 
 import os
@@ -38,13 +38,13 @@ from core.utils.bible_parser import parse_reference
 
 class VerseContent(QWidget):
     """
-    Content editor widget for 'verse' (Bible verse) slides.
+    Content editor widget for "verse" (Bible verse) slides.
 
     This widget allows the user to input a Bible reference
     (e.g., "요한복음 3:16"), fetch the corresponding verse text from
     the selected Bible version, and preview the formatted output.
 
-    The fetched verses are also written to `verse_output.txt` to support
+    The fetched verses are also written to :py:data:`core.config.paths.VERSE_FILE` to support
     emergency subtitle overlays.
     """
 
@@ -79,6 +79,7 @@ class VerseContent(QWidget):
         Construct the UI layout for verse editing.
 
         The layout includes:
+
         - A Bible version selector
         - A reference input field
         - A multi-line text preview for verse content
@@ -132,11 +133,12 @@ class VerseContent(QWidget):
         Fetch and display Bible verses based on the entered reference.
 
         This method:
+
         - Parses the reference string
         - Loads the selected Bible version
         - Expands verse ranges or full chapters if needed
         - Formats and displays the verse text
-        - Writes the output to `verse_output.txt`
+        - Writes the output to :py:data:`core.config.paths.VERSE_FILE`
 
         Displays an error message in the preview area if parsing or loading fails.
         """
@@ -211,7 +213,8 @@ class VerseContent(QWidget):
         Returns:
             dict:
                 Dictionary containing:
-                - style: 'verse'
+
+                - style: "verse"
                 - caption: Bible reference string
                 - headline: Verse text content
         """

@@ -21,17 +21,19 @@ def split_by_length(text: str, max_chars: int = 60) -> list[str]:
     """
     Split a text string into multiple chunks constrained by a maximum character length.
 
-    This helper uses Python's `textwrap.wrap()` to break a long string into
+    This helper uses Python's `textwrap.wrap <https://docs.python.org/3/library/textwrap.html#textwrap.wrap>`_ to break a long string into
     word-aware segments. Line breaks are inserted at appropriate word boundaries
     whenever possible, ensuring that each resulting chunk does not exceed
-    `max_chars` characters.
+    ``max_chars`` characters.
 
     This function is intentionally simple and presentation-oriented:
+
     - It does not preserve original newlines.
     - It does not apply hyphenation.
     - It assumes the input text is a single logical paragraph.
 
     Typical use cases include:
+
     - Splitting long Bible verses for overlay display.
     - Breaking lyrics or responsive readings into readable slide units.
 

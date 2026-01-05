@@ -18,9 +18,11 @@ Key responsibilities:
 
 - Resolve book name aliases into canonical internal IDs
 - Parse flexible reference formats such as:
-  - "요 3"
-  - "요한복음 3:16"
-  - "John 3:14-16"
+
+    - "요 3"
+    - "요한복음 3:16"
+    - "John 3:14-16"
+
 - Support chapter-only references and full verse ranges
 
 The parser is intentionally permissive and designed for use in
@@ -47,9 +49,10 @@ def resolve_book_name(name: str, lang_map: dict = None, lang_code: str = "ko") -
     Resolve a user-provided book name to a canonical internal book ID.
 
     This function attempts resolution using multiple strategies:
-    1. Direct alias matching from `BOOK_ALIASES`
+
+    1. Direct alias matching from ``BOOK_ALIASES``
     2. Reverse matching against canonical IDs
-    3. Optional fallback using localized names from `standard_book.json`
+    3. Optional fallback using localized names from :py:data:`core.config.paths.STANDARD_BOOK_FILE`
 
     All comparisons are performed using normalized strings
     (lowercased, whitespace and dot characters removed).
@@ -102,14 +105,15 @@ def parse_reference(text: str):
     Parse a Bible reference string into structured components.
 
     Supported input formats include:
-        "<book> <chapter>"
-        "<book> <chapter>:<verse>"
-        "<book> <chapter>:<start>-<end>"
+        - "<book> <chapter>"
+        - "<book> <chapter>:<verse>"
+        - "<book> <chapter>:<start>-<end>"
 
     Examples:
-        "요 3"
-        "요한복음 3:16"
-        "John 3:14-16"
+
+        - "요 3"
+        - "요한복음 3:16"
+        - "John 3:14-16"
 
     If only a chapter is provided, the verse range is interpreted
     as the full chapter.
@@ -120,8 +124,8 @@ def parse_reference(text: str):
 
     Returns:
         tuple[str, int, tuple[int, int]] | None:
-            A tuple of (book_id, chapter_number, verse_range),
-            where verse_range is (start, end) and end == -1
+            A tuple of ``(book_id, chapter_number, verse_range)``,
+            where ``verse_range`` is ``(start, end)`` and ``end == -1``
             indicates the full chapter.
 
             Returns None if parsing or resolution fails.

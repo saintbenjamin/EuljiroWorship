@@ -68,7 +68,7 @@ class EmergencyCaptionDialog(QDialog):
 
     - Non-Bible emergency slide generation
         - User chooses a slide style from :py:data:`core.config.style_map.STYLE_ALIASES`.
-        - For preset-based styles (e.g., "respo"/"hymn"), numeric inputs can load presets.
+        - For preset-based styles (e.g., "respo" / "hymn"), numeric inputs can load presets.
         - Otherwise, a manual slide is created from caption/headline inputs.
 
     Generated slides are stored in ``self.finalized_slides`` and can be retrieved

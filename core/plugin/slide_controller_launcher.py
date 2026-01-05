@@ -11,7 +11,7 @@
 Launches and manages the slide controller subprocess for integrated slide output control.
 
 This module provides a small utility class responsible for starting the
-slide controller (`controller/slide_controller.py`) as a subprocess.
+slide controller (:mod:`controller.slide_controller`) as a subprocess.
 It ensures that the controller is launched only once and keeps track
 of the running process for basic status checks.
 
@@ -73,6 +73,7 @@ class SlideControllerLauncher:
         without performing any action.
 
         If the launch fails, an error message is reported as follows:
+        
         - If a Qt parent widget is provided, a warning dialog is shown.
         - Otherwise, the error is printed to standard output.
 

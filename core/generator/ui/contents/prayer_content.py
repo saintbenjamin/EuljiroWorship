@@ -8,13 +8,13 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-UI content widget for editing 'prayer' style slides.
+UI content widget for editing "prayer"-style slides.
 
-This module defines `PrayerContent`, a QWidget that provides input fields
+This module defines :class:`core.generator.ui.contents.prayer_content.PrayerContent`, a `QWidget` that provides input fields
 for creating prayer slides. A prayer slide typically consists of a short
 title (e.g., "기도") and the name of the person leading the prayer.
 
-The widget integrates with `SlideInputSubmitter` to support automatic
+The widget integrates with :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to support automatic
 submission and synchronization with the parent slide generator.
 """
 
@@ -24,14 +24,15 @@ from core.generator.utils.slide_input_submitter import SlideInputSubmitter
 
 class PrayerContent(QWidget):
     """
-    Content editor widget for 'prayer' style slides.
+    Content editor widget for "prayer"-style slides.
 
     This widget allows users to specify:
+
     - A short prayer title (usually "기도")
     - The name of the prayer leader
 
     The entered values are exported as a simple slide dictionary and
-    rendered using the 'prayer' slide style.
+    rendered using the "prayer"-slide style.
     """
 
     def __init__(self, parent, generator_window, caption: str = "기도", headline: str = ""):
@@ -64,7 +65,7 @@ class PrayerContent(QWidget):
 
         This method creates labeled input fields for the prayer title and
         the prayer leader's name, arranges them vertically, and registers
-        the inputs with `SlideInputSubmitter` to enable automatic submission.
+        the inputs with :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to enable automatic submission.
 
         Args:
             None
@@ -125,6 +126,7 @@ class PrayerContent(QWidget):
         Returns:
             dict:
                 Dictionary representing the prayer slide, including:
+
                 - style
                 - caption (prayer title)
                 - headline (prayer leader name)

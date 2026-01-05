@@ -10,10 +10,10 @@
 
 UI builder for the Slide Generator main window.
 
-This module defines `SlideGeneratorUIBuilder`, a helper class responsible for
+This module defines :class:`core.generator.ui.slide_generator_ui_builder.SlideGeneratorUIBuilder`, a helper class responsible for
 constructing and wiring the full Qt UI layout of the slide generator window.
 It separates UI composition from application logic to keep the main window
-class (`SlideGenerator`) focused on workflow and state management.
+class (:class:`core.generator.ui.slide_generator.SlideGenerator`) focused on workflow and state management.
 
 The builder assembles:
 
@@ -41,38 +41,47 @@ class SlideGeneratorUIBuilder:
     It does not own application state; instead, it assumes that the parent
     provides the necessary widgets and methods.
 
-    Constructed UI elements
-    -----------------------
+    Constructed UI elements:
+
     - A horizontal toolbar of action buttons (with SVG icons)
     - A label displaying the current worship/session name
     - The central slide table widget
     - A 'Tools > Settings' menu entry
     - Keyboard shortcuts and signal-slot connections
 
-    Required parent interface
-    -------------------------
-    The parent object is expected to provide at least:
-    - `table` (QTableWidget): main slide table widget
-    - `menuBar()` -> QMenuBar
-    - `table_manager`: row manipulation logic
-    - `load_from_file()`: load slide session
-    - `save_as()`: save slide session
-    - `export_slides_for_overlay()`: export overlay JSON
-    - `open_settings_dialog()`: open settings dialog
-    - `handle_table_double_click(row, column)`: edit slide dialog
-    - `apply_generator_font_settings()`: apply font preferences
+    Required parent interface:
+
+        The parent object is expected to provide at least:
+        
+        - ``table`` (`QTableWidget`): 
+            main slide table widget
+        - ``menuBar()`` -> `QMenuBar`
+        - ``table_manager`` = :class:`core.generator.ui.slide_table_manager.SlideTableManager`: 
+            row manipulation logic
+        - :meth:`core.generator.ui.slide_generator.SlideGenerator.load_from_file`: 
+            load slide session
+        - :meth:`core.generator.ui.slide_generator.SlideGenerator.save_as`: 
+            save slide session
+        - :meth:`core.generator.ui.slide_generator.SlideGenerator.export_slides_for_overlay`: 
+            export overlay JSON
+        - :meth:`core.generator.ui.slide_generator.SlideGenerator.open_settings_dialog`: 
+            open settings dialog
+        - :meth:`core.generator.ui.slide_generator.SlideGenerator.handle_table_double_click`: 
+            edit slide dialog
+        - :meth:`core.generator.ui.slide_generator.SlideGenerator.apply_generator_font_settings`: 
+            apply font preferences
     """
     def __init__(self, parent, worship_name=""):
         """
         Initialize the UI builder and immediately construct the UI layout.
 
         This constructor stores references to the parent window and the initial
-        worship/session name, then calls `setup_ui()` to build and connect all
+        worship/session name, then calls :meth:`setup_ui` to build and connect all
         UI components.
 
         Args:
             parent (QMainWindow or QWidget):
-                The main SlideGenerator window that owns the UI and application logic.
+                The main :class:`core.generator.ui.slide_generator.SlideGenerator` window that owns the UI and application logic.
                 It must expose the methods and attributes required by this builder.
             worship_name (str):
                 Initial worship/session name to display above the slide table.
@@ -89,6 +98,7 @@ class SlideGeneratorUIBuilder:
         Construct and wire the complete slide generator UI.
 
         This method performs the following:
+    
         - Registers keyboard shortcuts (e.g., Ctrl+S for saving)
         - Creates action buttons with SVG icons and connects them to parent handlers
         - Assembles the button toolbar, label, and slide table into a vertical layout

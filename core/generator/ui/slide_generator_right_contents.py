@@ -10,10 +10,10 @@
 
 Dynamic right-hand content panel for the slide generator UI.
 
-This module defines `SlideGeneratorRightContents`, a QWidget responsible for
+This module defines :class:`core.generator.ui.slide_generator_right_contents.SlideGeneratorRightContents`, a `QWidget` responsible for
 hosting the style-specific input panes used to edit slide content. The widget
 acts as a dispatcher that selects and embeds the appropriate sub-pane based on
-the slide style (e.g., lyrics, verse, anthem).
+the slide style (e.g., "lyrics", "verse", "anthem").
 
 Each sub-pane encapsulates its own UI logic and data extraction method, allowing
 the generator to remain modular and extensible as new slide styles are added.
@@ -41,28 +41,28 @@ class SlideGeneratorRightContents(QWidget):
     (e.g., `LyricsContent`, `VerseContent`) that defines its own input fields
     and data extraction logic.
 
-    Supported slide styles
-    ----------------------
+    Supported slide styles:
+
     - "anthem": Choir name, title, and lyrics
     - "corner": Short caption displayed at the corner
     - "greet": Freeform greeting or announcement text
-    - "hymn": Hymn lyrics editor (exported as lyrics)
+    - "hymn": Hymn lyrics editor (exported as "lyrics")
     - "lyrics": General lyrics editor with line splitting
     - "prayer": Representative name or prayer leader
     - "respo": Responsive reading editor
     - "verse": Bible verse reference and preview editor
-    - "image": Image-based slide with caption/headline
+    - "image": Image-based slide with ``caption``/``headline``
+    - "video": Video-based slide with ``caption``/``headline``
     - "blank": Empty slide with no editable content
 
-    Attributes
-    ----------
-    style : str
-        Internal slide style key that determines which sub-pane is created.
-    subpane : QWidget
-        The embedded style-specific content widget.
-    generator_window : QWidget
-        Reference to the parent generator window, used by sub-panes for
-        callbacks or shared context.
+    Attributes:
+        style (str):
+            Internal slide style key that determines which sub-pane is created.
+        subpane (QWidget):
+            The embedded style-specific content widget.
+        generator_window (QWidget):
+            Reference to the parent generator window, used by sub-panes for
+            callbacks or shared context.
     """
 
     def __init__(self, style: str, generator_window, caption: str = "", headline: str = "", parent=None):
@@ -70,7 +70,7 @@ class SlideGeneratorRightContents(QWidget):
         Initialize the right-hand content panel for a specific slide style.
 
         This constructor selects the appropriate style-specific sub-pane and
-        embeds it into the panel layout. Initial caption and headline values
+        embeds it into the panel layout. Initial ``caption`` and ``headline`` values
         are passed through to the sub-pane to pre-fill the editor when editing
         an existing slide.
 
@@ -127,9 +127,9 @@ class SlideGeneratorRightContents(QWidget):
         """
         Retrieve the slide data from the active content sub-pane.
 
-        This method delegates to the embedded sub-pane's `get_slide_data()` method
+        This method delegates to the embedded sub-pane's :meth:`get_slide_data` method
         if it exists. If the current sub-pane does not implement data extraction
-        (e.g., blank slides), an empty dictionary is returned.
+        (e.g., "blank" slides), an empty dictionary is returned.
 
         Args:
             None

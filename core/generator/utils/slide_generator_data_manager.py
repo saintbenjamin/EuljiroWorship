@@ -10,7 +10,7 @@
 
 Data management layer for the slide generator table UI.
 
-This module defines SlideGeneratorDataManager, which is responsible for
+This module defines :class:`core.generator.utils.slide_generator_data?manager.SlideGeneratorDataManager`, which is responsible for
 loading slide data from JSON files into the generator table, collecting
 edited table contents back into structured slide dictionaries, and
 handling style-specific normalization (e.g., anthem choir names,
@@ -34,7 +34,7 @@ class SlideGeneratorDataManager:
 
     This class provides a thin data-adapter layer between JSON-based slide
     definitions and the generator table widget. It loads slide JSON data into the
-    ``QTableWidget`` and converts table rows back into structured slide
+    `QTableWidget` and converts table rows back into structured slide
     dictionaries. It also performs style-specific preprocessing and normalization,
     such as handling anthem choir names and verse formatting.
 
@@ -60,12 +60,14 @@ class SlideGeneratorDataManager:
         Load slide data from a JSON file and populate the generator table.
 
         This method:
-            - Clears the existing table
-            - Inserts rows matching the number of slides
-            - Applies style aliases to the style combo box
-            - Performs style-specific preprocessing:
-                * Merges anthem caption and choir name
-                * Formats multi-verse Bible slides for readability
+
+        - Clears the existing table
+        - Inserts rows matching the number of slides
+        - Applies style aliases to the style combo box
+        - Performs style-specific preprocessing:
+
+            * Merges anthem caption and choir name
+            * Formats multi-verse Bible slides for readability
 
         Args:
             path (str):
@@ -128,7 +130,7 @@ class SlideGeneratorDataManager:
 
         This method reads each table row and converts it into a slide
         dictionary using internal style keys. Style-specific handling
-        is applied where necessary (e.g., anthem caption/choir separation).
+        is applied where necessary (e.g., anthem ``caption``/``choir`` separation).
 
         Returns:
             list[dict]:
@@ -174,6 +176,7 @@ class SlideGeneratorDataManager:
         Insert a new empty slide row into the generator table.
 
         The row includes:
+
         - A style selection combo box
         - Empty caption and headline cells
         """

@@ -44,7 +44,7 @@ class SlideControllerUIBuilder:
     attaches widgets onto the controller instance (``self.c``), and wires up signals
     to the controller's navigation and emergency-caption handlers.
 
-    Notes:
+    Note:
         - Widgets are attached onto the controller instance as attributes
           (e.g., ``controller.label``, ``controller.table``, ``controller.page_input``).
         - The builder assumes :class:`controller.slide_controller.SlideController` already loaded ``slides`` and ``index``.

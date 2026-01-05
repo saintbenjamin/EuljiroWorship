@@ -158,14 +158,14 @@ class BibleDataLoader:
         prefix order followed by lexicographical ordering.
 
         This method is required by both GUI and CLI code paths.
-        DO NOT DELETE.
+        *DO NOT DELETE*.
 
         Args:
             None
 
         Returns:
             function:
-                Callable suitable for use as the `key` argument in sorted().
+                Callable suitable for use as the ``key`` argument in ``sorted()``.
         """
         def sort_key(version_name: str):
             prefix = version_name.split()[0]
@@ -323,7 +323,7 @@ class BibleDataLoader:
 
         Returns:
             dict:
-                Mapping of book_id -> localized name.
+                Mapping of ``book_id`` -> localized name.
         """
         return {
             book_id: data.get(lang_code, book_id)
@@ -340,7 +340,7 @@ class BibleDataLoader:
 
         Returns:
             dict:
-                Mapping of version_key -> alias string.
+                Mapping of ``version_key`` -> alias string.
         """
         alias_map = {}
         for k, v in self.aliases_version.items():

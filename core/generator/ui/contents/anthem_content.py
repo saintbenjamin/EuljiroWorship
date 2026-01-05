@@ -8,14 +8,14 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-UI content widget for editing 'anthem' style slides.
+UI content widget for editing "anthem" style slides.
 
-This module defines `AnthemContent`, a QWidget responsible for collecting
-input data required to generate an anthem-style slide. The widget provides
+This module defines :class:`core.generator.ui.contents.anthem_content.AnthemContent`, a `QWidget` responsible for collecting
+input data required to generate an "anthem"-style slide. The widget provides
 fields for specifying the choir name and the anthem title, and converts the
 input into a standardized slide dictionary used by the generator.
 
-The widget integrates with `SlideInputSubmitter` to support automatic
+The widget integrates with :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to support automatic
 submission and synchronization with the parent generator window.
 """
 
@@ -24,14 +24,15 @@ from core.generator.utils.slide_input_submitter import SlideInputSubmitter
 
 class AnthemContent(QWidget):
     """
-    Content editor widget for 'anthem' style slides.
+    Content editor widget for "anthem" style slides.
 
     This widget provides input fields for:
+
     - Choir or group name
     - Anthem title
 
     The collected input is transformed into a slide dictionary containing
-    `caption`, `caption_choir`, and `headline` fields, which are later used
+    ``caption``, ``caption_choir``, and ``headline`` fields, which are later used
     by the slide exporter and controller.
     """
 
@@ -61,11 +62,11 @@ class AnthemContent(QWidget):
 
     def build_ui(self):
         """
-        Construct the UI elements for editing an anthem slide.
+        Construct the UI elements for editing an "anthem"-style slide.
 
         This method builds input fields for the choir name and anthem title,
         arranges them vertically, and registers the inputs with
-        `SlideInputSubmitter` to enable automatic submission and synchronization
+        :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to enable automatic submission and synchronization
         with the generator window.
 
         Args:
@@ -140,6 +141,7 @@ class AnthemContent(QWidget):
         Returns:
             dict:
                 Dictionary representing the anthem slide, including:
+
                 - style
                 - caption
                 - caption_choir

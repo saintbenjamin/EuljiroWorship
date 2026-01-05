@@ -8,14 +8,14 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-UI content widget for editing 'lyrics' style slides.
+UI content widget for editing "lyrics" style slides.
 
-This module defines `LyricsContent`, a QWidget that provides input fields
+This module defines :class:`core.generator.ui.contents.lyrics_content.LyricsContent`, a `QWidget` that provides input fields
 for entering a song or praise title and its lyrics. The lyrics are entered
 as multiline text and are later split into multiple slides according to
 the generator's export rules (typically every two lines).
 
-The widget integrates with `SlideInputSubmitter` to support automatic
+The widget integrates with :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to support automatic
 submission and synchronization with the parent generator window.
 """
 
@@ -28,20 +28,21 @@ from core.generator.utils.slide_input_submitter import SlideInputSubmitter
 
 class LyricsContent(QWidget):
     """
-    Content editor widget for 'lyrics' style slides.
+    Content editor widget for "lyrics" style slides.
 
     This widget allows users to enter:
+
     - A title for the song or praise
     - Multiline lyrics text
 
-    The lyrics content is stored as raw text and later processed by the
+    The "lyrics" content is stored as raw text and later processed by the
     slide exporter, which splits the text into multiple slides according
     to predefined rules (e.g., two lines per slide).
     """
 
     def __init__(self, parent, generator_window, caption: str = "", headline: str = ""):
         """
-        Initialize the lyrics content editor.
+        Initialize the "lyrics"-style content editor.
 
         Args:
             parent (QWidget):
@@ -65,11 +66,11 @@ class LyricsContent(QWidget):
 
     def build_ui(self):
         """
-        Construct the UI elements for editing a lyrics-style slide.
+        Construct the UI elements for editing a "lyrics"-style slide.
 
         This method creates labeled input fields for the lyrics title and
         multiline lyrics content, arranges them vertically, and registers
-        the title input with `SlideInputSubmitter` to enable automatic
+        the title input with :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to enable automatic
         submission.
 
         Args:
@@ -101,7 +102,7 @@ class LyricsContent(QWidget):
 
     def build_lyrics_slide(self):
         """
-        Conditionally generate lyrics slide data.
+        Conditionally generate "lyrics"-style slide data.
 
         If both the title and lyrics fields are empty, no slide data is
         generated. Otherwise, the current input values are returned as a
@@ -122,7 +123,7 @@ class LyricsContent(QWidget):
 
     def get_slide_data(self) -> dict:
         """
-        Generate the slide data dictionary for a lyrics slide.
+        Generate the slide data dictionary for a "lyrics"-style slide.
 
         Args:
             None
@@ -130,6 +131,7 @@ class LyricsContent(QWidget):
         Returns:
             dict:
                 Dictionary representing the lyrics slide, including:
+
                 - style
                 - caption (song title)
                 - headline (raw lyrics text)

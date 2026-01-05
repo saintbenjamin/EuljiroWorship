@@ -25,8 +25,8 @@ def load_last_path():
     Load the most recently opened slide file path.
 
     This function reads the JSON file defined by
-    `paths.SETTING_LAST_OPEN_FILE` and extracts the stored
-    `"last_opened_file"` value.
+    :py:data:`core.config.paths.SETTING_LAST_OPEN_FILE` and extracts the stored
+    ``"last_opened_file"`` value.
 
     If the settings file does not exist or the key is missing,
     the function safely returns None.
@@ -46,7 +46,9 @@ def save_last_path(path):
     Save the most recently opened slide file path.
 
     The given path is written to a small JSON file located at
-    `paths.SETTING_LAST_OPEN_FILE`. The parent directory is
+    :py:data:`core.config.paths.SETTING_LAST_OPEN_FILE`. 
+    
+    The parent directory is
     created automatically if it does not already exist.
 
     Args:

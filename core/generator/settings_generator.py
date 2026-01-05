@@ -11,12 +11,12 @@
 Handles persistent generator settings for the Slide Generator/Controller.
 
 This module provides a small persistence layer for generator UI preferences,
-stored as a JSON file (`paths.SETTING_FILE`). It currently supports:
+stored as a JSON file (:py:data:`core.config.paths.SETTING_FILE`). It currently supports:
 
 - Font family (e.g., "Malgun Gothic")
 - Font size (int)
 - Font weight (string name matching `QFont.Weight`, e.g., "Normal", "Bold")
-- (Optional) emergency caption output path (e.g., verse_output.txt path)
+- (Optional) emergency caption output path (e.g., ``verse_output.txt`` path)
 
 The settings are used to build a `QFont` instance for UI widgets in the generator.
 """
@@ -37,6 +37,7 @@ def load_generator_settings():
     If the settings file does not exist, an empty dictionary is returned.
 
     The returned dictionary may include keys such as:
+
     - "font_family": str
     - "font_size": int
     - "font_weight": str (e.g., "Normal", "Bold")
@@ -56,8 +57,7 @@ def save_generator_settings(data):
     """
     Save generator settings to the JSON settings file.
 
-    This function writes the provided settings dictionary to
-    `paths.SETTING_FILE`, creating parent directories if needed.
+    This function writes the provided settings dictionary to, :py:data:`core.config.paths.SETTING_FILE` creating parent directories if needed.
 
     Note:
         This function is currently unused but reserved for future
@@ -79,17 +79,17 @@ def get_font_from_settings(limit_ui_size=True):
     Create a QFont instance based on persisted generator settings.
 
     The font family, size, and weight are read from the settings file.
-    When `limit_ui_size` is enabled, the font size is clamped to a safe
+    When ``limit_ui_size`` is enabled, the font size is clamped to a safe
     UI range to prevent layout issues.
 
     Args:
         limit_ui_size (bool, optional):
-            Whether to clamp the font size to the range 8–14 pt.
-            Defaults to True.
+            Whether to clamp the font size to the range 8-14 pt.
+            Defaults to ``True``.
 
     Returns:
-        QFont:
-            Configured QFont instance for use in generator UI widgets.
+        `QFont`:
+            Configured `QFont` instance for use in generator UI widgets.
     """
     settings = load_generator_settings()
 

@@ -10,8 +10,8 @@
 
 Modal dialog for editing a single slide.
 
-This module defines `SlideGeneratorDialog`, a QDialog wrapper that reuses the
-existing right-hand content panel (`SlideGeneratorRightContents`) inside a
+This module defines :class:`core.generator.ui.slide_generator_dialog.SlideGeneratorDialog`, a `QDialog` wrapper that reuses the
+existing right-hand content panel (:class:`core.generator.ui.slide_generator_right_contents.SlideGeneratorRightContents`) inside a
 modal dialog context. It allows slide editing via the same style-specific UI
 used in the main generator, but with explicit OK/Cancel semantics.
 
@@ -27,14 +27,15 @@ class SlideGeneratorDialog(QDialog):
     """
     Modal dialog for editing a single slide.
 
-    This dialog embeds `SlideGeneratorRightContents` to provide the same
+    This dialog embeds :class:`core.generator.ui.slide_generator_right_contents.SlideGeneratorRightContents` to provide the same
     style-specific editing UI used elsewhere in the generator, but presents
     it in a blocking modal dialog with explicit OK and Cancel buttons.
 
     The dialog is intended to be used as follows:
+
     - Construct with the slide style and initial caption/headline.
-    - Call `exec()` to display the dialog modally.
-    - If the dialog is accepted, call `get_result()` to retrieve edited data.
+    - Call ``exec()`` to display the dialog modally.
+    - If the dialog is accepted, call :meth:`get_result` to retrieve edited data.
     """
 
     def __init__(self, style: str, caption: str, headline: str, parent=None):
@@ -42,7 +43,7 @@ class SlideGeneratorDialog(QDialog):
         Initialize the slide editor dialog.
 
         This constructor creates a modal dialog window, embeds a
-        `SlideGeneratorRightContents` widget configured for the given slide style,
+        :class:`core.generator.ui.slide_generator_right_contents.SlideGeneratorRightContents` widget configured for the given slide style,
         and adds a standard OK/Cancel button box.
 
         Args:
@@ -86,7 +87,7 @@ class SlideGeneratorDialog(QDialog):
         Return the edited slide data from the dialog.
 
         This method should only be called after the dialog has been accepted
-        (i.e., `exec()` returned `QDialog.Accepted`). The returned dictionary
+        (i.e., ``exec()`` returned `QDialog.Accepted`). The returned dictionary
         is produced by the embedded content widget and represents the fully
         edited slide data.
 

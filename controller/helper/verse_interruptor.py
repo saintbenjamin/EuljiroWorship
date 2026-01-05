@@ -15,7 +15,7 @@ This module runs as a small background helper process. It uses `watchdog <https:
 monitor the project base directory for changes to the :py:data:`core.config.paths.VERSE_FILE`, then
 parses the content into one or more slide dictionaries.
 
-Key behaviors
+Key behaviors:
 
 - If the last line looks like a structured Bible reference header, it generates
   per-verse slides with wrapped lines (`textwrap.wrap <https://docs.python.org/3/library/textwrap.html#textwrap.wrap>`_) and style "verse".
@@ -53,11 +53,11 @@ def parse_verse_output(file_path, max_chars=60):
     - Structured mode: If the last line matches one of the expected header forms (e.g., "(<book> <chapter>장 ...", "(<book> <chapter>:<verse>, ..."), the earlier lines are treated as verse body lines. Each verse line is wrapped to ``max_chars`` and converted into style "verse" slides.
     - Fallback mode: If no header pattern matches, the entire file is treated as a free-form emergency message. Non-empty lines are grouped into slides (up to 2 lines per slide or until the approximate character budget is met) using style "lyrics" and a fixed church caption.
 
-    Notes:
+    Note:
         - This function does not validate that the file is a real Bible reference.
           It only checks header patterns and then formats accordingly.
         - The caption format in structured mode follows the current implementation
-          (e.g., "<book> <chapter>장 <verse>절").
+          (e.g., ``<book> <chapter>장 <verse>절``).
 
     Args:
         file_path (str):

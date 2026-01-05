@@ -12,7 +12,7 @@ Utility helpers for applying SVG icons to Qt widgets.
 
 This module provides small helper functions used throughout the slide
 generator UI to standardize icon handling, including resolving icon
-paths and applying SVG icons to QPushButton instances.
+paths and applying SVG icons to `QPushButton` instances.
 """
 
 import os
@@ -60,7 +60,7 @@ def get_icon_path(name: str) -> str:
 
     Args:
         name (str):
-            Icon filename (e.g., "save.svg").
+            Icon filename (e.g., ``"save.svg"``).
 
     Returns:
         str:

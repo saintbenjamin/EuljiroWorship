@@ -48,10 +48,9 @@ def _project_root() -> Path:
     This function assumes that ``EuljiroWorship.py`` is located at the repository
     root (i.e., the root directory of the project).
 
-    Returns
-    -------
-    pathlib.Path
-        Absolute path to the project root directory.
+    Returns:
+        pathlib.Path:
+            Absolute path to the project root directory.
     """
     return Path(__file__).resolve().parent
 
@@ -63,23 +62,20 @@ def _start_http_server(cwd: Path, port: int = 8080) -> subprocess.Popen:
 
         python -m http.server <port>
 
-    Parameters
-    ----------
-    cwd : pathlib.Path
-        The directory to serve as the HTTP document root (process working directory).
-    port : int, optional
-        TCP port to bind the HTTP server to. Default is ``8080``.
+    Args:
+        cwd (pathlib.Path):
+            The directory to serve as the HTTP document root (process working directory).
+        port (int, optional):
+            TCP port to bind the HTTP server to. Default is ``8080``.
 
-    Returns
-    -------
-    subprocess.Popen
-        A handle to the spawned HTTP server process.
+    Returns:
+        subprocess.Popen:
+            A handle to the spawned HTTP server process.
 
-    Notes
-    -----
-    - ``start_new_session=True`` is used to improve shutdown reliability across
-      platforms by detaching the child process session.
-    - Standard output/error are inherited by default (``stdout=None``, ``stderr=None``).
+    Note:
+        - ``start_new_session=True`` is used to improve shutdown reliability across platforms by detaching the child process session.
+        - Standard output/error are inherited by default (``stdout=None``, ``stderr=None``).
+
     """
     cmd = [sys.executable, "-m", "http.server", str(port)]
     return subprocess.Popen(
@@ -99,26 +95,21 @@ def _start_ws_server(root: Path) -> subprocess.Popen:
 
         <project_root>/server/websocket_server.py
 
-    Parameters
-    ----------
-    root : pathlib.Path
-        Absolute path to the project root directory.
+    Args:
+        root (pathlib.Path):
+            Absolute path to the project root directory.
 
-    Returns
-    -------
-    subprocess.Popen
-        A handle to the spawned WebSocket server process.
+    Raises:
+        FileNotFoundError
+            If ``server/websocket_server.py`` does not exist under ``root``.
 
-    Raises
-    ------
-    FileNotFoundError
-        If ``server/websocket_server.py`` does not exist under ``root``.
+    Returns:
+        subprocess.Popen:
+            A handle to the spawned WebSocket server process.
 
-    Notes
-    -----
-    - The process is spawned with its working directory set to the project root.
-    - ``start_new_session=True`` is used to improve shutdown reliability across
-      platforms.
+    Note:
+        - The process is spawned with its working directory set to the project root.
+        - ``start_new_session=True`` is used to improve shutdown reliability across platforms.
     """
     ws_path = root / "server" / "websocket_server.py"
     if not ws_path.exists():
@@ -143,15 +134,12 @@ def _terminate_process(p: subprocess.Popen) -> None:
     to ``kill()``. Any exceptions during shutdown are suppressed intentionally
     (shutdown paths should not crash the main application).
 
-    Parameters
-    ----------
-    p : subprocess.Popen
-        Subprocess handle to terminate. If the process is already exited, this
-        function does nothing.
+    Args:
+        p (subprocess.Popen):
+            Subprocess handle to terminate. If the process is already exited, this function does nothing.
 
-    Returns
-    -------
-    None
+    Returns:
+        None
     """
     if p is None:
         return
@@ -172,6 +160,7 @@ def _ensure_alive(p: subprocess.Popen, name: str) -> None:
     Verify that a freshly spawned subprocess is still running.
 
     This is a small safety check to catch immediate failures such as:
+
     - address/port already in use
     - missing dependencies
     - import/runtime errors causing instant exit
@@ -179,21 +168,18 @@ def _ensure_alive(p: subprocess.Popen, name: str) -> None:
     The function waits briefly and then checks the return code via ``poll()``.
     If the process has already exited, a ``RuntimeError`` is raised.
 
-    Parameters
-    ----------
-    p : subprocess.Popen
-        Subprocess handle to validate.
-    name : str
-        Human-readable process name used in the error message.
+    Args:
+        p (subprocess.Popen):
+            Subprocess handle to validate.
+        name (str):
+            Human-readable process name used in the error message.
 
-    Raises
-    ------
-    RuntimeError
-        If the subprocess has already exited.
+    Raises:
+        RuntimeError:
+            If the subprocess has already exited.
 
-    Returns
-    -------
-    None
+    Returns:
+        None
     """
     time.sleep(0.25)
     rc = p.poll()

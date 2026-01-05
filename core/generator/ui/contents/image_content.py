@@ -8,18 +8,18 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-UI content widget for editing 'image' style slides.
+UI content widget for editing "image"-style slides.
 
-This module defines `ImageContent`, a QWidget that allows users to select
+This module defines :class:`core.generator.ui.contents.image_content.ImageContent`, a `QWidget` that allows users to select
 an image file, preview it, and associate it with caption text for use
-in image-based slides. Selected images are copied into a local `img/`
+in image-based slides. Selected images are copied into a local ``img/``
 directory for reliable access by overlay HTML files.
 
-In this slide style, the `headline` field is repurposed to store the
-relative image path, while the `caption` field is used as accompanying
+In this slide style, the ``headline`` field is repurposed to store the
+relative image path, while the ``caption`` field is used as accompanying
 text displayed alongside the image.
 
-The widget integrates with `SlideInputSubmitter` to support automatic
+The widget integrates with :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to support automatic
 submission and synchronization with the parent generator window.
 """
 
@@ -32,16 +32,17 @@ from core.generator.utils.slide_input_submitter import SlideInputSubmitter
 
 class ImageContent(QWidget):
     """
-    Content editor widget for 'image' style slides.
+    Content editor widget for "image" style slides.
 
     This widget allows users to:
+
     - Select an image file from disk
     - Copy the selected image into a local image directory for overlay use
     - Preview the selected image
     - Enter optional caption text associated with the image
 
-    In this slide style, the image path is stored in the `headline` field
-    of the slide data dictionary, while the `caption` field contains
+    In this slide style, the image path is stored in the ``headline`` field
+    of the slide data dictionary, while the ``caption`` field contains
     accompanying text.
     """
 
@@ -75,7 +76,7 @@ class ImageContent(QWidget):
 
         This method builds input fields for caption and image path, a button
         for selecting an image file, and an image preview area. It also
-        registers the input fields with `SlideInputSubmitter` to enable
+        registers the input fields with :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to enable
         automatic submission.
 
         Args:
@@ -159,7 +160,7 @@ class ImageContent(QWidget):
         Returns:
             str:
                 Relative image path suitable for use in overlay HTML
-                (e.g., "img/example.png").
+                (e.g., ``img/example.png``).
 
         Raises:
             OSError:
@@ -207,6 +208,7 @@ class ImageContent(QWidget):
         Returns:
             dict:
                 Dictionary representing the image slide, including:
+                
                 - style
                 - caption
                 - headline (relative image path)

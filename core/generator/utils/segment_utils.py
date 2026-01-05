@@ -18,7 +18,7 @@ using blank-line boundaries and fixed two-line grouping rules.
 
 def segment_lyrics_for_export(data: dict) -> list[dict]:
     """
-    Split a single 'lyrics' slide into multiple export-ready slides.
+    Split a single "lyrics" slide into multiple export-ready slides.
 
     This function takes a lyrics-style slide dictionary and divides its
     multiline headline text into smaller slides according to the following
@@ -31,6 +31,7 @@ def segment_lyrics_for_export(data: dict) -> list[dict]:
     Args:
         data (dict):
             Slide dictionary with at least the keys:
+
             - "style": expected to be "lyrics"
             - "caption": title of the song
             - "headline": multiline lyrics text
@@ -38,6 +39,7 @@ def segment_lyrics_for_export(data: dict) -> list[dict]:
     Returns:
         list[dict]:
             A list of slide dictionaries, each containing:
+    
             - "style"
             - "caption"
             - "headline" (two lines or fewer)

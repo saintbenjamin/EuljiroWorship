@@ -10,7 +10,7 @@
 
 Row-level table operations for the slide generator.
 
-This module defines `SlideTableManager`, a helper class responsible for
+This module defines :class:`core.generator.ui.slide_table_manager.SlideTableManager`, a helper class responsible for
 manipulating rows in the slide table widget used by the generator UI.
 It encapsulates all row operations (insert, delete, move, swap) and
 coordinates with the parent generator to enforce edit restrictions
@@ -29,13 +29,12 @@ class SlideTableManager:
     style selection handling. It delegates edit-safety checks to the
     parent generator to ensure consistency with the controller state.
 
-    Attributes
-    ----------
-    table : QTableWidget
-        The table widget that lists slide rows.
-    generator :
-        Reference to the main slide generator window, used for edit
-        permission checks and coordination.
+    Attributes:
+        table (QTableWidget):
+            The table widget that lists slide rows.
+        generator :
+            Reference to the main slide generator window, used for edit
+            permission checks and coordination.
     """
 
     def __init__(self, table, generator):
@@ -46,7 +45,7 @@ class SlideTableManager:
             table (QTableWidget):
                 The table widget used to display and edit slide rows.
             generator:
-                The main SlideGenerator window. This object is queried to
+                The main :class:`core.generator.ui.slide_generator.SlideGenerator` window. This object is queried to
                 determine whether edits are currently allowed.
         """
         self.table = table
@@ -75,7 +74,7 @@ class SlideTableManager:
 
         If no explicit row index is provided, the insertion position is
         determined from the current table selection. A style selection
-        combo box and empty caption/headline cells are created for the row.
+        combo box and empty `caption`/`headline` cells are created for the row.
 
         Args:
             row (int | None):
@@ -197,8 +196,9 @@ class SlideTableManager:
         Swap the contents of two rows in the slide table.
 
         This includes swapping:
+    
         - The selected values of the style combo boxes
-        - The text contents of the caption and headline cells
+        - The text contents of the ``caption`` and ``headline`` cells
 
         Args:
             row1 (int):

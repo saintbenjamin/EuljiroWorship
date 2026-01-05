@@ -8,18 +8,18 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-UI content widget for editing 'video' style slides.
+UI content widget for editing "video"-style slides.
 
-This module defines `VideoContent`, a QWidget that allows users to select
+This module defines :class:`core.generator.ui.contents.video_content.VideoContent`, a `QWidget` that allows users to select
 a video file, preview it, and associate it with caption text for use
-in video-based slides. Selected videos are copied into a local `html/img/`
+in video-based slides. Selected videos are copied into a local ``html/img/``
 directory for reliable access by overlay HTML files.
 
-In this slide style, the `headline` field is repurposed to store the
-relative video path, while the `caption` field is used as accompanying
+In this slide style, the ``headline`` field is repurposed to store the
+relative video path, while the ``caption`` field is used as accompanying
 text displayed alongside the video.
 
-The widget integrates with `SlideInputSubmitter` to support automatic
+The widget integrates with :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to support automatic
 submission and synchronization with the parent generator window.
 """
 
@@ -45,16 +45,17 @@ from core.generator.utils.slide_input_submitter import SlideInputSubmitter
 
 class VideoContent(QWidget):
     """
-    Content editor widget for 'video' style slides.
+    Content editor widget for "video" style slides.
 
     This widget allows users to:
+
     - Select a video file from disk
-    - Copy the selected video into a local image directory for overlay use (html/img)
+    - Copy the selected video into a local image directory for overlay use (``html/img``)
     - Preview the selected video (play/pause)
     - Enter optional caption text associated with the video
 
-    In this slide style, the video path is stored in the `headline` field
-    of the slide data dictionary, while the `caption` field contains
+    In this slide style, the video path is stored in the ``headline`` field
+    of the slide data dictionary, while the ``caption`` field contains
     accompanying text.
     """
 
@@ -71,7 +72,7 @@ class VideoContent(QWidget):
             caption (str):
                 Initial caption text associated with the video.
             headline (str):
-                Initial video path (stored in the headline field).
+                Initial video path (stored in the ``headline`` field).
 
         Returns:
             None
@@ -98,7 +99,7 @@ class VideoContent(QWidget):
 
         Builds input fields for caption and video path, a button for selecting
         a video file, and a video preview area. Registers the input fields with
-        `SlideInputSubmitter` to enable automatic submission.
+        :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter` to enable automatic submission.
 
         Returns:
             None
@@ -159,7 +160,7 @@ class VideoContent(QWidget):
 
     def _init_player(self):
         """
-        Initialize QMediaPlayer for in-widget preview.
+        Initialize `QMediaPlayer` for in-widget preview.
 
         Returns:
             None
@@ -173,7 +174,7 @@ class VideoContent(QWidget):
         """
         Prompt the user to select a video file and register it for slide use.
 
-        The selected video is copied into the local `html/img` directory and its
+        The selected video is copied into the local ``html/img`` directory and its
         relative path is stored in the headline field.
 
         Returns:
@@ -201,7 +202,7 @@ class VideoContent(QWidget):
 
     def copy_to_img_folder(self, source_path: str) -> str:
         """
-        Copy the selected video file into the local image directory (html/img).
+        Copy the selected video file into the local image directory (``html/img``).
 
         If the destination directory does not exist, it is created.
         If the file already exists at the destination, it is not copied again.
@@ -212,7 +213,7 @@ class VideoContent(QWidget):
 
         Returns:
             str:
-                Relative path for overlay HTML usage, e.g. "img/example.mp4".
+                Relative path for overlay HTML usage, e.g. ``img/example.mp4``.
 
         Raises:
             OSError:
@@ -232,7 +233,7 @@ class VideoContent(QWidget):
 
     def _load_preview_from_absolute_path(self, abs_path: str):
         """
-        Load preview video into QMediaPlayer from an absolute file path.
+        Load preview video into `QMediaPlayer` from an absolute file path.
 
         Args:
             abs_path (str): Absolute file path.
@@ -248,9 +249,9 @@ class VideoContent(QWidget):
 
     def _load_preview_from_relative_path(self, rel_path: str):
         """
-        Load preview video into QMediaPlayer from a relative path like "img/foo.mp4".
+        Load preview video into `QMediaPlayer` from a relative path like ``img/foo.mp4``.
 
-        This resolves it against "./html/" to match the copy destination.
+        This resolves it against ``./html/`` to match the copy destination.
 
         Args:
             rel_path (str): Relative path stored in slide data.
@@ -321,9 +322,10 @@ class VideoContent(QWidget):
         Returns:
             dict:
                 Dictionary representing the video slide:
+
                 - style
                 - caption
-                - headline (relative video path, e.g., "img/foo.mp4")
+                - headline (relative video path, e.g., ``img/foo.mp4``)
         """
         return {
             "style": "video",

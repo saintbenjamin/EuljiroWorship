@@ -24,11 +24,9 @@ Outputs:
 
 - A list of slide dictionaries with keys: ``style``, ``caption``, ``headline``
 
-Notes:
-
-- Bible verse text is wrapped into smaller chunks (currently ``width=60``) to avoid
-  overly long single-slide lines.
-- Version display aliases are loaded from :py:data:`core.config.paths.ALIASES_VERSION_FILE`.
+Note:
+    - Bible verse text is wrapped into smaller chunks (currently ``width=60``) to avoid overly long single-slide lines.
+    - Version display aliases are loaded from :py:data:`core.config.paths.ALIASES_VERSION_FILE`.
 """
 
 import os
