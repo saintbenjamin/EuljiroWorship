@@ -32,12 +32,33 @@ class BibleKeywordSearcher:
     """
     Keyword-based Bible verse search engine.
 
-    This class loads a single Bible version into memory and provides
-    multiple keyword search strategies over the verse text.
+    This class loads a single Bible version into memory and provides multiple
+    keyword-based search strategies over verse text, including word-based AND
+    search and whitespace-insensitive (compact) substring search.
 
-    Search results are returned as structured dictionaries containing
-    verse location metadata and both raw and highlighted text, making
-    them suitable for direct rendering in UI components.
+    Search results are returned as structured dictionaries containing verse
+    location metadata and both raw and highlighted text, making them suitable
+    for direct rendering in GUI table models, delegates, or CLI output.
+
+    Attributes:
+        version (str):
+            Bible version key currently loaded (e.g., "개역개정", "NKRV").
+            This corresponds to the JSON filename without extension.
+
+        data (dict):
+            Parsed Bible text data loaded from ``<version>.json``.
+            Structure is typically:
+            ``data[book][chapter][verse] = verse_text``.
+
+        name_map (dict):
+            Parsed content of ``standard_book.json``.
+            Used to resolve canonical or localized book names when needed
+            by UI or higher-level logic.
+
+    Note:
+        - The Bible data for the selected version is fully loaded at initialization time (not lazily).
+        - Highlighting is performed using simple HTML ``<span>`` tags, assuming downstream renderers support HTML (e.g., QTextDocument).
+        - This class is used by both GUI (TabKeyword) and CLI search paths.
     """
 
     def __init__(self, version: str = "개역개정"):

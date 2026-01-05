@@ -8,7 +8,7 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-Provides error and debug logging utilities for EuljiroBible.
+Provides error and debug logging utilities for EuljiroBible/EuljiroWorship.
 
 This module defines a lightweight logging wrapper around Python's
 standard `logging <https://docs.python.org/3/library/logging.html>`_ module, with the following design goals:

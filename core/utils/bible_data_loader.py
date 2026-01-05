@@ -33,15 +33,52 @@ class BibleDataLoader:
     """
     Lazy-loading data manager for Bible text and metadata.
 
-    This class loads and caches Bible-related JSON resources on demand,
-    including version metadata, book aliases, canonical book names, and
-    full Bible text files.
+    This loader provides on-demand (lazy) access to Bible JSON resources and caches
+    loaded content in memory to avoid repeated disk I/O.
 
-    Bible text files are loaded per version only when first requested
-    and stored in an internal cache to avoid repeated disk access.
+    It loads and exposes:
 
-    The class is shared by both EuljiroBible and EuljiroWorship systems
-    and therefore includes several compatibility helper methods.
+    - Version alias metadata (e.g., full name → short label)
+    - Book alias / canonical naming metadata
+    - Canonical book name table (per language)
+    - Version sort order metadata
+    - Per-version Bible text JSON files (loaded only when first accessed)
+
+    The class is shared by both EuljiroBible and EuljiroWorship and therefore keeps
+    several compatibility helpers and legacy-style accessors.
+
+    Attributes:
+        json_dir (str):
+            Directory containing Bible metadata JSON files (aliases, canonical names,
+            and sort order).
+
+        text_dir (str):
+            Directory containing Bible text JSON files (per-version text).
+
+        aliases_version (dict):
+            Parsed content of ``aliases_version.json``. Typically maps a version key
+            to either a string alias or a nested dict containing localized aliases,
+            depending on your data schema.
+
+        aliases_book (dict):
+            Parsed content of ``aliases_book.json``. Used for book name aliasing and
+            compatibility mapping.
+
+        standard_book (dict):
+            Parsed content of ``standard_book.json``. Maps canonical book IDs to a
+            per-language display name dictionary (e.g., ``{"John": {"ko": "...", "en": "John"}}``).
+
+        sort_order (dict):
+            Parsed content of the configured sort-order JSON (e.g., prefix → rank).
+            Used by :meth:`get_sort_key` for stable version ordering in UI/CLI.
+
+        data (dict):
+            In-memory cache of loaded Bible text, keyed by version key.
+            Structure is typically ``data[version][book][chapter][verse] = text``.
+
+    Note:
+        - Version JSON is loaded lazily by :meth:`get_verses`. Use :meth:`load_version` or :meth:`load_versions` to preload explicitly.
+        - Some methods exist primarily for cross-project compatibility and are not necessarily used by every code path.
     """
 
     def __init__(self, json_dir=None, text_dir=None):
