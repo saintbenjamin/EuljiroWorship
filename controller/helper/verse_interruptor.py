@@ -63,7 +63,7 @@ def parse_verse_output(file_path, max_chars=60):
             Path to the :py:data:`core.config.paths.VERSE_FILE` to parse.
         max_chars (int, optional):
             Maximum character width used when wrapping long verse text or when
-            grouping fallback message lines. Defaults to 60.
+            grouping fallback message lines. Defaults to 60. (See also :py:data:`core.config.constants.MAX_CHARS`.)
 
     Returns:
         list[dict]:
