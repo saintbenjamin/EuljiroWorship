@@ -71,9 +71,7 @@ class SlideExporter:
         """
         Initialize the slide exporter.
 
-        See also:: 
-        
-            :py:data:`core.config.constants.MAX_CHARS`
+        See also :py:data:`core.config.constants.MAX_CHARS`.
 
         Args:
             settings (dict | None):

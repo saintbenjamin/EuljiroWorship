@@ -390,9 +390,7 @@ class SlideGenerator(QMainWindow):
         4) Write the exported JSON to :py:data:`core.config.paths.SLIDE_FILE` (UTF-8).
         5) Launch the slide controller if it is not already running.
 
-        See also:: 
-        
-            :py:data:`core.config.constants.MAX_CHARS`
+        See also :py:data:`core.config.constants.MAX_CHARS`.
 
         Args:
             None

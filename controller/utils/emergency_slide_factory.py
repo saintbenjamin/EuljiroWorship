@@ -161,9 +161,7 @@ class EmergencySlideFactory:
         Each verse is wrapped using `textwrap.wrap(..., width=60) <https://docs.python.org/3/library/textwrap.html#textwrap.wrap>`_ to avoid overly long
         single lines, producing multiple slides per verse when needed.
         
-        See also::
-        
-            :py:data:`core.config.constants.MAX_CHARS`
+        See also :py:data:`core.config.constants.MAX_CHARS`.
 
         Args:
             book_id (str):
