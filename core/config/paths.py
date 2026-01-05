@@ -27,31 +27,68 @@ consistent behavior across platforms (Windows, macOS, Linux).
 import os
 
 # ───── Base directories ─────
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))  # Project root
-STORE_DIR = os.path.join(BASE_DIR, "store")  # Output and backup directory
-SETTING_DIR = os.path.join(BASE_DIR, "json")  # JSON config and settings
-ICON_DIR = os.path.join(BASE_DIR, "assets", "svg")  # SVG icon assets
+#: Absolute path to the project root directory.
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+#: Directory for slide output and backup files (under ``BASE_DIR/store``).
+STORE_DIR = os.path.join(BASE_DIR, "store")
+
+#: Directory for JSON configs and settings (under ``BASE_DIR/json``).
+SETTING_DIR = os.path.join(BASE_DIR, "json")
+
+#: Directory for SVG icon assets (under ``BASE_DIR/assets/svg``).
+ICON_DIR = os.path.join(BASE_DIR, "assets", "svg")
 
 # ───── Emergency overlay file ─────
-VERSE_FILE = os.path.join(BASE_DIR, "verse_output.txt")  # Used by overlay system
-# [FIXME] Should allow configurable path assignment in the future
+#: Emergency verse output file path (typically ``BASE_DIR/verse_output.txt``).
+#:
+#: This file is written by the emergency caption flow and monitored by
+#: helper processes such as the verse interruptor.
+VERSE_FILE = os.path.join(BASE_DIR, "verse_output.txt")
 
 # ───── Settings files ─────
-SETTING_FILE = os.path.join(SETTING_DIR, "settings.json")  # General application settings
-SETTING_LAST_OPEN_FILE = os.path.join(SETTING_DIR, "settings_last_path.json")  # Last opened file path
+#: Main application settings JSON file (typically ``json/settings.json``).
+SETTING_FILE = os.path.join(SETTING_DIR, "settings.json")
+
+#: JSON file storing the last opened path/session info
+#: (typically ``json/settings_last_path.json``).
+SETTING_LAST_OPEN_FILE = os.path.join(SETTING_DIR, "settings_last_path.json")
 
 # ───── Slide system output and backup ─────
-SLIDE_FILE = os.path.join(STORE_DIR, "slide_output.json")  # Main slide output
-SLIDE_BACKUP_FILE = os.path.join(STORE_DIR, "slide_output_backup.json")  # Used for restoration after emergency
+#: Main slide output JSON file written for overlay display
+#: (typically ``store/slide_output.json``).
+SLIDE_FILE = os.path.join(STORE_DIR, "slide_output.json")
 
-# ───── Bible data paths (EuljiroBible) ─────
-BIBLE_DATA_DIR = os.path.join(BASE_DIR, "data")  # Full Bible version JSON files
-JSON_DIR = os.path.join(BASE_DIR, "json")  # Version alias/config JSONs
-BIBLE_NAME_DIR = os.path.join(JSON_DIR, "bible")  # Name alias subdirectory
+#: Backup of the previous slide output used for restoration after
+#: emergency mode (typically ``store/slide_output_backup.json``).
+SLIDE_BACKUP_FILE = os.path.join(STORE_DIR, "slide_output_backup.json")
+
+# ───── Bible data directories (EuljiroBible) ─────
+#: Directory containing Bible version JSON data files (typically ``data/``).
+BIBLE_DATA_DIR = os.path.join(BASE_DIR, "data")
+
+#: Directory containing JSON configs.
+#:
+#: This directory is the same physical location as ``SETTING_DIR``.
+JSON_DIR = os.path.join(BASE_DIR, "json")
+
+#: Directory containing Bible name/version alias JSON files
+#: (typically ``json/bible/``).
+BIBLE_NAME_DIR = os.path.join(JSON_DIR, "bible")
 
 # ───── Bible alias/config files ─────
-ALIASES_VERSION_FILE = os.path.join(BIBLE_NAME_DIR, "aliases_version.json")  # GUI version aliases
-ALIASES_VERSION_CLI_FILE = os.path.join(BIBLE_NAME_DIR, "aliases_version_cli.json")  # CLI version aliases
-ALIASES_BOOK_FILE = os.path.join(BIBLE_NAME_DIR, "aliases_book.json")  # Book name aliases
-STANDARD_BOOK_FILE = os.path.join(BIBLE_NAME_DIR, "standard_book.json")  # Canonical book list
-SORT_ORDER_FILE = os.path.join(BIBLE_NAME_DIR, "your_sort_order.json")  # Custom book sort order
+#: GUI Bible version alias mapping JSON file.
+ALIASES_VERSION_FILE = os.path.join(BIBLE_NAME_DIR, "aliases_version.json")
+
+#: CLI Bible version alias mapping JSON file
+#: (simplified aliases for CLI parsing).
+ALIASES_VERSION_CLI_FILE = os.path.join(BIBLE_NAME_DIR, "aliases_version_cli.json")
+
+#: Book name alias mapping JSON file.
+ALIASES_BOOK_FILE = os.path.join(BIBLE_NAME_DIR, "aliases_book.json")
+
+#: Canonical book list JSON file used as the standard reference.
+STANDARD_BOOK_FILE = os.path.join(BIBLE_NAME_DIR, "standard_book.json")
+
+#: Custom book sort order JSON file.
+SORT_ORDER_FILE = os.path.join(BIBLE_NAME_DIR, "your_sort_order.json")

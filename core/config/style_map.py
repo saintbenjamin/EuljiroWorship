@@ -27,6 +27,10 @@ or renaming.
 """
 
 # ───── Internal style to Korean display name ─────
+#: Mapping from internal style keys (used in JSON/export) to Korean display
+#: names shown in the generator UI.
+#:
+#: This is the primary source of truth for style naming across the system.
 STYLE_ALIASES = {
     "corner": "코너자막",     # Corner overlay
     "hymn":   "새찬송가",     # Hymnal number
@@ -39,11 +43,18 @@ STYLE_ALIASES = {
     "intro":  "시작화면",     # Introductory screen
     "blank":  "공백화면",     # Empty screen
     "image":  "그림화면",     # Image display
-    "video":  "영상재생",     # Video display 
+    "video":  "영상재생",     # Video display
 }
 
 # ───── Reverse mapping: Korean → internal key ─────
+#: Reverse lookup mapping from Korean display names back to internal style keys.
+#:
+#: This mapping is derived from :data:`STYLE_ALIASES`.
 REVERSE_ALIASES = {v: k for k, v in STYLE_ALIASES.items()}
 
 # ───── List of all Korean display names (used in UI dropdowns) ─────
+#: Ordered list of Korean display names used to populate UI dropdown menus.
+#:
+#: This list is derived from :data:`STYLE_ALIASES` and preserves the insertion
+#: order of that dictionary.
 STYLE_LIST = list(STYLE_ALIASES.values())
