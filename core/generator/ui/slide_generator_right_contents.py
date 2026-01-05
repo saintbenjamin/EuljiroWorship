@@ -59,12 +59,9 @@ class SlideGeneratorRightContents(QWidget):
         style (str):
             Internal slide style key that determines which sub-pane is created.
         generator_window (QWidget):
-            Reference to the parent generator window, passed through to
-            sub-panes so they can access shared context, settings, or callbacks.
+            Reference to the parent generator window, passed through to sub-panes so they can access shared context, settings, or callbacks.
         subpane (QWidget):
-            The instantiated style-specific content widget responsible for
-            rendering input fields and producing slide data. For ``"blank"``
-            or unsupported styles, this is an empty ``QWidget <https://doc.qt.io/qt-6/qwidget.html>`_`.
+            The instantiated style-specific content widget responsible for rendering input fields and producing slide data. For ``"blank"`` or unsupported styles, this is an empty ``QWidget <https://doc.qt.io/qt-6/qwidget.html>`_`.
     """
 
     def __init__(self, style: str, generator_window, caption: str = "", headline: str = "", parent=None):
