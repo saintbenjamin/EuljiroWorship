@@ -10,7 +10,7 @@
 
 UI content widget for editing "greet" style slides.
 
-This module defines :class:`core.generator.ui.contents.greet_content.GreetContent`, a `QWidget` that provides input fields
+This module defines :class:`core.generator.ui.contents.greet_content.GreetContent`, a `QWidget <https://doc.qt.io/qt-6/qwidget.html>`_ that provides input fields
 for greeting or message-style slides. These slides are typically used for
 welcome messages, sermon titles with extended descriptions, or other
 freeform announcements.

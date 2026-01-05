@@ -10,7 +10,7 @@
 
 UI content widget for editing "image"-style slides.
 
-This module defines :class:`core.generator.ui.contents.image_content.ImageContent`, a `QWidget` that allows users to select
+This module defines :class:`core.generator.ui.contents.image_content.ImageContent`, a `QWidget <https://doc.qt.io/qt-6/qwidget.html>`_ that allows users to select
 an image file, preview it, and associate it with caption text for use
 in image-based slides. Selected images are copied into a local ``img/``
 directory for reliable access by overlay HTML files.

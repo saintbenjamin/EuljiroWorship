@@ -18,7 +18,7 @@ Key responsibilities in this module:
 
 - Ensure the project root is importable (sys.path injection for direct execution)
 - Define :func:`controller.slide_controller.launch_interruptor` to start the verse interruptor as a detached process
-- Define :class:`controller.slide_controller.SlideController`, the main `QWidget` that:
+- Define :class:`controller.slide_controller.SlideController`, the main `QWidget <https://doc.qt.io/qt-6/qwidget.html>`_ that:
 
     - loads and displays slide data
     - sends slides via WebSocket
@@ -318,7 +318,7 @@ class SlideController(QWidget):
             row (int):
                 The clicked row index (0-based), used as the slide index.
             _column (int):
-                Unused column index (Qt signal provides it).
+                Unused column index (`Qt <https://doc.qt.io/qt-6/>`_ signal provides it).
 
         Returns:
             None

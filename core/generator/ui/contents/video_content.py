@@ -10,7 +10,7 @@
 
 UI content widget for editing "video"-style slides.
 
-This module defines :class:`core.generator.ui.contents.video_content.VideoContent`, a `QWidget` that allows users to select
+This module defines :class:`core.generator.ui.contents.video_content.VideoContent`, a `QWidget <https://doc.qt.io/qt-6/qwidget.html>`_ that allows users to select
 a video file, preview it, and associate it with caption text for use
 in video-based slides. Selected videos are copied into a local ``html/img/``
 directory for reliable access by overlay HTML files.

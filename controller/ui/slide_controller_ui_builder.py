@@ -46,6 +46,7 @@ class SlideControllerUIBuilder:
     controller's navigation and emergency-caption handlers.
 
     The builder assumes the controller already has:
+
     - ``slides``: list[dict] containing slide data for preview population
     - ``index``: int current slide index to pre-select in the table
 
@@ -55,15 +56,16 @@ class SlideControllerUIBuilder:
             Widgets created by this builder are attached onto this object.
 
             This builder assigns (at minimum) the following attributes onto ``c``:
-            - label (QLabel): Top status label (elided text).
-            - btn_on (QPushButton): Emergency caption ON button.
-            - btn_off (QPushButton): Emergency caption OFF button.
-            - first_button (QPushButton): Jump to first slide button.
-            - prev_button (QPushButton): Jump to previous slide button.
-            - next_button (QPushButton): Jump to next slide button.
-            - last_button (QPushButton): Jump to last slide button.
-            - page_input (QLineEdit): Page number input used for direct jump.
-            - table (QTableWidget): Slide preview table (row selection + click-to-jump).
+
+            - label (`QLabel <https://doc.qt.io/qt-6/qlabel.html>`_): Top status label (elided text).
+            - btn_on (`QPushButton <https://doc.qt.io/qt-6/qpushbutton.html>`_): Emergency caption ON button.
+            - btn_off (`QPushButton <https://doc.qt.io/qt-6/qpushbutton.html>`_): Emergency caption OFF button.
+            - first_button (`QPushButton <https://doc.qt.io/qt-6/qpushbutton.html>`_): Jump to first slide button.
+            - prev_button (`QPushButton <https://doc.qt.io/qt-6/qpushbutton.html>`_): Jump to previous slide button.
+            - next_button (`QPushButton <https://doc.qt.io/qt-6/qpushbutton.html>`_): Jump to next slide button.
+            - last_button (`QPushButton <https://doc.qt.io/qt-6/qpushbutton.html>`_): Jump to last slide button.
+            - page_input (`QLineEdit <https://doc.qt.io/qt-6/qlineedit.html>`_): Page number input used for direct jump.
+            - table (`QTableWidget <https://doc.qt.io/qt-6/qtablewidget.html>`_): Slide preview table (row selection + click-to-jump).
 
     Note:
         - Widgets are attached onto the controller instance as attributes
@@ -77,7 +79,7 @@ class SlideControllerUIBuilder:
         Initialize the UI builder with a :class:`controller.slide_controller.SlideController` instance.
 
         Args:
-            controller (QWidget):
+            controller (`QWidget <https://doc.qt.io/qt-6/qwidget.html>`_):
                 The main :class:`controller.slide_controller.SlideController` instance that owns the window and runtime
                 logic. Widgets created by this builder are assigned as attributes
                 on this object.
@@ -198,7 +200,7 @@ class SlideControllerUIBuilder:
     @staticmethod
     def set_elided_label_text(label: QLabel, text: str):
         """
-        Set right-elided text on a `QLabel` to fit the current label width.
+        Set right-elided text on a `QLabel <https://doc.qt.io/qt-6/qlabel.html>`_ to fit the current label width.
 
         This helper computes an elided string (truncated with an ellipsis) so the
         label does not overflow horizontally. Truncation occurs on the right side.

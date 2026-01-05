@@ -8,7 +8,7 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-Watches :py:data:`core.config.paths.VERSE_FILE` and emits a Qt signal when the emergency text is cleared.
+Watches :py:data:`core.config.paths.VERSE_FILE` and emits a `Qt <https://doc.qt.io/qt-6/index.html>`_ signal when the emergency text is cleared.
 
 This module defines a lightweight polling watcher used by the slide controller.
 It monitors the emergency verse file (:py:data:`core.config.paths.VERSE_FILE`) and detects the state
@@ -19,7 +19,7 @@ previous slide session and exit emergency mode.
 Key behavior:
 
 - Polls the verse file at a configurable interval (``poll_interval``)
-- Emits a signal only on the transition: non-empty -> empty
+- Emits a signal only on the transition: ``non-empty -> empty``
 - Provides a stop mechanism for clean thread shutdown
 """
 
@@ -35,7 +35,7 @@ class InterruptorWatcher(QObject):
     """
     Monitors the emergency verse output file and emits a signal when it is cleared.
 
-    This watcher is designed to run inside a `QThread` loop (polling-based).
+    This watcher is designed to run inside a `QThread <https://doc.qt.io/qt-6/qthread.html>`_ loop (polling-based).
     It reads :py:data:`core.config.paths.VERSE_FILE` periodically and tracks the last observed content.
     When the file transitions from non-empty content to an empty string, it emits
     ``interruptor_cleared``.
@@ -68,7 +68,7 @@ class InterruptorWatcher(QObject):
         """
         Stop the watcher loop.
 
-        This method signals the polling loop in `run()` to exit cleanly.
+        This method signals the polling loop in ``run()`` to exit cleanly.
         It is intended to be called during controller shutdown.
 
         Args:
@@ -91,7 +91,7 @@ class InterruptorWatcher(QObject):
 
         Note:
             - This is a polling-based watcher (not filesystem event-based).
-            - Intended to be executed in a background `QThread`.
+            - Intended to be executed in a background `QThread <https://doc.qt.io/qt-6/qthread.html>`_.
 
         Args:
             None

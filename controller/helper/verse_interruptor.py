@@ -50,7 +50,7 @@ def parse_verse_output(file_path, max_chars=60):
 
     The input file is interpreted as:
 
-    - Structured mode: If the last line matches one of the expected header forms (e.g., "(<book> <chapter>장 ...", "(<book> <chapter>:<verse>, ..."), the earlier lines are treated as verse body lines. Each verse line is wrapped to ``max_chars`` and converted into style "verse" slides.
+    - Structured mode: If the last line matches one of the expected header forms (e.g., ``<book> <chapter>장 ...``, ``<book> <chapter>:<verse>, ...``), the earlier lines are treated as verse body lines. Each verse line is wrapped to ``max_chars`` and converted into style "verse" slides.
     - Fallback mode: If no header pattern matches, the entire file is treated as a free-form emergency message. Non-empty lines are grouped into slides (up to 2 lines per slide or until the approximate character budget is met) using style "lyrics" and a fixed church caption.
 
     Note:
@@ -61,7 +61,7 @@ def parse_verse_output(file_path, max_chars=60):
 
     Args:
         file_path (str):
-            Path to the verse_output.txt file to parse.
+            Path to the :py:data:`core.config.paths.VERSE_FILE` to parse.
         max_chars (int, optional):
             Maximum character width used when wrapping long verse text or when
             grouping fallback message lines. Defaults to 60.
@@ -69,6 +69,7 @@ def parse_verse_output(file_path, max_chars=60):
     Returns:
         list[dict]:
             List of slide dictionaries. Each slide dict contains:
+
             - "style": "verse" (structured) or "lyrics" (fallback)
             - "caption": caption string
             - "headline": display text (possibly multi-line in fallback mode)
@@ -209,9 +210,12 @@ class VerseFileHandler(FileSystemEventHandler):
         If the modified path matches the target :py:data:`core.config.paths.VERSE_FILE`, this callback:
 
         1) Parses :py:data:`core.config.paths.VERSE_FILE` into slide dictionaries.
+
         2) If any slides were produced:
+
             - Creates a backup (if applicable)
             - Writes slides to :py:data:`core.config.paths.SLIDE_FILE`
+
         3) Otherwise logs that no slides were generated.
 
         Args:

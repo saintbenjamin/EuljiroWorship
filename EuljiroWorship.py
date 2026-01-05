@@ -10,21 +10,20 @@
 
 Main entry point for the EuljiroWorship application.
 
-This module launches the Qt-based Slide Generator UI and starts the background
+This module launches the `Qt <https://doc.qt.io/qt-6/index.html>`_-based Slide Generator UI and starts the background
 servers required for the browser-based overlay:
 
 - An HTTP server (static file hosting; default: ``python -m http.server 8080``)
-- A WebSocket server (real-time slide updates; launched via ``server/websocket_server.py``)
+- A `WebSocket <https://websocket-client.readthedocs.io/en/latest/index.html>`_ server (real-time slide updates; launched via ``server/websocket_server.py``)
 
 Typical usage::
 
     python EuljiroWorship.py
 
-Notes:
-
-- The HTTP document root is currently set to the project root directory. If your overlay/static files live under a specific subdirectory (e.g. ``web/``), update ``http_cwd`` accordingly.
-- Both servers are started as subprocesses. They are terminated on normal Qt exit and also via ``atexit`` as a fallback.
-- If the server subprocess exits immediately (e.g., port already in use), the launcher raises a ``RuntimeError``.
+Note:
+    - The HTTP document root is currently set to the project root directory. If your overlay/static files live under a specific subdirectory (e.g. ``web/``), update ``http_cwd`` accordingly.
+    - Both servers are started as subprocesses. They are terminated on normal `Qt <https://doc.qt.io/qt-6/index.html>`_ exit and also via ``atexit`` as a fallback.
+    - If the server subprocess exits immediately (e.g., port already in use), the launcher raises a ``RuntimeError``.
 """
 
 import sys
@@ -89,7 +88,7 @@ def _start_http_server(cwd: Path, port: int = 8080) -> subprocess.Popen:
 
 def _start_ws_server(root: Path) -> subprocess.Popen:
     """
-    Start the WebSocket server as a subprocess.
+    Start the `WebSocket <https://websocket-client.readthedocs.io/en/latest/index.html>`_ server as a subprocess.
 
     This launches::
 
@@ -105,7 +104,7 @@ def _start_ws_server(root: Path) -> subprocess.Popen:
 
     Returns:
         subprocess.Popen:
-            A handle to the spawned WebSocket server process.
+            A handle to the spawned `WebSocket <https://websocket-client.readthedocs.io/en/latest/index.html>`_ server process.
 
     Note:
         - The process is spawned with its working directory set to the project root.

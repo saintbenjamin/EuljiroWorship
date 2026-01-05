@@ -10,7 +10,7 @@
 
 UI content widget for editing "corner" style slides.
 
-This module defines :class:`core.generator.ui.contents.corner_content.CornerContent`, a `QWidget` that provides simple text
+This module defines :class:`core.generator.ui.contents.corner_content.CornerContent`, a `QWidget <https://doc.qt.io/qt-6/qwidget.html>`_ that provides simple text
 inputs for creating "corner"-style slides. A "corner" slide typically displays
 a short headline and a caption in a fixed corner position on the screen,
 and is commonly used for sermon titles, worship order sections, or brief

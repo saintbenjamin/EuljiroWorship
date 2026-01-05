@@ -8,12 +8,12 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-Lightweight `QAbstractTableModel` for displaying Bible keyword search results.
+Lightweight `QAbstractTableModel <https://doc.qt.io/qt-6/qabstracttablemodel.html>`_ for displaying Bible keyword search results.
 
 This module defines a minimal table model optimized for keyword search output:
 
 - Two-column layout: Bible reference and verse text
-- Designed for read-only display in `QTableView`
+- Designed for read-only display in `QTableView <https://doc.qt.io/qt-6/qtableview.html>`_
 - Supports tooltip display of highlighted (HTML-formatted) verse text
 - Uses standard book name mapping for localized display
 

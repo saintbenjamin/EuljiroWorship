@@ -12,14 +12,14 @@ Slide file watcher for the slide controller.
 
 This module continuously monitors the slide output JSON file used by the
 slide controller. It detects file modification events via polling and emits
-Qt signals when:
+`Qt <https://doc.qt.io/qt-6/index.html>`_ signals when:
 
 - Slide content is updated (non-empty JSON)
 - Slide content is cleared (empty JSON), typically indicating the end of
   emergency caption mode
 
-The watcher is designed to run inside a `QThread` and communicate with the
-:class:`controller.slide_controller.SlideController` via Qt signals only.
+The watcher is designed to run inside a `QThread <https://doc.qt.io/qt-6/qthread.html>`_ and communicate with the
+:class:`controller.slide_controller.SlideController` via `Qt <https://doc.qt.io/qt-6/index.html>`_ signals only.
 """
 
 import json
@@ -87,7 +87,7 @@ class SlideFileWatcher(QObject):
         - Emits ``slide_changed`` if the file contains slide data
         - Emits ``slide_cleared`` if the file is empty
 
-        This method is intended to be executed inside a `QThread`.
+        This method is intended to be executed inside a `QThread <https://doc.qt.io/qt-6/qthread.html>`_.
 
         Returns:
             None

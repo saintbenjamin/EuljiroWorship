@@ -10,7 +10,7 @@
 
 UI content widget for editing "prayer"-style slides.
 
-This module defines :class:`core.generator.ui.contents.prayer_content.PrayerContent`, a `QWidget` that provides input fields
+This module defines :class:`core.generator.ui.contents.prayer_content.PrayerContent`, a `QWidget <https://doc.qt.io/qt-6/qwidget.html>`_ that provides input fields
 for creating prayer slides. A prayer slide typically consists of a short
 title (e.g., "기도") and the name of the person leading the prayer.
 

@@ -8,9 +8,9 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-`QStyledItemDelegate` implementation for keyword highlighting in Qt item views.
+`QStyledItemDelegate <https://doc.qt.io/qt-6/qstyleditemdelegate.html>`_ implementation for keyword highlighting in `Qt <https://doc.qt.io/qt-6/index.html>`_ item views.
 
-This module defines a delegate that renders cell text using `QTextDocument` so that:
+This module defines a delegate that renders cell text using `QTextDocument <https://doc.qt.io/qt-6/qtextdocument.html>`_ so that:
 
 - HTML tags (e.g., ``<b>``) are supported.
 - Newlines are rendered as multi-line content (``<br>``).
@@ -34,7 +34,7 @@ class KeywordHighlightDelegate(QStyledItemDelegate):
 
     - HTML formatting (keyword highlighting)
     - Multi-line wrapping
-    - Accurate ``sizeHint()`` based on rendered document height
+    - Accurate :meth:`sizeHint` based on rendered document height
 
     Attributes:
         keywords (list[str]):
@@ -66,7 +66,7 @@ class KeywordHighlightDelegate(QStyledItemDelegate):
 
         - Fills the background depending on selection state.
         - Converts the cell text to HTML with keyword highlighting.
-        - Uses `QTextDocument` to render the HTML with wrapping.
+        - Uses `QTextDocument <https://doc.qt.io/qt-6/qtextdocument.html>`_ to render the HTML with wrapping.
         - Draws the document contents with a small padding offset.
 
         Args:
@@ -114,7 +114,7 @@ class KeywordHighlightDelegate(QStyledItemDelegate):
         This method:
 
         - Escapes HTML special characters (``&``, ``<``, ``>``).
-        - Converts newline characters to <br>.
+        - Converts newline characters to ``<br>``.
         - Wraps each keyword occurrence with::
 
             <span style='color:red'>...</span>
@@ -151,7 +151,7 @@ class KeywordHighlightDelegate(QStyledItemDelegate):
         """
         Return the preferred size for a cell based on HTML-rendered content.
 
-        Computes the document size using `QTextDocument` with the same width constraints
+        Computes the document size using `QTextDocument <https://doc.qt.io/qt-6/qtextdocument.html>`_ with the same width constraints
         used during painting, then adds padding so the content does not touch borders.
 
         Args:

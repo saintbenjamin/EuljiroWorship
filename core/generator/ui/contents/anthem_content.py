@@ -10,7 +10,7 @@
 
 UI content widget for editing "anthem" style slides.
 
-This module defines :class:`core.generator.ui.contents.anthem_content.AnthemContent`, a `QWidget` responsible for collecting
+This module defines :class:`core.generator.ui.contents.anthem_content.AnthemContent`, a `QWidget <https://doc.qt.io/qt-6/qwidget.html>`_ responsible for collecting
 input data required to generate an "anthem"-style slide. The widget provides
 fields for specifying the choir name and the anthem title, and converts the
 input into a standardized slide dictionary used by the generator.

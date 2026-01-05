@@ -10,7 +10,7 @@
 
 Dynamic right-hand content panel for the slide generator UI.
 
-This module defines :class:`core.generator.ui.slide_generator_right_contents.SlideGeneratorRightContents`, a `QWidget` responsible for
+This module defines :class:`core.generator.ui.slide_generator_right_contents.SlideGeneratorRightContents`, a `QWidget <https://doc.qt.io/qt-6/qwidget.html>`_ responsible for
 hosting the style-specific input panes used to edit slide content. The widget
 acts as a dispatcher that selects and embeds the appropriate sub-pane based on
 the slide style (e.g., "lyrics", "verse", "anthem").
@@ -64,7 +64,7 @@ class SlideGeneratorRightContents(QWidget):
         subpane (QWidget):
             The instantiated style-specific content widget responsible for
             rendering input fields and producing slide data. For ``"blank"``
-            or unsupported styles, this is an empty ``QWidget``.
+            or unsupported styles, this is an empty ``QWidget <https://doc.qt.io/qt-6/qwidget.html>`_`.
     """
 
     def __init__(self, style: str, generator_window, caption: str = "", headline: str = "", parent=None):

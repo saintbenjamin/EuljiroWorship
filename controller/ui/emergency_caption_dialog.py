@@ -53,7 +53,7 @@ from core.utils.bible_keyword_searcher import BibleKeywordSearcher
 
 class EmergencyCaptionDialog(QDialog):
     """
-    PySide6 dialog for building emergency slide payloads (Bible verses or custom messages).
+    `PySide6 <https://pypi.org/project/PySide6/>`_ dialog for building emergency slide payloads (Bible verses or custom messages).
 
     Supported features:
 

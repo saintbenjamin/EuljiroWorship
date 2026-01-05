@@ -43,7 +43,7 @@ class EmergencyCaptionHandler:
     - :class:`controller.utils.emergency_slide_factory.EmergencySlideFactory`
 
     Attributes:
-        parent (QWidget):
+        parent (`QWidget <https://doc.qt.io/qt-6/qwidget.html>`_):
             Parent widget used to anchor the emergency caption dialog
             as a modal window.
 

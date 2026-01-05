@@ -10,7 +10,7 @@
 
 UI content widget for editing "lyrics" style slides.
 
-This module defines :class:`core.generator.ui.contents.lyrics_content.LyricsContent`, a `QWidget` that provides input fields
+This module defines :class:`core.generator.ui.contents.lyrics_content.LyricsContent`, a `QWidget <https://doc.qt.io/qt-6/qwidget.html>`_ that provides input fields
 for entering a song or praise title and its lyrics. The lyrics are entered
 as multiline text and are later split into multiple slides according to
 the generator's export rules (typically every two lines).

@@ -10,7 +10,7 @@
 
 UI content widget for editing "verse"-style slides.
 
-This module defines :class:`core.generator.ui.contents.verse_content.VerseContent`, a `QWidget` that provides an interface
+This module defines :class:`core.generator.ui.contents.verse_content.VerseContent`, a `QWidget <https://doc.qt.io/qt-6/qwidget.html>`_ that provides an interface
 for entering Bible references, fetching the corresponding verses from
 the internal Bible data engine, and previewing the formatted output.
 

@@ -10,7 +10,7 @@
 
 UI content widget for editing "hymn" style slides.
 
-This module defines :class:`core.generator.ui.contents.hymn_content.HymnContent`, a `QWidget` that provides an interface for
+This module defines :class:`core.generator.ui.contents.hymn_content.HymnContent`, a `QWidget <https://doc.qt.io/qt-6/qwidget.html>`_ that provides an interface for
 editing "hymn"-based slides. It supports selecting a hymn by number, loading
 its title and lyrics from local JSON files, editing the content, and saving
 updates back to the hymn database.

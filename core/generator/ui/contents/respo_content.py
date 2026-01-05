@@ -10,7 +10,7 @@
 
 UI content widget for editing "respo" (responsive reading) style slides.
 
-This module defines :class:`core.generator.ui.contents.respo_content.RespoContent`, a `QWidget` that provides a table-based
+This module defines :class:`core.generator.ui.contents.respo_content.RespoContent`, a `QWidget <https://doc.qt.io/qt-6/qwidget.html>`_ that provides a table-based
 editor for responsive readings (교독문). Each slide consists of a title
 and a sequence of speaker-response pairs, which are rendered as formatted
 HTML for slide output.
