@@ -26,14 +26,34 @@ class AnthemContent(QWidget):
     """
     Content editor widget for "anthem" style slides.
 
-    This widget provides input fields for:
+    This widget provides input fields for composing anthem-style slides,
+    typically used for choir or special music presentations. It allows
+    the user to specify:
 
     - Choir or group name
     - Anthem title
 
     The collected input is transformed into a slide dictionary containing
-    ``caption``, ``caption_choir``, and ``headline`` fields, which are later used
-    by the slide exporter and controller.
+    ``caption``, ``caption_choir``, and ``headline`` fields, which are later
+    consumed by the slide generator/exporter and controller.
+
+    Attributes:
+        caption (str):
+            Initial caption text passed from existing slide data.
+            Typically represents the main group or choir name.
+        headline (str):
+            Initial headline text passed from existing slide data.
+            Typically represents the anthem title.
+        generator_window:
+            Reference to the slide generator window. Used for automatic
+            submission, synchronization, and triggering save/update logic.
+        name_input (QLineEdit):
+            Input field for choir or group name.
+        headline_input (QLineEdit):
+            Input field for the anthem title.
+        submitter (SlideInputSubmitter):
+            Helper object that watches input fields and submits slide data
+            back to the generator window when changes occur.
     """
 
     def __init__(self, parent, generator_window, caption: str = "", headline: str = ""):

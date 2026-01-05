@@ -27,13 +27,33 @@ class GreetContent(QWidget):
     """
     Content editor widget for "greet"-style slides.
 
-    This widget provides input fields for:
+    This widget is used to compose greeting or announcement slides, typically
+    shown at the beginning or end of a service. It allows the user to enter:
 
-    - Caption: A short reference or subtitle (e.g., Bible reference)
-    - Headline: A multiline main message or greeting text
+    - A short caption (e.g., Bible reference or section label)
+    - A multi-line headline containing the main greeting or message
 
-    The collected input is converted into a slide data dictionary
-    containing ``style``, ``caption``, and ``headline`` fields.
+    The entered content is converted into a slide data dictionary containing
+    ``style``, ``caption``, and ``headline`` fields, which are then consumed by
+    the slide generator and controller.
+
+    Attributes:
+        caption (str):
+            Initial caption text provided when the widget is created.
+            Usually a short reference or subtitle.
+        headline (str):
+            Initial headline text provided when the widget is created.
+            Usually a greeting or main message body.
+        generator_window:
+            Reference to the slide generator window. Used to submit updated
+            slide data and support automatic save/synchronization behavior.
+        caption_edit (QLineEdit):
+            Single-line input field for editing the caption text.
+        headline_edit (QPlainTextEdit):
+            Multi-line text input field for editing the main greeting message.
+        submitter (SlideInputSubmitter):
+            Helper object that monitors input widgets and submits updated
+            slide data to the generator window whenever changes occur.
     """
 
     def __init__(self, parent, generator_window, caption: str = "", headline: str = ""):

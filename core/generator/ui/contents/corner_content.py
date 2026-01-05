@@ -27,13 +27,34 @@ class CornerContent(QWidget):
     """
     Content editor widget for "corner" style slides.
 
-    This widget provides input fields for:
+    This widget provides a simple editor for corner-style slides, typically
+    used for sermon titles, section headers, or brief announcements. It allows
+    the user to edit:
 
     - Headline text (main title)
     - Caption text (subtitle or secondary label)
 
-    The collected input is converted into a slide data dictionary
-    containing ``style``, ``caption``, and ``headline`` fields.
+    The input is converted into a slide dictionary containing
+    ``style``, ``caption``, and ``headline`` fields, which are consumed by the
+    slide generator and controller.
+
+    Attributes:
+        caption (str):
+            Initial caption text provided when the widget is created.
+            Typically represents a subtitle or secondary label.
+        headline (str):
+            Initial headline text provided when the widget is created.
+            Typically represents the main title.
+        generator_window:
+            Reference to the slide generator window. Used for automatic
+            submission, synchronization, and save/update behavior.
+        headline_edit (QLineEdit):
+            Input field for editing the headline text.
+        caption_edit (QLineEdit):
+            Input field for editing the caption text.
+        submitter (SlideInputSubmitter):
+            Helper object that monitors input fields and submits updated
+            slide data to the generator window when changes occur.
     """
 
     def __init__(self, parent, generator_window, caption: str = "", headline: str = ""):

@@ -32,16 +32,31 @@ class SlideGeneratorDataManager:
     """
     Manage slide data exchange between JSON files and the generator table UI.
 
-    This class provides a thin data-adapter layer between JSON-based slide
-    definitions and the generator table widget. It loads slide JSON data into the
-    `QTableWidget` and converts table rows back into structured slide
-    dictionaries. It also performs style-specific preprocessing and normalization,
-    such as handling anthem choir names and verse formatting.
+    This class acts as a thin data-adapter layer between JSON-based slide
+    definitions and the slide generator's `QTableWidget`. It is responsible for
+    loading slide session data from disk into the table, and for collecting and
+    normalizing table contents back into structured slide dictionaries suitable
+    for saving or exporting.
 
-    This class intentionally contains no UI logic beyond table population.
+    Responsibilities include:
 
-    Args:
-        table_widget (QTableWidget): The table widget used in the slide generator UI.
+    - Populating the generator table from a slide JSON file
+    - Extracting slide data from table rows into normalized dictionaries
+    - Applying style alias mappings between display labels and internal keys
+    - Performing style-specific preprocessing and normalization, such as:
+
+        * Merging and splitting anthem captions and choir names
+        * Reformatting multi-verse Bible slide text for readability
+
+    This class deliberately contains no UI control logic beyond direct table
+    population and inspection, and does not handle dialogs, user interaction,
+    or rendering concerns.
+
+    Attributes:
+        table (QTableWidget):
+            Reference to the generator's slide table widget.
+        loader (BibleDataLoader):
+            Bible data loader instance used for verse-related preprocessing.
     """
 
     def __init__(self, table_widget):

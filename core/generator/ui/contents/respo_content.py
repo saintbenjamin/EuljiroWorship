@@ -37,14 +37,57 @@ class RespoContent(QWidget):
     """
     Content editor widget for "respo" (responsive reading) slides.
 
-    This widget allows users to:
+    This widget provides a small editor UI for creating and maintaining
+    responsive reading (교독문) content backed by local JSON files under
+    ``data/respo/``.
 
-    - Select a responsive reading by number
-    - Edit the title of the reading
-    - Edit speaker-response pairs using a table interface
+    Users can:
 
-    The table contents are converted into formatted HTML and exported
-    as slide data for rendering.
+    - Select a responsive reading by number and load its JSON data
+    - Edit the reading title (exported as slide ``caption``)
+    - Edit speaker/response pairs in a 2-column table
+    - Save the edited content back to the JSON database
+    - Export the current state as a slide dictionary where table rows are
+      converted into an HTML-like formatted string (exported as slide ``headline``)
+
+    The widget itself is responsible for *editing and formatting* the content.
+    Actual slide splitting / rendering is handled downstream by the generator
+    and overlay/controller pipelines.
+
+    Integration with
+    :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter`
+    enables automatic submission/synchronization with the generator window.
+
+    Attributes:
+        caption (str):
+            Initial caption provided at construction time. Often contains a
+            numbered title such as ``"12. ..."`` which may trigger auto-loading.
+        headline (str):
+            Initial headline provided at construction time. This is not directly
+            edited; exported headline is rebuilt from the table via
+            :meth:`format_responsive_text`.
+        respo_data (dict):
+            In-memory JSON payload for the currently loaded responsive reading.
+            Typically contains ``title`` and ``slides``.
+        generator_window:
+            Reference to the generator main window that receives slide updates
+            and manages auto-save/session state.
+
+        number_input (QLineEdit):
+            Input field for the responsive reading number.
+        load_button (QPushButton):
+            Button that triggers :meth:`load_respo_by_number`.
+        capt_edit (QLineEdit):
+            Title input field (exported as slide ``caption``).
+        table (QTableWidget):
+            Two-column table editor for speaker/response rows.
+            Column 0 = speaker, column 1 = body text.
+        save_button (QPushButton):
+            Button that triggers :meth:`save_respo_json`.
+
+        submitter (SlideInputSubmitter):
+            Auto-submit helper that observes the title/table widgets and supplies
+            updated slide data via :meth:`build_respo_slide`.
     """
 
     def __init__(self, parent, generator_window, caption: str = "", headline: str = ""):

@@ -48,14 +48,14 @@ from core.plugin.slide_controller_launcher import SlideControllerLauncher
 
 class SlideGenerator(QMainWindow):
     """
-    Main window for the EuljiroWorship slide generator (`PySide6 <https://pypi.org/project/PySide6/>`_ / Qt).
+    Main window for the EuljiroWorship slide generator.
 
     The generator provides a table-based slide session editor and supports:
 
-    - Creating, inserting, deleting, and reordering slide rows in a table
-    - Editing each slide via a style-specific modal dialog (on double-click)
-    - Loading/saving slide sessions as JSON files
-    - Exporting an overlay-ready JSON (prepends a blank slide for clean initial state)
+    - Creating, inserting, deleting, and reordering slide rows
+    - Editing each slide via a style-specific modal dialog (double-click)
+    - Loading and saving slide sessions as JSON files
+    - Exporting overlay-ready JSON (prepends a blank slide for a clean initial state)
     - Launching the slide controller for live output (if not already running)
 
     Core collaborators (high-level):
@@ -64,13 +64,47 @@ class SlideGenerator(QMainWindow):
         Owns table row operations (add/insert/delete/move) for the main table widget.
     - :class:`core.generator.utils.slide_generator_data_manager.SlideGeneratorDataManager`:
         Loads/saves and collects slide session data from the table.
+    - :class:`core.generator.ui.slide_generator_ui_builder.SlideGeneratorUIBuilder`:
+        Builds and wires the generator window UI chrome (menus, buttons, labels).
     - :class:`core.generator.utils.slide_exporter.SlideExporter`:
         Converts the internal slide session into the overlay JSON format.
     - :class:`core.plugin.slide_controller_launcher.SlideControllerLauncher`:
-        Launches the controller process/UI that pushes slides to the overlay target.
+        Launches the controller UI/process that pushes slides to the overlay target.
 
     Note:
-        - On startup, this window may show a file-open dialog to load an existing session. If the user cancels, a blank session is created.
+        - On startup, this window may show a file-open dialog to load an existing
+          session. If the user cancels, a blank session is created.
+        - Table cells are intentionally non-editable; edits are performed via the
+          modal per-style editor dialog.
+
+    Attributes:
+        first_save_done (bool):
+            Tracks whether the first save action has completed in the current
+            session. Used to choose between "save as" vs. save-to-last-path on
+            Ctrl+S.
+        reverse_style_aliases (dict[str, str]):
+            Reverse mapping from the displayed style label (Korean UI text) to
+            the internal style key (e.g., "가사" -> "lyrics"). Derived from
+            ``style_map.REVERSE_ALIASES``.
+        table (QTableWidget):
+            Main slide table with three columns: style, caption, headline.
+            Rows represent slides in the current session.
+        detail_widget (QWidget):
+            Right-side placeholder panel (reserved for future detail views).
+        slide_controller_launcher (SlideControllerLauncher):
+            Helper that launches (or detects) the running slide controller.
+        table_manager (SlideTableManager):
+            Encapsulates row operations and table manipulation logic.
+        data_manager (SlideGeneratorDataManager):
+            Loads/saves session JSON and collects session data from the table.
+        ui_builder (SlideGeneratorUIBuilder):
+            UI builder responsible for wiring menus, buttons, and header labels.
+        worship_name (str | None):
+            Session label derived from the loaded filename stem. None for a new
+            unsaved session.
+        last_saved_path (str | None):
+            Last known save path for the current session. When set, normal save
+            operations write to this path without prompting.
     """
 
     def __init__(self):

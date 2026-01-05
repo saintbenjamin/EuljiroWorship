@@ -34,16 +34,43 @@ class ImageContent(QWidget):
     """
     Content editor widget for "image" style slides.
 
-    This widget allows users to:
+    This widget supports selecting an image file, copying it into the local
+    overlay image directory, previewing it, and editing an optional caption.
 
-    - Select an image file from disk
-    - Copy the selected image into a local image directory for overlay use
-    - Preview the selected image
-    - Enter optional caption text associated with the image
+    In the slide schema used by this project:
 
-    In this slide style, the image path is stored in the ``headline`` field
-    of the slide data dictionary, while the ``caption`` field contains
-    accompanying text.
+    - ``style`` is fixed to ``"image"``.
+    - ``headline`` stores the (relative) image path used by the overlay.
+    - ``caption`` stores optional text associated with the image.
+
+    The widget integrates with the generator window via
+    :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter`
+    so that changes can be submitted automatically.
+
+    Attributes:
+        caption (str):
+            Initial caption value passed at construction time.
+        headline (str):
+            Initial headline value passed at construction time. For this style,
+            it represents an image path (typically relative).
+        generator_window:
+            Reference to the generator window that receives live slide updates
+            and manages auto-save/session logic.
+        headline_label (QLabel):
+            Label describing the image-path input field.
+        headline_edit (QLineEdit):
+            Input field that stores the relative image path (slide ``headline``).
+        caption_label (QLabel):
+            Label describing the caption input field.
+        caption_edit (QLineEdit):
+            Input field that stores caption text (slide ``caption``).
+        image_button (QPushButton):
+            Button that opens the file picker to select an image file.
+        image_preview (QLabel):
+            Preview area that displays the selected image (scaled to fit).
+        submitter (SlideInputSubmitter):
+            Auto-submit helper that observes inputs and provides updated slide
+            payloads via ``build_image_slide()``.
     """
 
     def __init__(self, parent, generator_window, caption: str = "", headline: str = ""):

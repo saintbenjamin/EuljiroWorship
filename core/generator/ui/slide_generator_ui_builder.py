@@ -37,40 +37,52 @@ class SlideGeneratorUIBuilder:
     Build and wire the full UI layout for the slide generator window.
 
     This builder is responsible for composing the visual layout and connecting
-    UI controls to the corresponding handlers exposed by the parent window.
-    It does not own application state; instead, it assumes that the parent
-    provides the necessary widgets and methods.
+    UI controls to handler methods exposed by the parent generator window.
+    It does not own or manage application state; instead, it assumes that the
+    parent provides the required widgets, managers, and callbacks.
 
-    Constructed UI elements:
+    Constructed UI elements include:
 
-    - A horizontal toolbar of action buttons (with SVG icons)
+    - A horizontal toolbar of action buttons (SVG-icon buttons)
     - A label displaying the current worship/session name
     - The central slide table widget
-    - A 'Tools > Settings' menu entry
+    - A ``도구 > 설정`` menu entry
     - Keyboard shortcuts and signal-slot connections
 
     Required parent interface:
 
-        The parent object is expected to provide at least:
-        
-        - ``table`` (`QTableWidget`): 
-            main slide table widget
-        - ``menuBar()`` -> `QMenuBar`
-        - ``table_manager`` = :class:`core.generator.ui.slide_table_manager.SlideTableManager`: 
-            row manipulation logic
-        - :meth:`core.generator.ui.slide_generator.SlideGenerator.load_from_file`: 
-            load slide session
-        - :meth:`core.generator.ui.slide_generator.SlideGenerator.save_as`: 
-            save slide session
-        - :meth:`core.generator.ui.slide_generator.SlideGenerator.export_slides_for_overlay`: 
-            export overlay JSON
-        - :meth:`core.generator.ui.slide_generator.SlideGenerator.open_settings_dialog`: 
-            open settings dialog
-        - :meth:`core.generator.ui.slide_generator.SlideGenerator.handle_table_double_click`: 
-            edit slide dialog
-        - :meth:`core.generator.ui.slide_generator.SlideGenerator.apply_generator_font_settings`: 
-            apply font preferences
+    The parent object is expected to provide at least:
+
+    - ``table`` (QTableWidget):
+        Main slide table widget.
+    - ``menuBar()`` -> QMenuBar:
+        Menu bar accessor for adding menus and actions.
+    - ``table_manager`` (core.generator.ui.slide_table_manager.SlideTableManager):
+        Row manipulation logic for the slide table.
+    - ``load_from_file()``:
+        Load a slide session into the table.
+    - ``save_as()``:
+        Save the current slide session using a Save As flow.
+    - ``export_slides_for_overlay()``:
+        Export overlay-ready JSON and launch the slide controller if needed.
+    - ``open_settings_dialog()``:
+        Open the generator settings dialog.
+    - ``handle_table_double_click(row: int, column: int)``:
+        Open the style-specific slide editor dialog.
+    - ``apply_generator_font_settings()``:
+        Apply persisted font preferences to the generator UI.
+
+    Attributes:
+        parent (QMainWindow | QWidget):
+            The slide generator main window that owns the UI and application logic.
+            All widgets are ultimately attached to this object.
+        worship_name (str):
+            Current worship/session name displayed above the slide table.
+        worship_label (QLabel):
+            Label widget showing the current worship/session name. This is created
+            during UI setup and updated when a session is loaded or renamed.
     """
+
     def __init__(self, parent, worship_name=""):
         """
         Initialize the UI builder and immediately construct the UI layout.

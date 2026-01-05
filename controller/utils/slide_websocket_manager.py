@@ -33,12 +33,20 @@ class SlideWebSocketManager:
     `websocket-client <https://pypi.org/project/websocket-client/>`_ library and provides simple methods for:
 
     - Connecting to a WebSocket server
-    - Sending slide dictionaries as JSON
+    - Sending slide dictionaries as JSON payloads
     - Querying connection state
     - Closing the connection safely
 
-    It does not implement reconnection logic or background threads by design;
-    higher-level components are expected to handle retry behavior if needed.
+    It intentionally does **not** implement reconnection logic, background threads,
+    or retry loops. Higher-level controller components are expected to manage
+    lifecycle and recovery behavior if needed.
+
+    Attributes:
+        uri (str):
+            WebSocket server URI (e.g., ``ws://127.0.0.1:8765/ws``).
+        ws (websocket.WebSocket | None):
+            Active WebSocket connection object created by ``websocket.create_connection``.
+            Set to ``None`` when disconnected or on connection failure.
     """
 
     def __init__(self, uri):

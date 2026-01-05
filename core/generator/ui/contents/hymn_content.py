@@ -38,16 +38,44 @@ class HymnContent(QWidget):
     """
     Content editor widget for "hymn" style slides.
 
-    This widget provides input fields and controls for:
+    This widget provides a small editor for hymn-based slides, including:
 
     - Selecting a hymn by number
-    - Viewing and editing the hymn title
-    - Viewing and editing the hymn lyrics
-    - Loading hymn data from a local JSON database
-    - Saving edited hymn data back to the database
+    - Loading hymn JSON data from the local hymn database
+    - Viewing/editing the hymn title and lyrics
+    - Saving edits back to the JSON database
+    - Producing slide payloads for the generator/controller export flow
 
-    The edited content can be exported as slide data for use in the
-    slide generator and controller.
+    The widget is designed to integrate with the generator window via
+    :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter`,
+    so edits can be reflected in the current slide state automatically.
+
+    Attributes:
+        caption (str):
+            Initial caption value passed at construction time. Often contains
+            the hymn title or a string like "새찬송가 88장".
+        headline (str):
+            Initial lyrics text passed at construction time.
+        hymn_data (dict):
+            In-memory representation of the currently loaded hymn JSON file.
+            This is updated when a hymn is loaded and then reused on save.
+        generator_window:
+            Reference to the generator window that receives live slide updates
+            and manages auto-save/session logic.
+        number_input (QLineEdit):
+            Input field for the hymn number. Pressing Enter triggers loading.
+        title_edit (QLineEdit):
+            Editor for the hymn title (used as the slide caption).
+        headline_edit (QTextEdit):
+            Editor for the hymn lyrics (used as the slide headline). Font is set
+            via ``get_font_from_settings()``.
+        load_button (QPushButton):
+            Button that triggers hymn loading for the number in ``number_input``.
+        save_button (QPushButton):
+            Button that writes the current ``hymn_data`` back to disk.
+        submitter (SlideInputSubmitter):
+            Auto-submit helper that observes inputs and provides updated slide
+            payloads via ``build_hymn_slide()``. Created after a hymn is loaded.
     """
 
     def __init__(self, parent, generator_window, caption: str = "", headline: str = ""):

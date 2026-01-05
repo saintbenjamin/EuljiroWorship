@@ -41,17 +41,19 @@ class EmergencySlideFactory:
     """
     Factory for constructing emergency slide blocks.
 
-    This class converts user-facing emergency inputs into a list of slide dicts.
+    This class converts user-facing emergency inputs into a list of slide
+    dictionaries suitable for immediate export to the slide controller.
 
-    Primary responsibilities:
+    It supports multiple input modes, including:
 
-    - Detect whether the first line is a Bible reference via :func:`core.utils.bible_parser.parse_reference`
-    - If a reference is valid, retrieve verses using :class:`core.utils.bible_data_loader.BibleDataLoader`
-    - Wrap long verse text into multiple slides using `textwrap.wrap <https://docs.python.org/3/library/textwrap.html#textwrap.wrap>`_
-    - If not a reference, build a fallback "manual" slide payload
-    - Load preset materials:
-        - Responsive readings ("respo") from JSON
-        - Hymns from JSON
+    - Bible references (single verse, range, or full chapter)
+    - Manual text fallback
+    - Responsive readings (교독문)
+    - Hymns (찬송가)
+    - Arbitrary manual slide content
+
+    Verse-based slides are retrieved via :class:`core.utils.bible_data_loader.BibleDataLoader`
+    and wrapped into screen-friendly chunks using `textwrap.wrap <https://docs.python.org/3/library/textwrap.html#textwrap.wrap>`_.
 
     Slide dict schema::
 
@@ -60,6 +62,17 @@ class EmergencySlideFactory:
             "caption": str,   # title / reference line
             "headline": str,  # main body text shown on screen
         }
+
+    Attributes:
+        VERSION_ALIASES (dict):
+            Mapping of Bible version keys to human-readable aliases,
+            loaded from :py:data:`core.config.paths.ALIASES_VERSION_FILE`.
+            Used when rendering verse captions.
+
+        loader (BibleDataLoader):
+            Bible data loader instance used to retrieve verse text,
+            book names, and chapter metadata. Either provided externally
+            or created internally during initialization.
     """
 
     def __init__(self, bible_loader=None):

@@ -27,15 +27,16 @@ class SlideGeneratorDialog(QDialog):
     """
     Modal dialog for editing a single slide.
 
-    This dialog embeds :class:`core.generator.ui.slide_generator_right_contents.SlideGeneratorRightContents` to provide the same
-    style-specific editing UI used elsewhere in the generator, but presents
-    it in a blocking modal dialog with explicit OK and Cancel buttons.
+    This dialog embeds :class:`core.generator.ui.slide_generator_right_contents.SlideGeneratorRightContents`
+    to provide the same style-specific editing UI used in the generator, but
+    presents it in a blocking modal dialog with explicit OK/Cancel buttons.
 
-    The dialog is intended to be used as follows:
-
-    - Construct with the slide style and initial caption/headline.
-    - Call ``exec()`` to display the dialog modally.
-    - If the dialog is accepted, call :meth:`get_result` to retrieve edited data.
+    Attributes:
+        content_widget (SlideGeneratorRightContents):
+            The embedded style-specific editor widget that owns the input fields
+            and produces the final slide data dict.
+        button_box (QDialogButtonBox):
+            Standard OK/Cancel button box wired to :meth:`accept` and :meth:`reject`.
     """
 
     def __init__(self, style: str, caption: str, headline: str, parent=None):

@@ -40,12 +40,61 @@ class VerseContent(QWidget):
     """
     Content editor widget for "verse" (Bible verse) slides.
 
-    This widget allows the user to input a Bible reference
-    (e.g., "요한복음 3:16"), fetch the corresponding verse text from
-    the selected Bible version, and preview the formatted output.
+    This widget provides a verse-focused editor workflow:
 
-    The fetched verses are also written to :py:data:`core.config.paths.VERSE_FILE` to support
-    emergency subtitle overlays.
+    - Select a Bible version (JSON file under :py:data:`core.config.paths.BIBLE_DATA_DIR`)
+    - Enter a Bible reference string (e.g., "요한복음 3:16")
+    - Press Enter to parse the reference, fetch verses, and preview the result
+    - Export the fetched/assembled text into the slide system and also write the
+      same formatted output to :py:data:`core.config.paths.VERSE_FILE` for
+      emergency subtitle overlays.
+
+    Verse resolution is performed by :func:`core.utils.bible_parser.parse_reference`
+    and verse retrieval uses :class:`core.utils.bible_data_loader.BibleDataLoader`.
+    When the parsed reference indicates a full chapter request (``(1, -1)``),
+    the widget expands the verse range using the chapter's maximum verse count
+    when available.
+
+    Note:
+        - The preview text shown in the editor is a joined block of
+          ``"{caption}\\n{headline}"`` entries separated by blank lines.
+        - The exported slide data returned by :meth:`get_slide_data` uses the
+          raw user-entered reference as ``caption`` and the preview text block
+          as ``headline`` (the detailed per-verse slide dicts are kept separately
+          in ``generated_slides`` when generated).
+
+    Attributes:
+        caption (str):
+            Initial reference string provided at construction time.
+        headline (str):
+            Initial preview/body text provided at construction time.
+        generator_window:
+            Reference to the generator main window for submission and
+            synchronization (auto-save/session updates via the submitter).
+        VERSION_ALIASES (dict):
+            Mapping of Bible version display names to shorter aliases, loaded
+            from :py:data:`core.config.paths.ALIASES_VERSION_FILE`. Used when
+            composing per-verse caption strings (e.g., ``"(개역개정)"``).
+        versions (list[str]):
+            Available version keys discovered from JSON files in
+            :py:data:`core.config.paths.BIBLE_DATA_DIR`.
+        version_dropdown (QComboBox):
+            Version selector widget; current selection determines which JSON
+            is loaded when fetching verses.
+        caption_edit (QLineEdit):
+            Reference input widget. ``returnPressed`` triggers
+            :meth:`try_fetch_verse_output`.
+        headline_edit (QTextEdit):
+            Multi-line preview area that displays the formatted verse output.
+        submitter (SlideInputSubmitter):
+            Auto-submit helper that observes the verse preview widget and
+            provides export-ready slide data via :meth:`build_verse_slide`.
+            The reference input is ignored for auto-submit in this widget.
+        generated_slides (list[dict]):
+            List of per-verse slide dictionaries produced by the last successful
+            fetch. Each entry follows the standard slide schema
+            (``style``, ``caption``, ``headline``). Present only after a
+            successful fetch.
     """
 
     def __init__(self, parent, generator_window, caption: str = "", headline: str = ""):

@@ -39,15 +39,37 @@ class SlideControllerUIBuilder:
     """
     UI builder for the :class:`controller.slide_controller.SlideController` main window.
 
-    This class encapsulates widget construction so that :class:`controller.slide_controller.SlideController` can keep
-    its runtime logic separate from UI layout details. The builder creates and
-    attaches widgets onto the controller instance (``self.c``), and wires up signals
-    to the controller's navigation and emergency-caption handlers.
+    This class encapsulates widget construction so that
+    :class:`controller.slide_controller.SlideController` can keep runtime logic
+    separate from UI layout details. The builder creates and attaches widgets
+    onto the controller instance (``self.c``), and wires up signals to the
+    controller's navigation and emergency-caption handlers.
+
+    The builder assumes the controller already has:
+    - ``slides``: list[dict] containing slide data for preview population
+    - ``index``: int current slide index to pre-select in the table
+
+    Attributes:
+        c (controller.slide_controller.SlideController):
+            The controller instance that owns the window and runtime logic.
+            Widgets created by this builder are attached onto this object.
+
+            This builder assigns (at minimum) the following attributes onto ``c``:
+            - label (QLabel): Top status label (elided text).
+            - btn_on (QPushButton): Emergency caption ON button.
+            - btn_off (QPushButton): Emergency caption OFF button.
+            - first_button (QPushButton): Jump to first slide button.
+            - prev_button (QPushButton): Jump to previous slide button.
+            - next_button (QPushButton): Jump to next slide button.
+            - last_button (QPushButton): Jump to last slide button.
+            - page_input (QLineEdit): Page number input used for direct jump.
+            - table (QTableWidget): Slide preview table (row selection + click-to-jump).
 
     Note:
         - Widgets are attached onto the controller instance as attributes
           (e.g., ``controller.label``, ``controller.table``, ``controller.page_input``).
-        - The builder assumes :class:`controller.slide_controller.SlideController` already loaded ``slides`` and ``index``.
+        - The builder installs event filters on the controller and its table to
+          support keyboard navigation.
     """
 
     def __init__(self, controller):

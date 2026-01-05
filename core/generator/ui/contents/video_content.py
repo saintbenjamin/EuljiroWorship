@@ -42,21 +42,55 @@ from PySide6.QtMultimediaWidgets import QVideoWidget
 
 from core.generator.utils.slide_input_submitter import SlideInputSubmitter
 
-
 class VideoContent(QWidget):
     """
     Content editor widget for "video" style slides.
 
-    This widget allows users to:
+    This widget supports selecting a local video file, copying it into the
+    overlay asset directory (``./html/img``), previewing it using Qt Multimedia,
+    and exporting the selection as slide data.
 
-    - Select a video file from disk
-    - Copy the selected video into a local image directory for overlay use (``html/img``)
-    - Preview the selected video (play/pause)
-    - Enter optional caption text associated with the video
+    Slide-data mapping:
 
-    In this slide style, the video path is stored in the ``headline`` field
-    of the slide data dictionary, while the ``caption`` field contains
-    accompanying text.
+    - ``caption``: optional text shown alongside the media
+    - ``headline``: relative video path used by the overlay (e.g., ``"img/foo.mp4"``)
+
+    The preview player resolves stored relative paths against ``./html/`` so that
+    values produced by :meth:`copy_to_img_folder` can be previewed consistently.
+
+    Attributes:
+        caption (str):
+            Initial caption text provided at construction time.
+        headline (str):
+            Relative video path stored in slide data (e.g., ``"img/foo.mp4"``).
+        generator_window:
+            Reference to the generator main window. Used by the input submitter
+            to synchronize and auto-save slide edits.
+        player (QMediaPlayer | None):
+            Qt Multimedia player used for in-widget preview playback.
+            Initialized in :meth:`_init_player`.
+        audio (QAudioOutput | None):
+            Audio output sink for preview playback. Attached to ``player``.
+        video_widget (QVideoWidget | None):
+            Video output widget used to render preview frames.
+        headline_edit (QLineEdit):
+            Input field holding the relative video path (stored in ``headline``).
+        caption_edit (QLineEdit):
+            Input field holding the caption text.
+        video_button (QPushButton):
+            Button that opens a file picker to select a video.
+        preview_label (QLabel):
+            Label showing the selected filename or status messages
+            (e.g., "비디오 로딩 실패").
+        play_button (QPushButton):
+            Starts preview playback.
+        pause_button (QPushButton):
+            Pauses preview playback.
+        stop_button (QPushButton):
+            Stops preview playback and resets position.
+        submitter (SlideInputSubmitter):
+            Auto-submit helper that produces export-ready slide payloads using
+            :meth:`build_video_slide`.
     """
 
     def __init__(self, parent, generator_window, caption: str = "", headline: str = ""):

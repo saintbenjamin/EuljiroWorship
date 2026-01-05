@@ -38,31 +38,33 @@ class SlideGeneratorRightContents(QWidget):
 
     This widget selects and embeds a style-specific editor pane based on the
     given slide style. Each supported style maps to a dedicated sub-widget
-    (e.g., `LyricsContent`, `VerseContent`) that defines its own input fields
+    (e.g., ``LyricsContent``, ``VerseContent``) that defines its own input fields
     and data extraction logic.
 
     Supported slide styles:
 
-    - "anthem": Choir name, title, and lyrics
-    - "corner": Short caption displayed at the corner
-    - "greet": Freeform greeting or announcement text
-    - "hymn": Hymn lyrics editor (exported as "lyrics")
-    - "lyrics": General lyrics editor with line splitting
-    - "prayer": Representative name or prayer leader
-    - "respo": Responsive reading editor
-    - "verse": Bible verse reference and preview editor
-    - "image": Image-based slide with ``caption``/``headline``
-    - "video": Video-based slide with ``caption``/``headline``
-    - "blank": Empty slide with no editable content
+    - ``"anthem"``: Choir name and anthem title editor
+    - ``"corner"`` / ``"intro"``: Corner-style caption and headline
+    - ``"greet"``: Greeting or announcement text
+    - ``"hymn"``: Hymn editor (exported as lyrics-style slides)
+    - ``"lyrics"``: General lyrics editor with deferred line splitting
+    - ``"prayer"``: Prayer title and leader name
+    - ``"respo"``: Responsive reading editor
+    - ``"verse"``: Bible verse reference and preview editor
+    - ``"image"``: Image-based slide editor (path stored in ``headline``)
+    - ``"video"``: Video-based slide editor (path stored in ``headline``)
+    - ``"blank"``: Empty slide with no editable content
 
     Attributes:
         style (str):
             Internal slide style key that determines which sub-pane is created.
-        subpane (QWidget):
-            The embedded style-specific content widget.
         generator_window (QWidget):
-            Reference to the parent generator window, used by sub-panes for
-            callbacks or shared context.
+            Reference to the parent generator window, passed through to
+            sub-panes so they can access shared context, settings, or callbacks.
+        subpane (QWidget):
+            The instantiated style-specific content widget responsible for
+            rendering input fields and producing slide data. For ``"blank"``
+            or unsupported styles, this is an empty ``QWidget``.
     """
 
     def __init__(self, style: str, generator_window, caption: str = "", headline: str = "", parent=None):

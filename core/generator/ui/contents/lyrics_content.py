@@ -30,14 +30,39 @@ class LyricsContent(QWidget):
     """
     Content editor widget for "lyrics" style slides.
 
-    This widget allows users to enter:
+    This widget collects:
 
-    - A title for the song or praise
-    - Multiline lyrics text
+    - Song/praise title (stored in ``caption``)
+    - Multiline lyrics body (stored in ``headline`` as raw text)
 
-    The "lyrics" content is stored as raw text and later processed by the
-    slide exporter, which splits the text into multiple slides according
-    to predefined rules (e.g., two lines per slide).
+    The widget intentionally stores lyrics as raw, unsplit text. The slide
+    export pipeline is responsible for splitting the lyrics into multiple
+    slides (e.g., two lines per slide, special split markers like "(간주)",
+    etc.), so the editor remains focused on input and synchronization.
+
+    This widget integrates with the generator window via
+    :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter`
+    so that edits can be submitted automatically.
+
+    Attributes:
+        caption (str):
+            Initial title value passed at construction time.
+        headline (str):
+            Initial lyrics body passed at construction time (raw multiline text).
+        generator_window:
+            Reference to the generator window that receives slide updates and
+            manages auto-save/session behavior.
+        caption_label (QLabel):
+            Label describing the title input.
+        caption_edit (QLineEdit):
+            Input field for the lyrics title (slide ``caption``).
+        headline_label (QLabel):
+            Label describing the lyrics body input.
+        headline_edit (QPlainTextEdit):
+            Multiline editor for raw lyrics text (slide ``headline``).
+        submitter (SlideInputSubmitter):
+            Auto-submit helper that observes inputs and provides updated slide
+            payloads via ``build_lyrics_slide()``.
     """
 
     def __init__(self, parent, generator_window, caption: str = "", headline: str = ""):

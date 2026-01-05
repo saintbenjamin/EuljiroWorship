@@ -26,13 +26,40 @@ class PrayerContent(QWidget):
     """
     Content editor widget for "prayer"-style slides.
 
-    This widget allows users to specify:
+    This widget collects minimal structured information required for a
+    prayer slide:
 
-    - A short prayer title (usually "기도")
-    - The name of the prayer leader
+    - A short prayer title (e.g., "기도")
+    - The name of the prayer leader (e.g., "이승철 장로")
 
-    The entered values are exported as a simple slide dictionary and
-    rendered using the "prayer"-slide style.
+    The widget focuses purely on data entry and synchronization. It does
+    not perform any rendering logic itself; instead, it produces a simple
+    slide dictionary consumed later by the slide generator and controller.
+
+    Integration with
+    :class:`core.generator.utils.slide_input_submitter.SlideInputSubmitter`
+    allows the prayer slide to be automatically regenerated and persisted
+    whenever input fields change.
+
+    Attributes:
+        caption (str):
+            Initial prayer title value provided at construction time.
+        headline (str):
+            Initial prayer leader name provided at construction time.
+        generator_window:
+            Reference to the generator main window that receives slide updates
+            and manages auto-save/session state.
+        caption_label (QLabel):
+            Label describing the prayer title input field.
+        caption_edit (QLineEdit):
+            Input field for the prayer title (slide ``caption``).
+        headline_label (QLabel):
+            Label describing the prayer leader input field.
+        headline_edit (QLineEdit):
+            Input field for the prayer leader name (slide ``headline``).
+        submitter (SlideInputSubmitter):
+            Auto-submit helper that observes input widgets and supplies updated
+            slide data via ``build_prayer_slide()``.
     """
 
     def __init__(self, parent, generator_window, caption: str = "기도", headline: str = ""):

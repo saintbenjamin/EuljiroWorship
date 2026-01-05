@@ -28,14 +28,28 @@ class SlideControllerLauncher:
     """
     Manages the lifecycle of the slide controller subprocess.
 
-    This class encapsulates the logic for launching and tracking the
-    slide controller process. It prevents duplicate launches and
-    provides a simple interface for checking whether the controller
-    is currently running.
+    This class provides a minimal supervisory layer for launching and tracking
+    the slide controller process from the generator UI. Its responsibility is
+    limited to preventing duplicate launches and reporting basic runtime status;
+    it does not attempt to restart, monitor health, or forcibly terminate the
+    controller.
 
-    The class does not attempt to restart or forcibly terminate the
-    controller; it only performs minimal lifecycle supervision suitable
-    for a UI-driven workflow.
+    The launcher maintains an internal reference to the subprocess handle and
+    uses it to determine whether the controller is currently active. Launch
+    requests issued while the controller is already running are safely ignored.
+
+    Error handling is intentionally lightweight and UI-aware: if a Qt parent
+    widget is available, launch failures are reported via a warning dialog;
+    otherwise, errors are emitted to standard output.
+
+    This design is suited for a user-driven workflow where the controller is
+    started explicitly by the generator and stopped externally or by user action,
+    rather than by automatic process management.
+
+    Attributes:
+        proc (subprocess.Popen | None):
+            Handle to the currently running slide controller subprocess, or None
+            if no controller has been launched.
     """
 
     def __init__(self):

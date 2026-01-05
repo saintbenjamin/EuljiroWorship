@@ -30,14 +30,26 @@ class EmergencyCaptionHandler:
     """
     Manages the emergency caption input and export workflow.
 
-    This class is responsible for:
+    This class coordinates the full emergency-caption lifecycle:
 
     - Opening the emergency caption dialog as a modal window
     - Retrieving finalized slide data from the dialog
     - Writing emergency slides to the slide output JSON file
 
-    The handler does not perform slide parsing itself; it delegates
-    slide creation to :class:`controller.ui.emergency_caption_dialog.EmergencyCaptionDialog` and :class:`controller.utils.emergency_slide_factory.EmergencySlideFactory`.
+    The handler itself does **not** parse or format slide content.
+    Slide construction is delegated to:
+
+    - :class:`controller.ui.emergency_caption_dialog.EmergencyCaptionDialog`
+    - :class:`controller.utils.emergency_slide_factory.EmergencySlideFactory`
+
+    Attributes:
+        parent (QWidget):
+            Parent widget used to anchor the emergency caption dialog
+            as a modal window.
+
+        slide_factory (EmergencySlideFactory):
+            Factory instance responsible for constructing emergency
+            slide dictionaries from validated dialog input.
     """
 
     def __init__(self, parent):

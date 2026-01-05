@@ -60,6 +60,10 @@ class SlideExporter:
 
                 - ``max_chars`` (int):
                     Maximum characters per text chunk.
+
+    Attributes:
+        max_chars (int):
+            Maximum characters per exported text chunk.
     """
 
     def __init__(self, settings=None):

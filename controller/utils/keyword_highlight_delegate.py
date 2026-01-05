@@ -30,18 +30,16 @@ class KeywordHighlightDelegate(QStyledItemDelegate):
     """
     Custom item delegate that highlights keywords in model text using HTML rendering.
 
-    This delegate converts the cell text into HTML and wraps each keyword occurrence
-    with a red-colored ``<span>`` . Rendering is done via `QTextDocument` to support:
-    
-    - HTML formatting
-    - Multi-line wrapping
-    - Accurate sizeHint calculation
+    This delegate renders each cell via ``QTextDocument`` so it can support:
 
-    Args:
+    - HTML formatting (keyword highlighting)
+    - Multi-line wrapping
+    - Accurate ``sizeHint()`` based on rendered document height
+
+    Attributes:
         keywords (list[str]):
-            Keywords to highlight. Empty strings are ignored.
-        parent (QWidget | None):
-            Optional parent widget.
+            Keywords to highlight. Empty strings are ignored. Matching is performed
+            via simple substring replacement after HTML-escaping the cell text.
     """
 
     def __init__(self, keywords, parent=None):
