@@ -33,7 +33,7 @@ import os
 import json
 import textwrap
 
-from core.config import paths
+from core.config import paths, constants
 from core.utils.bible_data_loader import BibleDataLoader
 from core.utils.bible_parser import parse_reference
 
@@ -188,7 +188,7 @@ class EmergencySlideFactory:
                 try:
                     verse_text = self.loader.get_verse(ver, book_id, chapter, verse_num)
                     reftext = f"{self.loader.get_standard_book(book_id, 'ko')} {chapter}장 {verse_num}절 ({alias})"
-                    chunks = textwrap.wrap(verse_text.strip(), width=60)
+                    chunks = textwrap.wrap(verse_text.strip(), width=constants.MAX_CHARS)
                     for chunk in chunks:
                         slides.append({
                             "style": "verse",

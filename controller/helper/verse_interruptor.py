@@ -41,8 +41,7 @@ if PROJECT_ROOT not in sys.path:
 # ─────────────────────────────────────────────
 
 from core.config import paths
-
-MAX_CHARS = 60
+from core.config import constants
 
 def parse_verse_output(file_path, max_chars=60):
     """
@@ -227,7 +226,7 @@ class VerseFileHandler(FileSystemEventHandler):
         """
         if event.src_path.endswith(paths.VERSE_FILE):
             print("[INFO] verse_output.txt changed. Parsing...")
-            slides = parse_verse_output(paths.VERSE_FILE, MAX_CHARS)
+            slides = parse_verse_output(paths.VERSE_FILE, constants.MAX_CHARS)
 
             if slides:
                 backup_slide_if_not_emergency()

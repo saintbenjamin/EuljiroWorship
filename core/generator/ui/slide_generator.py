@@ -36,7 +36,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QFont
 
-from core.config import paths, style_map
+from core.config import paths, style_map, constants
 from core.generator.settings_generator import load_generator_settings
 from core.generator.settings_last_path import save_last_path
 from core.generator.ui.settings_dialog import SettingsDialog
@@ -405,7 +405,7 @@ class SlideGenerator(QMainWindow):
             "headline": ""
         })
 
-        exporter = SlideExporter(settings={"max_chars": 60})
+        exporter = SlideExporter(settings={"max_chars": constants.MAX_CHARS})
         exported = exporter.export(slides)
 
         with open(paths.SLIDE_FILE, "w", encoding="utf-8") as f:

@@ -18,6 +18,7 @@ display. The exporter applies style-specific rules such as line
 segmentation, verse splitting, and style normalization.
 """
 
+from core.config import constants
 from core.generator.utils.text_splitter import split_by_length
 from core.generator.utils.segment_utils import segment_lyrics_for_export
 
@@ -76,7 +77,7 @@ class SlideExporter:
                 If provided, ``max_chars`` controls the maximum number of
                 characters allowed per exported text block.
         """
-        self.max_chars = (settings or {}).get("max_chars", 60)
+        self.max_chars = (settings or {}).get("max_chars", constants.MAX_CHARS)
 
     def export(self, raw_slides: list[dict]) -> list[dict]:
         """
