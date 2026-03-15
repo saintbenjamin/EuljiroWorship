@@ -29,10 +29,11 @@ import datetime
 import json
 
 from PySide6.QtWidgets import (
-    QMainWindow, QTableWidget, QWidget, 
-    QFileDialog, QMessageBox, QHeaderView, 
-    QAbstractItemView, QInputDialog, QDialog, 
-    QTableWidgetItem
+    QMainWindow, QTableWidget, QWidget,
+    QFileDialog, QMessageBox, QHeaderView,
+    QAbstractItemView, QInputDialog, QDialog,
+    QTableWidgetItem, QDialogButtonBox,
+    QVBoxLayout, QFormLayout, QLineEdit
 )
 from PySide6.QtGui import QFont
 
@@ -352,19 +353,181 @@ class SlideGenerator(QMainWindow):
 
         self.last_saved_path = path
 
+    def _get_announcement_import_settings_path(self) -> str:
+        """
+        Return the JSON path used to persist announcement import range settings.
+
+        This file is stored alongside the existing "last opened file" setting
+        so that the announcement import feature can keep its own lightweight,
+        dedicated configuration without affecting unrelated generator settings.
+
+        Args:
+            None
+
+        Returns:
+            str:
+                Absolute path to the announcement import settings JSON file.
+        """
+        settings_dir = os.path.dirname(paths.SETTING_LAST_OPEN_FILE)
+        return os.path.join(settings_dir, "announcement_import_settings.json")
+
+    def _load_announcement_import_settings(self) -> dict:
+        """
+        Load persisted announcement import marker settings.
+
+        If the settings file does not exist or cannot be parsed, default marker
+        values are returned.
+
+        Args:
+            None
+
+        Returns:
+            dict:
+                Dictionary containing:
+
+                - ``start_headline`` (str):
+                    Headline text that marks the first slide of the import block.
+                - ``end_headline`` (str):
+                    Headline text that marks the last slide of the import block.
+                    If empty, the block extends to the end of the file.
+        """
+        default_settings = {
+            "start_headline": "오늘 처음 오신 분들을 환영하고 축복합니다!",
+            "end_headline": ""
+        }
+
+        settings_path = self._get_announcement_import_settings_path()
+        try:
+            with open(settings_path, "r", encoding="utf-8") as f:
+                loaded = json.load(f)
+            if isinstance(loaded, dict):
+                default_settings.update({
+                    "start_headline": loaded.get("start_headline", default_settings["start_headline"]),
+                    "end_headline": loaded.get("end_headline", default_settings["end_headline"]),
+                })
+        except Exception:
+            pass
+
+        return default_settings
+
+    def _save_announcement_import_settings(self, start_headline: str, end_headline: str) -> None:
+        """
+        Save announcement import marker settings to a dedicated JSON file.
+
+        Args:
+            start_headline (str):
+                Headline text marking the first slide of the import block.
+            end_headline (str):
+                Headline text marking the last slide of the import block.
+                If empty, the block extends to the end of the file.
+
+        Returns:
+            None
+        """
+        settings_path = self._get_announcement_import_settings_path()
+        os.makedirs(os.path.dirname(settings_path), exist_ok=True)
+
+        data = {
+            "start_headline": start_headline,
+            "end_headline": end_headline,
+        }
+
+        with open(settings_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+    def _prompt_announcement_import_range(
+        self,
+        start_default: str,
+        end_default: str
+    ) -> tuple[str | None, str | None]:
+        """
+        Open a modal dialog that asks the user for announcement import markers.
+
+        The dialog lets the user define the start and end headlines used when
+        extracting and replacing the announcement block. If the end headline is
+        left empty, the import block extends to the end of the file.
+
+        Args:
+            start_default (str):
+                Default text to pre-fill in the start marker field.
+            end_default (str):
+                Default text to pre-fill in the end marker field.
+
+        Returns:
+            tuple[str | None, str | None]:
+                Two-element tuple of ``(start_headline, end_headline)``.
+
+                - If the user accepts the dialog, stripped string values are returned.
+                - If the user cancels the dialog, ``(None, None)`` is returned.
+        """
+        dialog = QDialog(self)
+        dialog.setWindowTitle("광고 가져오기 범위 설정")
+        dialog.setMinimumWidth(520)
+
+        layout = QVBoxLayout(dialog)
+        form = QFormLayout()
+
+        start_input = QLineEdit(start_default)
+        end_input = QLineEdit(end_default)
+
+        start_input.setPlaceholderText("가져오기 시작 headline")
+        end_input.setPlaceholderText("가져오기 끝 headline (비우면 파일 끝까지)")
+
+        form.addRow("가져오기 시작", start_input)
+        form.addRow("가져오기 끝", end_input)
+        layout.addLayout(form)
+
+        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        button_box.accepted.connect(dialog.accept)
+        button_box.rejected.connect(dialog.reject)
+        layout.addWidget(button_box)
+
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return None, None
+
+        return start_input.text().strip(), end_input.text().strip()
+
+    def _find_slide_index_by_headline(
+        self,
+        slides: list[dict],
+        headline: str,
+        start_index: int = 0
+    ) -> int | None:
+        """
+        Find the first slide index whose headline matches the given text.
+
+        Matching is performed using stripped exact string comparison.
+
+        Args:
+            slides (list[dict]):
+                Slide dictionaries to search.
+            headline (str):
+                Target headline text to match.
+            start_index (int):
+                Row index from which to begin the search.
+
+        Returns:
+            int | None:
+                Index of the first matching slide, or ``None`` if not found.
+        """
+        target = headline.strip()
+        for i in range(start_index, len(slides)):
+            if str(slides[i].get("headline", "")).strip() == target:
+                return i
+        return None
+
     def import_announcements(self):
         """
-        Import an announcement block from an external slide JSON file and
-        replace the existing announcement block in the current session.
+        Import a configurable slide block from an external slide JSON file and
+        replace the corresponding block in the current session.
 
-        This method opens a file-selection dialog, loads the chosen slide JSON,
-        extracts the announcement section starting from the standard greeting
-        slide (e.g., “오늘 처음 오신 분들을 환영하고 축복합니다!”), and
-        replaces the corresponding section in the currently loaded generator
-        table.
+        This method opens a file-selection dialog, asks the user for the start
+        and end headline markers that define the import range, persists those
+        marker values to a dedicated settings JSON file, and then replaces the
+        matching range in the currently loaded generator table.
 
-        The operation preserves all slides before the announcement block and
-        overwrites only the announcement portion.
+        The imported range is extracted from the selected source file and applied
+        onto the current session using the same start/end markers.
 
         Args:
             None
@@ -378,16 +541,18 @@ class SlideGenerator(QMainWindow):
             reported to the user via message dialogs.
 
         Notes:
-            - The announcement start is detected by matching a known headline
-            string used in worship announcements.
+            - Range boundaries are detected by exact headline matching after
+            stripping leading and trailing whitespace.
+            - If the end marker is empty, the import block extends to the end
+            of the file.
             - If either the source file or the current session does not contain
-            a detectable announcement block, no changes are applied.
+            the requested start marker, no changes are applied.
             - This function modifies the generator table in place and does not
             automatically save the session file.
+            - User-edited start/end marker values are persisted and reused as
+            defaults in subsequent imports.
         """
-
         from PySide6.QtWidgets import QFileDialog, QMessageBox
-        import json
 
         # ── 1. Select source file ─────────────────────────────
         src_path, _ = QFileDialog.getOpenFileName(
@@ -399,7 +564,25 @@ class SlideGenerator(QMainWindow):
         if not src_path:
             return
 
-        # ── 2. Load source slides ─────────────────────────────
+        # ── 2. Load persisted defaults and ask for range ─────
+        settings = self._load_announcement_import_settings()
+        start_default = settings.get("start_headline", "오늘 처음 오신 분들을 환영하고 축복합니다!")
+        end_default = settings.get("end_headline", "")
+
+        start_headline, end_headline = self._prompt_announcement_import_range(
+            start_default=start_default,
+            end_default=end_default
+        )
+        if start_headline is None:
+            return
+
+        if not start_headline:
+            QMessageBox.warning(self, "실패", "시작 headline은 비워둘 수 없습니다.")
+            return
+
+        self._save_announcement_import_settings(start_headline, end_headline)
+
+        # ── 3. Load source slides ─────────────────────────────
         try:
             with open(src_path, "r", encoding="utf-8") as f:
                 src_slides = json.load(f)
@@ -407,31 +590,51 @@ class SlideGenerator(QMainWindow):
             QMessageBox.critical(self, "오류", f"파일을 읽을 수 없습니다:\n{e}")
             return
 
-        # ── 3. Find announcement start in source ──────────────
-        def find_announcement_start(slides):
-            for i, s in enumerate(slides):
-                if s.get("headline") == "오늘 처음 오신 분들을 환영하고 축복합니다!":
-                    return i
-            return None
-
-        start_src = find_announcement_start(src_slides)
-        if start_src is None:
-            QMessageBox.warning(self, "실패", "원본 파일에서 광고 시작을 찾을 수 없습니다.")
+        if not isinstance(src_slides, list):
+            QMessageBox.warning(self, "실패", "원본 파일 형식이 올바르지 않습니다.")
             return
 
-        announcement_block = src_slides[start_src:]
+        # ── 4. Find source range ──────────────────────────────
+        start_src = self._find_slide_index_by_headline(src_slides, start_headline)
+        if start_src is None:
+            QMessageBox.warning(self, "실패", "원본 파일에서 시작 headline을 찾을 수 없습니다.")
+            return
 
-        # ── 4. Collect current slides from table ──────────────
+        if end_headline:
+            end_src = self._find_slide_index_by_headline(src_slides, end_headline, start_index=start_src)
+            if end_src is None:
+                QMessageBox.warning(self, "실패", "원본 파일에서 끝 headline을 찾을 수 없습니다.")
+                return
+            if end_src < start_src:
+                QMessageBox.warning(self, "실패", "원본 파일에서 끝 headline이 시작 headline보다 앞에 있습니다.")
+                return
+        else:
+            end_src = len(src_slides) - 1
+
+        announcement_block = src_slides[start_src:end_src + 1]
+
+        # ── 5. Collect current slides and find target range ──
         current_slides = self.data_manager.collect_slide_data()
 
-        start_dst = find_announcement_start(current_slides)
+        start_dst = self._find_slide_index_by_headline(current_slides, start_headline)
         if start_dst is None:
-            QMessageBox.warning(self, "실패", "현재 파일에서 광고 시작을 찾을 수 없습니다.")
+            QMessageBox.warning(self, "실패", "현재 파일에서 시작 headline을 찾을 수 없습니다.")
             return
 
-        new_slides = current_slides[:start_dst] + announcement_block
+        if end_headline:
+            end_dst = self._find_slide_index_by_headline(current_slides, end_headline, start_index=start_dst)
+            if end_dst is None:
+                QMessageBox.warning(self, "실패", "현재 파일에서 끝 headline을 찾을 수 없습니다.")
+                return
+            if end_dst < start_dst:
+                QMessageBox.warning(self, "실패", "현재 파일에서 끝 headline이 시작 headline보다 앞에 있습니다.")
+                return
+        else:
+            end_dst = len(current_slides) - 1
 
-        # ── 5. Reload table with new slides ───────────────────
+        new_slides = current_slides[:start_dst] + announcement_block + current_slides[end_dst + 1:]
+
+        # ── 6. Reload table with new slides ───────────────────
         self.table.blockSignals(True)
         self.table.setRowCount(0)
 
@@ -441,19 +644,28 @@ class SlideGenerator(QMainWindow):
         for row, slide in enumerate(new_slides):
             combo = self.table.cellWidget(row, 0)
             if combo:
+                combo.blockSignals(True)
                 combo.setCurrentText(
                     style_map.STYLE_ALIASES.get(slide.get("style", "lyrics"), "찬양가사")
                 )
+                combo.blockSignals(False)
 
+            style = slide.get("style", "lyrics")
             caption = slide.get("caption", "")
             headline = slide.get("headline", "")
+
+            if style == "anthem":
+                caption = f"{slide.get('caption', '')} {slide.get('caption_choir', '')}".strip()
+
+            if style == "verse":
+                headline = self.data_manager._split_verse_headline(headline)
 
             self.table.setItem(row, 1, QTableWidgetItem(caption))
             self.table.setItem(row, 2, QTableWidgetItem(headline))
 
         self.table.blockSignals(False)
 
-        QMessageBox.information(self, "완료", "광고를 가져왔습니다.")
+        QMessageBox.information(self, "완료", "지정한 범위의 슬라이드를 가져왔습니다.")
 
     def warn_if_controller_running(self):
         """
