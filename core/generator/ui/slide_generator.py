@@ -351,6 +351,109 @@ class SlideGenerator(QMainWindow):
 
         self.last_saved_path = path
 
+    def import_announcements(self):
+        """
+        Import an announcement block from an external slide JSON file and
+        replace the existing announcement block in the current session.
+
+        This method opens a file-selection dialog, loads the chosen slide JSON,
+        extracts the announcement section starting from the standard greeting
+        slide (e.g., “오늘 처음 오신 분들을 환영하고 축복합니다!”), and
+        replaces the corresponding section in the currently loaded generator
+        table.
+
+        The operation preserves all slides before the announcement block and
+        overwrites only the announcement portion.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        Raises:
+            None explicitly.
+            Any file I/O or JSON parsing errors are handled internally and
+            reported to the user via message dialogs.
+
+        Notes:
+            - The announcement start is detected by matching a known headline
+            string used in worship announcements.
+            - If either the source file or the current session does not contain
+            a detectable announcement block, no changes are applied.
+            - This function modifies the generator table in place and does not
+            automatically save the session file.
+        """
+
+        from PySide6.QtWidgets import QFileDialog, QMessageBox
+        import json
+
+        # ── 1. Select source file ─────────────────────────────
+        src_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "광고를 가져올 예배 파일 선택",
+            "",
+            "JSON Files (*.json)"
+        )
+        if not src_path:
+            return
+
+        # ── 2. Load source slides ─────────────────────────────
+        try:
+            with open(src_path, "r", encoding="utf-8") as f:
+                src_slides = json.load(f)
+        except Exception as e:
+            QMessageBox.critical(self, "오류", f"파일을 읽을 수 없습니다:\n{e}")
+            return
+
+        # ── 3. Find announcement start in source ──────────────
+        def find_announcement_start(slides):
+            for i, s in enumerate(slides):
+                if s.get("headline") == "오늘 처음 오신 분들을 환영하고 축복합니다!":
+                    return i
+            return None
+
+        start_src = find_announcement_start(src_slides)
+        if start_src is None:
+            QMessageBox.warning(self, "실패", "원본 파일에서 광고 시작을 찾을 수 없습니다.")
+            return
+
+        announcement_block = src_slides[start_src:]
+
+        # ── 4. Collect current slides from table ──────────────
+        current_slides = self.data_manager.collect_slide_data()
+
+        start_dst = find_announcement_start(current_slides)
+        if start_dst is None:
+            QMessageBox.warning(self, "실패", "현재 파일에서 광고 시작을 찾을 수 없습니다.")
+            return
+
+        new_slides = current_slides[:start_dst] + announcement_block
+
+        # ── 5. Reload table with new slides ───────────────────
+        self.table.blockSignals(True)
+        self.table.setRowCount(0)
+
+        for _ in new_slides:
+            self.data_manager._insert_empty_row()
+
+        for row, slide in enumerate(new_slides):
+            combo = self.table.cellWidget(row, 0)
+            if combo:
+                combo.setCurrentText(
+                    style_map.STYLE_ALIASES.get(slide.get("style", "lyrics"), "찬양가사")
+                )
+
+            caption = slide.get("caption", "")
+            headline = slide.get("headline", "")
+
+            self.table.setItem(row, 1, QTableWidgetItem(caption))
+            self.table.setItem(row, 2, QTableWidgetItem(headline))
+
+        self.table.blockSignals(False)
+
+        QMessageBox.information(self, "완료", "광고를 가져왔습니다.")
+
     def warn_if_controller_running(self):
         """
         Warn the user if the slide controller is currently running.

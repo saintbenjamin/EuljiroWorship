@@ -147,12 +147,14 @@ class SlideGeneratorUIBuilder:
         set_svg_icon(up_btn, get_icon_path("up.svg"), size=30)
         down_btn = QPushButton()
         set_svg_icon(down_btn, get_icon_path("down.svg"), size=30)
+        import_btn = QPushButton()
+        set_svg_icon(import_btn, get_icon_path("import.svg"), size=30)
         export_btn = QPushButton()
         set_svg_icon(export_btn, get_icon_path("export.svg"), size=30)
 
         # Apply consistent button height and layout policy
         for btn in [load_btn, save_btn, add_btn, insert_above_btn,
-                    insert_below_btn, del_btn, up_btn, down_btn]:
+                    insert_below_btn, del_btn, up_btn, down_btn, import_btn, export_btn]:
             btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
             btn.setMinimumHeight(28)
 
@@ -165,6 +167,7 @@ class SlideGeneratorUIBuilder:
         del_btn.clicked.connect(parent.table_manager.delete_selected_row)
         up_btn.clicked.connect(parent.table_manager.move_row_up)
         down_btn.clicked.connect(parent.table_manager.move_row_down)
+        import_btn.clicked.connect(parent.import_announcements)
         export_btn.clicked.connect(parent.export_slides_for_overlay)
 
         # Arrange buttons horizontally
@@ -172,7 +175,7 @@ class SlideGeneratorUIBuilder:
         btn_layout.setContentsMargins(4, 2, 4, 2)
         btn_layout.setSpacing(4)
         for btn in [load_btn, save_btn, add_btn, insert_above_btn,
-                    insert_below_btn, del_btn, up_btn, down_btn, export_btn]:
+                    insert_below_btn, del_btn, up_btn, down_btn, import_btn, export_btn]:
             btn_layout.addWidget(btn)
 
         # Wrap button layout in a QWidget container
