@@ -282,6 +282,7 @@ class SlideGenerator(QMainWindow):
         filename_only = os.path.splitext(os.path.basename(path))[0]
         self.worship_name = filename_only
         self.ui_builder.set_worship_label(self.worship_name)
+        self.last_saved_path = path
         self.first_save_done = False
         return path
 

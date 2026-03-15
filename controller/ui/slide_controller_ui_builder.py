@@ -165,7 +165,8 @@ class SlideControllerUIBuilder:
         # ─────────────── Slide preview table ───────────────
         self.c.table = QTableWidget(0, 3)
         self.c.table.setHorizontalHeaderLabels(["", "제목", "본문"])
-        self.c.table.verticalHeader().setDefaultSectionSize(50)
+        # self.c.table.verticalHeader().setDefaultSectionSize(50)
+        self.c.table.verticalHeader().setDefaultSectionSize(70)
         self.c.table.setSelectionBehavior(QTableWidget.SelectRows)
         self.c.table.setSelectionMode(QTableWidget.SingleSelection)
         self.c.table.setEditTriggers(QTableWidget.NoEditTriggers)
@@ -176,7 +177,8 @@ class SlideControllerUIBuilder:
             self.c.table.insertRow(i)
             self.c.table.setItem(i, 0, QTableWidgetItem(str(i + 1)))
             self.c.table.setItem(i, 1, QTableWidgetItem(slide.get("caption", "")))
-            self.c.table.setItem(i, 2, QTableWidgetItem(slide.get("headline", "").split("\n")[0][:50]))
+            # self.c.table.setItem(i, 2, QTableWidgetItem(slide.get("headline", "").split("\n")[0][:50]))
+            self.c.table.setItem(i, 2, QTableWidgetItem(slide.get("headline", "")))
 
         # Pre-select current slide row
         self.c.table.selectRow(self.c.index)
