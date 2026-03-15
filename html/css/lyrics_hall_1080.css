@@ -185,12 +185,22 @@
 
     /* Prevent the caption box from intercepting mouse interactions */
     pointer-events: none;
+
+    max-width: calc(100% - 7%);
+
+    overflow: hidden;
 }
 
 /* Caption text inside the caption box */
 .lyrics-caption {
-    /* Render the caption as a box-sized inline element */
-    display: inline-block;
+    /* Render the caption as a block so width/ellipsis rules apply reliably */
+    display: block;
+
+    /* Fill the full available width of the red caption box */
+    width: 100%;
+
+    /* Include padding inside the declared width */
+    box-sizing: border-box;
 
     /* Add internal spacing around caption text */
     padding: 20px 30px 10px 30px;
@@ -201,7 +211,7 @@
     /* Set line spacing for readability */
     line-height: 1.5;
 
-    /* Prevent caption text from wrapping */
+    /* Prevent caption text from wrapping to a second line */
     white-space: nowrap;
 
     /* Center-align the caption text */
@@ -212,4 +222,10 @@
 
     /* Slight upward shift for visual alignment */
     transform: translateY(-9px);
+
+    /* Hide overflowing text instead of letting it spill outside the box */
+    overflow: hidden;
+
+    /* Show an ellipsis when the single-line caption is too long */
+    text-overflow: ellipsis;
 }
