@@ -197,8 +197,8 @@ class EmergencyCaptionDialog(QDialog):
         # Image preview
         self.image_preview = QLabel("선택된 그림 없음")
         self.image_preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.image_preview.setFixedHeight(220)
-        self.image_preview.setScaledContents(True)
+        self.image_preview.setFixedSize(640, 220)
+        self.image_preview.setScaledContents(False)
         self.image_preview.hide()
 
         # Video preview
@@ -265,11 +265,12 @@ class EmergencyCaptionDialog(QDialog):
         layout.addLayout(self.caption_row)
         layout.addWidget(self.input2, stretch=1)
         layout.addWidget(self.media_status)
-        layout.addWidget(self.image_preview)
+        layout.addWidget(self.image_preview, alignment=Qt.AlignmentFlag.AlignHCenter)
         layout.addWidget(self.video_status)
         layout.addWidget(self.video_widget)
         layout.addWidget(self.video_controls_widget)
         layout.addWidget(self.ok_button)
+
 
         self.setLayout(layout)
 
@@ -495,9 +496,9 @@ class EmergencyCaptionDialog(QDialog):
         """
         Load an image preview from either an absolute or relative path.
 
-        The resolved image is shown in ``self.image_preview`` and the resolved
-        absolute path is mirrored into the media status tooltip for operator
-        visibility.
+        The resolved image is scaled to fit inside the fixed preview box and the
+        resolved absolute path is mirrored into the media status tooltip for
+        operator visibility.
 
         Args:
             path_or_rel (str):
@@ -520,7 +521,14 @@ class EmergencyCaptionDialog(QDialog):
             self.image_preview.setText("그림 로딩 실패")
             return
 
-        self.image_preview.setPixmap(pixmap)
+        scaled_pixmap = pixmap.scaled(
+            self.image_preview.size(),
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation,
+        )
+
+        self.image_preview.clear()
+        self.image_preview.setPixmap(scaled_pixmap)
         self.image_preview.setToolTip(abs_path)
         self.media_status.setText(self.input3.text().strip() or abs_path)
         self.media_status.setToolTip(abs_path)

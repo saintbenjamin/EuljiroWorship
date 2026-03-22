@@ -102,71 +102,44 @@
 
 /* Main content area that centers the image within the panel */
 .image-headline {
-    /* Keep this layer in normal flow but above the background */
     position: relative;
-
-    /* Use flex layout for centering content */
     display: flex;
-
-    /* Stack children vertically (useful if additional elements appear) */
     flex-direction: column;
-
-    /* Center content vertically within the panel */
     justify-content: center;
-
-    /* Center content horizontally within the panel */
     align-items: center;
-
-    /* Set text color (mostly irrelevant when showing an img, but kept for consistency) */
     color: black;
-
-    /* Add padding so content does not touch the panel edges */
     padding: 40px 60px 20px 60px;
-
-    /* Set a base font size (fallback if text is used instead of an image) */
     font-size: 100px;
-
-    /* Set line height for readable multi-line text */
     line-height: 1.6;
-
-    /* Allow normal wrapping for text */
     white-space: normal;
-
-    /* Prefer word/phrase-level wrapping (good for Korean) */
     word-break: keep-all;
-
-    /* Allow forced wrapping only when unavoidable */
     overflow-wrap: break-word;
-
-    /* Place content above the background */
     z-index: 4;
-
-    /* Center-align text content */
     text-align: center;
-
-    /* Emphasize text content if present */
     font-weight: bold;
 
-    /* Allow content to overflow if needed (e.g., shadows or overlap) */
-    overflow: visible;
+    /* The image should fit inside this box, not overflow it */
+    overflow: hidden;
+    box-sizing: border-box;
 
-    /* Fill the available height so centering works reliably */
+    /* This box defines the maximum drawable area */
+    width: 100%;
     height: 100%;
 
-    /* Nudge the content slightly upward for visual balance */
     transform: translateY(-5px);
 }
 
 /* Image sizing rules inside the headline area */
 .image-headline img {
-    /* Constrain the image to the panel width */
-    max-width: 100%;
+    /* Fill the available frame as much as possible */
+    width: 100%;
+    height: 100%;
 
-    /* Constrain the image to the panel height */
-    max-height: 100%;
-
-    /* Preserve aspect ratio and fit fully within the box */
+    /* Preserve original aspect ratio and stop at the first limiting side */
     object-fit: contain;
+    object-position: center center;
+
+    display: block;
 }
 
 /* Caption background box that overlaps above the main panel */

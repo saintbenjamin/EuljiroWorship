@@ -33,45 +33,37 @@
 
 /* Wrapper that constrains and positions the displayed image */
 .image-show {
-    /* Limit the image width relative to the viewport */
+    /* Preserve the original OBS maximum frame */
+    width: 40vw;
+    height: 40vh;
     max-width: 40vw;
-
-    /* Limit the image height relative to the viewport */
     max-height: 40vh;
 
-    /* Use flex layout to align the image inside the box */
+    /* Keep the image anchored to the lower-right corner */
     display: flex;
-
-    /* Align the image to the bottom of the box */
     align-items: flex-end;
-
-    /* Align the image to the right of the box */
     justify-content: flex-end;
 
-    /* Do not apply any background behind the image */
     background: none;
-
-    /* Apply a subtle shadow around the image */
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-
-    /* Remove internal padding */
     padding: 0;
-
-    /* Remove external margin */
     margin: 0;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 /* Image element styling inside the image wrapper */
 .image-show img {
-    /* Constrain the image width to the wrapper */
-    max-width: 100%;
+    /* Fill the available OBS frame as much as possible */
+    width: 100%;
+    height: 100%;
 
-    /* Constrain the image height to the wrapper */
-    max-height: 100%;
-
-    /* Preserve aspect ratio while fitting within bounds */
+    /* Preserve aspect ratio and stop at the first limiting side */
     object-fit: contain;
+    object-position: right bottom;
 
-    /* Remove default image margins */
+    display: block;
     margin: 0;
+
+    /* Apply shadow to the rendered image rather than the empty frame */
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.3));
 }
