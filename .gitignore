@@ -2,7 +2,7 @@ __pycache__
 .DS_Store
 verse_output.txt
 docs/build
-*.mp4
+html/img/*.*
 store/*.json
 data/그리스어 신약 Society of Biblical Literature (2010).json
 data/그리스어 신약 Textus Receptus (1884) copy.json

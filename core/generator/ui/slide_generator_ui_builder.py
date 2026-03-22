@@ -18,7 +18,7 @@ class (:class:`core.generator.ui.slide_generator.SlideGenerator`) focused on wor
 The builder assembles:
 
 - A top row of action buttons with icons (load, save, add, duplicate, insert, delete, move, export)
-- A tools menu containing church-specific announcement import actions and generator settings
+- A tools menu containing church-specific worship-order import, announcement import, and settings actions
 - A central table area for listing and managing slides
 - A label showing the current worship/session name
 - Keyboard shortcuts (e.g., Ctrl+S) and signal connections
@@ -46,7 +46,8 @@ class SlideGeneratorUIBuilder:
     - A horizontal toolbar of action buttons (SVG-icon buttons), including row duplication
     - A label displaying the current worship/session name
     - The central slide table widget
-    - ``도구`` menu actions for church-specific announcement import and settings
+    - ``도구`` menu actions for church-specific worship-order import,
+      announcement import, and settings
     - Keyboard shortcuts and signal-slot connections
 
     Required parent interface:
@@ -66,10 +67,14 @@ class SlideGeneratorUIBuilder:
         Save the current slide session using a Save As flow.
     - ``export_slides_for_overlay()``:
         Export overlay-ready JSON and launch the slide controller if needed.
+    - ``import_worship_order_from_hwpx()``:
+        Import worship-order information from a HWPX bulletin file.
     - ``import_announcements()``:
         Import announcement slides from another worship JSON file.
     - ``import_announcements_from_hwpx()``:
         Import announcement slides from a HWPX bulletin file.
+    - ``handle_ctrl_s()``:
+        Handle the Ctrl+S shortcut for saving the current session.
     - ``open_settings_dialog()``:
         Open the generator settings dialog.
     - ``handle_table_double_click(row: int, column: int)``:
@@ -120,7 +125,8 @@ class SlideGeneratorUIBuilder:
         - Creates action buttons with SVG icons and connects them to parent handlers
         - Provides direct row actions such as add, duplicate, insert, delete, and move
         - Assembles the button toolbar, label, and slide table into a vertical layout
-        - Adds church-specific announcement import actions and a settings action to the Tools menu
+        - Adds church-specific worship-order import, announcement import,
+          and settings actions to the Tools menu
         - Applies persisted font settings to the UI
         - Connects table double-click events to the slide editor dialog
         - Installs the composed layout as the parent's central widget
@@ -205,13 +211,17 @@ class SlideGeneratorUIBuilder:
         menubar = parent.menuBar()
         tool_menu = menubar.addMenu("도구")
 
-        import_announcements_action = QAction("다른 예배 광고 가져오기 (을지로교회 전용)", parent)
-        import_announcements_action.triggered.connect(parent.import_announcements)
-        tool_menu.addAction(import_announcements_action)
+        hwpx_worship_order_action = QAction("HWPX 예배순서 반영하기 (을지로교회 전용)", parent)
+        hwpx_worship_order_action.triggered.connect(parent.import_worship_order_from_hwpx)
+        tool_menu.addAction(hwpx_worship_order_action)
 
         hwpx_announcement_action = QAction("HWPX 광고 가져오기 (을지로교회 전용)", parent)
         hwpx_announcement_action.triggered.connect(parent.import_announcements_from_hwpx)
         tool_menu.addAction(hwpx_announcement_action)
+
+        import_announcements_action = QAction("JSON 광고 가져오기 (을지로교회 전용)", parent)
+        import_announcements_action.triggered.connect(parent.import_announcements)
+        tool_menu.addAction(import_announcements_action)
 
         tool_menu.addSeparator()
 

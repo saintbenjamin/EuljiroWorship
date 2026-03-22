@@ -28,6 +28,7 @@ import os
 import datetime
 import json
 import shutil
+import re
 
 from PySide6.QtWidgets import (
     QMainWindow, QTableWidget, QWidget,
@@ -48,6 +49,9 @@ from core.generator.utils.slide_exporter import SlideExporter
 from core.generator.utils.slide_generator_data_manager import SlideGeneratorDataManager
 from core.generator.utils.hwpx_announcement_parser import extract_announcement_slides_from_hwpx
 from core.plugin.slide_controller_launcher import SlideControllerLauncher
+from core.generator.utils.hwpx_worship_order_parser import extract_first_service_order_entries_from_hwpx
+from core.utils.bible_parser import parse_reference
+from core.utils.bible_data_loader import BibleDataLoader
 
 class SlideGenerator(QMainWindow):
     """
@@ -720,6 +724,593 @@ class SlideGenerator(QMainWindow):
             self.table.setItem(row, 2, QTableWidgetItem(headline))
 
         self.table.blockSignals(False)
+
+    def _compact_order_text(self, text: str) -> str:
+        """
+        Remove whitespace from a worship-order string for loose comparisons.
+
+        Args:
+            text (str):
+                Source text to normalize for structural matching.
+
+        Returns:
+            str:
+                Text with all whitespace removed.
+        """
+        return re.sub(r"\s+", "", str(text or ""))
+
+    def _split_choir_caption_parts(self, choir_name: str) -> tuple[str, str]:
+        """
+        Split a choir label like ``시온찬양대`` into ``("시온", "찬양대")``.
+
+        Args:
+            choir_name (str):
+                Full choir label parsed from the worship-order source.
+
+        Returns:
+            tuple[str, str]:
+                Two-element tuple of ``(caption, caption_choir)``.
+            If no standard suffix is found, returns ``(choir_name, "")``.
+        """
+        choir_name = str(choir_name or "").strip()
+        if not choir_name:
+            return "", ""
+
+        suffix = "찬양대"
+        if choir_name.endswith(suffix):
+            main = choir_name[:-len(suffix)].strip()
+            return main or choir_name, suffix if main else ""
+
+        return choir_name, ""
+
+    def _get_default_bible_version_for_order_import(self) -> str:
+        """
+        Choose the preferred Bible version for worship-order verse imports.
+
+        The selection prioritizes locally available Korean Revised Version
+        files and falls back to the first available JSON Bible dataset when the
+        preferred names are not present.
+
+        Args:
+            None
+
+        Returns:
+            str:
+                Version name to pass to ``BibleDataLoader``.
+        """
+        preferred_candidates = [
+            "대한민국 개역개정 (1998)",
+            "대한민국 개역개정 (1998) copy",
+        ]
+
+        available_versions = [
+            filename[:-5]
+            for filename in os.listdir(paths.BIBLE_DATA_DIR)
+            if filename.endswith(".json")
+        ]
+
+        for candidate in preferred_candidates:
+            if candidate in available_versions:
+                return candidate
+
+        for version in available_versions:
+            if version.startswith("대한민국 ") and "개역개정" in version:
+                return version
+
+        for version in available_versions:
+            if "개역개정" in version:
+                return version
+
+        for version in available_versions:
+            if version.startswith("대한민국 "):
+                return version
+
+        return sorted(available_versions)[0] if available_versions else preferred_candidates[0]
+
+    def _build_hymn_slide_from_number(self, number: int) -> dict:
+        """
+        Build a hymn slide payload from a hymn number dataset.
+
+        Args:
+            number (int):
+                Hymn number to load from ``data/hymns``.
+
+        Returns:
+            dict:
+                Slide dictionary containing the hymn style, caption, and
+                headline text for the requested hymn.
+        """
+        path = os.path.join("data", "hymns", f"hymn_{int(number):03d}.json")
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+
+        return {
+            "style": "hymn",
+            "caption": data.get("title", f"새찬송가 {number}장"),
+            "headline": data.get("headline", ""),
+        }
+
+    def _build_respo_slide_from_number(self, number: int) -> dict:
+        """
+        Build a responsive-reading slide payload from a reading number dataset.
+
+        Args:
+            number (int):
+                Responsive reading number to load from ``data/respo``.
+
+        Returns:
+            dict:
+                Slide dictionary containing the responsive-reading style,
+                caption, and combined headline HTML text.
+        """
+        path = os.path.join("data", "respo", f"responsive_{int(number):03d}.json")
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+
+        lines = []
+        for row in data.get("slides", []):
+            speaker = str(row.get("speaker", "")).strip()
+            response = str(row.get("headline", "")).strip()
+            if speaker or response:
+                lines.append(f"<b>{speaker}:</b> {response}")
+
+        return {
+            "style": "respo",
+            "caption": data.get("title", f"성시교독 {number}번"),
+            "headline": "\n".join(lines),
+        }
+
+    def _build_verse_slide_from_reference(self, reference: str) -> dict:
+        """
+        Build a Bible-reading slide payload from a parsed reference string.
+
+        Args:
+            reference (str):
+                Scripture reference text extracted from the worship-order
+                bulletin.
+
+        Returns:
+            dict:
+                Slide dictionary containing the verse style, caption, and
+                resolved Bible text. If parsing fails, an empty verse headline
+                is returned with the original caption preserved.
+        """
+        parsed = parse_reference(reference)
+        if not parsed:
+            return {
+                "style": "verse",
+                "caption": reference,
+                "headline": "",
+            }
+
+        version = self._get_default_bible_version_for_order_import()
+        loader = BibleDataLoader()
+        loader.load_version(version)
+
+        book_id, chapter, verses = parsed
+        if isinstance(verses, tuple) and verses[1] == -1:
+            max_verse = len(loader.get_verses(version)[book_id][str(chapter)])
+            verses = list(range(1, max_verse + 1))
+        elif isinstance(verses, tuple):
+            verses = list(range(verses[0], verses[1] + 1))
+
+        book_name = loader.get_standard_book(book_id, "ko")
+        blocks = []
+
+        for verse_num in verses:
+            verse_text = loader.get_verse(version, book_id, chapter, verse_num)
+            if verse_text:
+                blocks.append(f"{book_name} {chapter}:{verse_num}\n{verse_text.strip()}")
+
+        return {
+            "style": "verse",
+            "caption": reference,
+            "headline": "\n\n".join(blocks),
+        }
+
+    def _classify_worship_order_slide(self, slides: list[dict], index: int) -> str | None:
+        """
+        Classify a slide into a worship-order slot category.
+
+        Args:
+            slides (list[dict]):
+                Full slide list currently being analyzed.
+            index (int):
+                Index of the slide to classify.
+
+        Returns:
+            str | None:
+                Normalized worship-order kind such as ``hymn`` or ``sermon``,
+                or ``None`` when the slide does not match a managed category.
+        """
+        slide = slides[index]
+        style = slide.get("style", "")
+        caption = self._compact_order_text(slide.get("caption", ""))
+        headline = self._compact_order_text(slide.get("headline", ""))
+
+        if style == "hymn":
+            return "hymn"
+
+        if style == "respo":
+            return "respo"
+
+        if style == "verse":
+            return "verse"
+
+        if style == "anthem":
+            return "anthem"
+
+        if style == "prayer":
+            return "prayer"
+
+        if style == "corner":
+            if "예배의부름" in headline:
+                return "call_to_worship"
+            if headline == "화답송":
+                return "response_song"
+            if headline == "화답송영":
+                return "response_doxology"
+            if headline == "기원":
+                return "invocation"
+            if "고백의기도" in headline:
+                return "confession_prayer"
+            if headline == "봉헌":
+                return "offering"
+            if headline == "봉헌기도":
+                return "offering_prayer"
+            if headline == "축도":
+                return "benediction"
+            if headline == "기도" and "설교자" in caption:
+                return "post_sermon_prayer"
+            if ("성찬" in caption) or ("성찬" in headline):
+                return "communion"
+
+            # Sermon-title slides are usually corner slides whose caption contains
+            # the preacher information and whose headline is the sermon title.
+            if ("목사" in caption or "설교자" in caption) and headline:
+                return "sermon"
+
+        if style == "lyrics":
+            if "사도신경" in caption or "사도신경" in headline:
+                return "creed"
+            if index > 0 and slides[index - 1].get("style") == "anthem":
+                return "anthem_lyrics"
+
+        return None
+
+    def _describe_worship_order_slide(self, slide: dict) -> str:
+        """
+        Produce a short human-readable description of a worship-order slide.
+
+        Args:
+            slide (dict):
+                Slide dictionary to summarize.
+
+        Returns:
+            str:
+                Compact text summary used in removal-confirmation prompts.
+        """
+        style = slide.get("style", "")
+        caption = str(slide.get("caption", "")).strip()
+        headline = str(slide.get("headline", "")).strip()
+
+        if style == "anthem":
+            caption = f"{caption} {slide.get('caption_choir', '')}".strip()
+
+        if caption and headline:
+            return f"[{style}] {caption} / {headline}"
+        if caption:
+            return f"[{style}] {caption}"
+        if headline:
+            return f"[{style}] {headline}"
+        return f"[{style}] (빈 순서)"
+
+    def _prompt_remove_missing_worship_order(self, slide: dict) -> bool:
+        """
+        Ask the user whether a slide missing from the imported order should be removed.
+
+        Args:
+            slide (dict):
+                Existing slide dictionary that is not present in the imported
+                HWPX worship-order data.
+
+        Returns:
+            bool:
+                ``True`` if the user approves removal, otherwise ``False``.
+        """
+        description = self._describe_worship_order_slide(slide)
+        result = QMessageBox.question(
+            self,
+            "예배순서 삭제 확인",
+            f"예전 예배에는 아래 순서가 있었지만,\n불러온 HWPX에는 없습니다.\n\n{description}\n\n없앨까요?",
+            QMessageBox.Ok | QMessageBox.Cancel,
+            QMessageBox.Ok,
+        )
+        return result == QMessageBox.Ok
+
+    def _remove_worship_order_block(self, slides: list[dict], index: int) -> None:
+        """
+        Remove a managed worship-order block from the working slide list.
+
+        Anthem blocks span two slides in this project: the ``anthem`` slide and
+        its following lyrics slide. Other kinds are removed as a single slide.
+
+        Args:
+            slides (list[dict]):
+                Mutable slide list being updated.
+            index (int):
+                Index of the first slide in the block to remove.
+
+        Returns:
+            None
+        """
+        if index >= len(slides):
+            return
+
+        if slides[index].get("style") == "anthem":
+            del slides[index]
+            if index < len(slides) and slides[index].get("style") == "lyrics":
+                del slides[index]
+            return
+
+        del slides[index]
+
+    def _find_communion_insert_index(self, slides: list[dict]) -> int:
+        """
+        Determine where a communion block should be inserted in the slide list.
+
+        Args:
+            slides (list[dict]):
+                Working slide list after other worship-order updates.
+
+        Returns:
+            int:
+                Insertion index for the communion block, typically after the
+                last hymn if one exists.
+        """
+        hymn_indices = [
+            idx for idx in range(len(slides))
+            if self._classify_worship_order_slide(slides, idx) == "hymn"
+        ]
+        if hymn_indices:
+            return hymn_indices[-1]
+        return len(slides)
+
+    def _build_special_worship_order_block(self, kind: str) -> list[dict]:
+        """
+        Build predefined slide blocks for special worship-order items.
+
+        Args:
+            kind (str):
+                Special worship-order kind to generate, such as ``communion``.
+
+        Returns:
+            list[dict]:
+                New slide dictionaries representing the requested special block.
+                Returns an empty list when no template is defined.
+        """
+        templates = {
+            "communion": [
+                {
+                    "style": "corner",
+                    "caption": "성찬식",
+                    "headline": "성찬",
+                }
+            ]
+        }
+        return [dict(row) for row in templates.get(kind, [])]
+
+    def _apply_worship_order_entries(
+        self,
+        current_slides: list[dict],
+        order_entries: list[dict]
+    ) -> list[dict]:
+        """
+        Apply imported worship-order entries to the current generator session.
+
+        This routine updates matching managed slide slots, prompts about
+        removing obsolete items, and inserts selected special-order templates
+        when needed. Sermon titles are updated conservatively so that imported
+        text is preserved unless an exact preacher suffix can be removed using
+        the current sermon slide caption as context.
+
+        Args:
+            current_slides (list[dict]):
+                Existing slide dictionaries collected from the generator table.
+            order_entries (list[dict]):
+                Parsed worship-order entry dictionaries extracted from HWPX.
+
+        Returns:
+            list[dict]:
+                Updated slide list ready to be reloaded into the generator
+                table.
+        """
+        slides = [dict(slide) for slide in current_slides]
+
+        kind_indices: dict[str, list[int]] = {}
+        for idx in range(len(slides)):
+            kind = self._classify_worship_order_slide(slides, idx)
+            if kind and kind != "anthem_lyrics":
+                kind_indices.setdefault(kind, []).append(idx)
+
+        consumed_counts: dict[str, int] = {}
+        parsed_counts: dict[str, int] = {}
+
+        for entry in order_entries:
+            kind = entry["kind"]
+            parsed_counts[kind] = parsed_counts.get(kind, 0) + 1
+
+            if kind == "communion":
+                continue
+
+            current_list = kind_indices.get(kind, [])
+            cursor = consumed_counts.get(kind, 0)
+            if cursor >= len(current_list):
+                continue
+
+            idx = current_list[cursor]
+            consumed_counts[kind] = cursor + 1
+
+            if kind == "hymn":
+                slides[idx] = self._build_hymn_slide_from_number(entry["number"])
+
+            elif kind == "respo":
+                slides[idx] = self._build_respo_slide_from_number(entry["number"])
+
+            elif kind == "verse":
+                slides[idx] = self._build_verse_slide_from_reference(entry["reference"])
+
+            elif kind == "anthem":
+                parsed_choir_name = str(entry.get("choir", "")).strip()
+
+                choir_caption = slides[idx].get("caption", "")
+                choir_suffix = slides[idx].get("caption_choir", "")
+
+                if parsed_choir_name:
+                    parsed_caption, parsed_suffix = self._split_choir_caption_parts(parsed_choir_name)
+                    if parsed_caption:
+                        choir_caption = parsed_caption
+                    if parsed_suffix:
+                        choir_suffix = parsed_suffix
+
+                slides[idx]["caption"] = choir_caption
+                slides[idx]["caption_choir"] = choir_suffix
+                slides[idx]["headline"] = entry["title"]
+
+                if idx + 1 < len(slides) and slides[idx + 1].get("style") == "lyrics":
+                    slides[idx + 1]["caption"] = entry["title"]
+
+            elif kind == "sermon":
+                imported_title = str(entry.get("title", "")).strip()
+                current_caption = str(slides[idx].get("caption", "")).strip()
+
+                # If the current sermon slide already contains preacher info in
+                # its caption, strip only that exact preacher suffix from the
+                # imported HWPX payload. This avoids sacrificing any sermon-title
+                # text while still removing duplicated preacher names when the
+                # HWPX line is glued together.
+                preacher_suffix = ""
+                preacher_match = re.search(
+                    r"([가-힣A-Za-z·]{2,4}\s*목사)\s*$",
+                    current_caption,
+                )
+                if preacher_match:
+                    preacher_suffix = preacher_match.group(1).strip()
+
+                if preacher_suffix:
+                    compact_suffix = re.sub(r"\s+", "", preacher_suffix)
+                    suffix_pattern = r"\s*".join(re.escape(ch) for ch in compact_suffix)
+                    imported_title = re.sub(
+                        rf"{suffix_pattern}\s*$",
+                        "",
+                        imported_title,
+                    ).strip()
+
+                slides[idx]["headline"] = imported_title
+
+            elif kind == "prayer":
+                slides[idx]["headline"] = entry.get("leader", "")
+
+            elif kind == "post_sermon_prayer":
+                slides[idx]["caption"] = "설교자"
+                slides[idx]["headline"] = "기도"
+
+            # Fixed liturgy items are only presence-checked for now.
+
+        remove_candidates: list[tuple[int, str]] = []
+        managed_kinds = {
+            "call_to_worship",
+            "response_song",
+            "invocation",
+            "creed",
+            "confession_prayer",
+            "respo",
+            "prayer",
+            "hymn",
+            "verse",
+            "anthem",
+            "sermon",
+            "post_sermon_prayer",
+            "offering",
+            "offering_prayer",
+            "benediction",
+            "response_doxology",
+            "communion",
+        }
+
+        for kind, idx_list in kind_indices.items():
+            if kind not in managed_kinds:
+                continue
+
+            keep_count = parsed_counts.get(kind, 0)
+            for idx in idx_list[keep_count:]:
+                remove_candidates.append((idx, kind))
+
+        approved_remove_indices: list[tuple[int, str]] = []
+        for idx, kind in sorted(remove_candidates, key=lambda item: item[0]):
+            if idx >= len(slides):
+                continue
+            if self._classify_worship_order_slide(slides, idx) != kind:
+                continue
+            if self._prompt_remove_missing_worship_order(slides[idx]):
+                approved_remove_indices.append((idx, kind))
+
+        for idx, kind in sorted(approved_remove_indices, key=lambda item: item[0], reverse=True):
+            if idx >= len(slides):
+                continue
+            if self._classify_worship_order_slide(slides, idx) != kind:
+                continue
+            self._remove_worship_order_block(slides, idx)
+
+        if parsed_counts.get("communion", 0) > 0 and not kind_indices.get("communion"):
+            insert_at = self._find_communion_insert_index(slides)
+            slides[insert_at:insert_at] = self._build_special_worship_order_block("communion")
+
+        return slides
+
+    def import_worship_order_from_hwpx(self):
+        """
+        Import first-service worship-order information from a HWPX bulletin and
+        conservatively update matching slots in the current generator session.
+
+        This first-pass implementation updates the existing session structure
+        rather than rebuilding the whole file from scratch.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        src_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "예배순서를 가져올 HWPX 주보 파일 선택",
+            "",
+            "HWPX Files (*.hwpx)"
+        )
+        if not src_path:
+            return
+
+        try:
+            order_entries = extract_first_service_order_entries_from_hwpx(src_path)
+        except Exception as e:
+            QMessageBox.critical(self, "오류", f"HWPX에서 예배순서를 추출하지 못했습니다:\n{e}")
+            return
+
+        if not order_entries:
+            QMessageBox.warning(self, "실패", "HWPX에서 1부 예배순서를 찾지 못했습니다.")
+            return
+
+        current_slides = self.data_manager.collect_slide_data()
+        updated_slides = self._apply_worship_order_entries(current_slides, order_entries)
+
+        self._load_slide_list_into_table(updated_slides)
+
+        QMessageBox.information(
+            self,
+            "완료",
+            f"HWPX 예배순서 {len(order_entries)}개 항목을 기준으로 현재 JSON을 갱신했습니다."
+        )
 
     def import_announcements_from_hwpx(self):
         """
