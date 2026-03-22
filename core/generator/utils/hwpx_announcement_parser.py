@@ -1,4 +1,28 @@
-﻿# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-ㅋㅁ
+"""
+:File: EuljiroWorship/core/generator/utils/hwpx_announcement_parser.py
+:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
+:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
+:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
+:Telephone: +82-2-2266-3070
+:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
+:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
+
+HWPX announcement parser for the Slide Generator's Euljiro-specific bulletin workflow.
+
+This module contains church-specific parsing helpers used to extract
+announcement slides from HWPX weekly bulletin files that follow the
+Eulji-ro Presbyterian Church's layout and worship-publication conventions.
+Unlike the generic slide generator utilities, the rules in this module
+intentionally assume Euljiro bulletin structure such as:
+
+- Announcement-heavy tables embedded in the first page layout
+- Section markers like ``환영``, ``예배``, ``모임``, and ``소식``
+- Bracketed announcement titles and optional nested-table announcement blocks
+
+The output is a normalized list of announcement slide dictionaries that can be
+inserted into the generator session through the church-specific import tools.
+"""
 
 import re
 import zipfile

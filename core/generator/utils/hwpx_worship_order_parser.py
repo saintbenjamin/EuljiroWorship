@@ -1,10 +1,29 @@
 # -*- coding: utf-8 -*-
 """
-Helpers for extracting first-service worship-order entries from HWPX bulletins.
+:File: EuljiroWorship/core/generator/utils/hwpx_worship_order_parser.py
+:Author: Benjamin Jaedon Choi - https://github.com/saintbenjamin
+:Affiliated Church: The Eulji-ro Presbyterian Church [대한예수교장로회(통합) 을지로교회]
+:Address: The Eulji-ro Presbyterian Church, 24-10, Eulji-ro 20-gil, Jung-gu, Seoul 04549, South Korea
+:Telephone: +82-2-2266-3070
+:E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
+:License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-This module parses HWPX section XML files, locates the portion of the bulletin
-that contains the first worship-service order, and converts recognized rows
-into normalized dictionaries for generator-side update logic.
+HWPX worship-order parser for the Slide Generator's Euljiro-specific bulletin workflow.
+
+This module parses HWPX section XML files, locates the portion of the weekly
+bulletin that contains the first-service worship order, and converts supported
+rows into normalized entry dictionaries for generator-side update logic.
+
+The logic here is intentionally church-specific. It assumes Euljiro
+Presbyterian Church bulletin patterns such as:
+
+- A first-service order embedded in a known HWPX bulletin structure
+- Worship-order labels and line formats used by Euljiro weekly bulletins
+- Euljiro-specific expectations around choir naming, sermon-title handling,
+  first-service extraction, and special liturgical insertions
+
+These helpers exist to support the church-specific Tools-menu import features,
+not as a general-purpose HWPX worship-order parser for arbitrary churches.
 """
 
 import re
