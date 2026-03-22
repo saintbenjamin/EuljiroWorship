@@ -59,8 +59,8 @@ class SlideGeneratorUIBuilder:
         Menu bar accessor for adding menus and actions.
     - ``table_manager`` (core.generator.ui.slide_table_manager.SlideTableManager):
         Row manipulation logic for the slide table.
-    - ``load_from_file()``:
-        Load a slide session into the table.
+    - ``prompt_load_from_file()``:
+        Run the interactive file-open flow and load a slide session.
     - ``save_as()``:
         Save the current slide session using a Save As flow.
     - ``export_slides_for_overlay()``:
@@ -159,7 +159,7 @@ class SlideGeneratorUIBuilder:
             btn.setMinimumHeight(28)
 
         # Connect button actions to parent handlers
-        load_btn.clicked.connect(parent.load_from_file)
+        load_btn.clicked.connect(parent.prompt_load_from_file)
         save_btn.clicked.connect(parent.save_as)
         add_btn.clicked.connect(parent.table_manager.add_row)
         insert_above_btn.clicked.connect(lambda: parent.table_manager.insert_row(above=True))
@@ -195,9 +195,16 @@ class SlideGeneratorUIBuilder:
         main_layout.addWidget(self.worship_label, 0)
         main_layout.addWidget(parent.table, 1)
 
-        # Create 'Tools > Settings' menu
+        # Create 'Tools' menu
         menubar = parent.menuBar()
         tool_menu = menubar.addMenu("도구")
+
+        hwpx_announcement_action = QAction("주보 HWPX 광고 가져오기 (을지로교회 전용)", parent)
+        hwpx_announcement_action.triggered.connect(parent.import_announcements_from_hwpx)
+        tool_menu.addAction(hwpx_announcement_action)
+
+        tool_menu.addSeparator()
+
         settings_action = QAction("설정", parent)
         settings_action.triggered.connect(parent.open_settings_dialog)
         tool_menu.addAction(settings_action)

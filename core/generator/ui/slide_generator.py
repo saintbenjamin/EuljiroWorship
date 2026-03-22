@@ -27,6 +27,7 @@ through exported JSON and the WebSocket-based overlay pipeline.
 import os
 import datetime
 import json
+import shutil
 
 from PySide6.QtWidgets import (
     QMainWindow, QTableWidget, QWidget,
@@ -39,12 +40,13 @@ from PySide6.QtGui import QFont
 
 from core.config import paths, style_map, constants
 from core.generator.settings_generator import load_generator_settings
-from core.generator.settings_last_path import save_last_path
+from core.generator.settings_last_path import load_last_path, save_last_path
 from core.generator.ui.settings_dialog import SettingsDialog
 from core.generator.ui.slide_generator_ui_builder import SlideGeneratorUIBuilder
 from core.generator.ui.slide_table_manager import SlideTableManager
 from core.generator.utils.slide_exporter import SlideExporter
 from core.generator.utils.slide_generator_data_manager import SlideGeneratorDataManager
+from core.generator.utils.hwpx_announcement_parser import extract_announcement_slides_from_hwpx
 from core.plugin.slide_controller_launcher import SlideControllerLauncher
 
 class SlideGenerator(QMainWindow):
@@ -162,7 +164,7 @@ class SlideGenerator(QMainWindow):
         self.last_saved_path = None
 
         # Prompt is removed — instead, load file and extract name
-        load_path = self.load_from_file()  # Shows OS file dialog on startup
+        load_path = self.prompt_load_from_file()  # Shows OS file dialog on startup
         if load_path:
             filename_only = os.path.splitext(os.path.basename(load_path))[0]
             self.worship_name = filename_only
@@ -230,6 +232,163 @@ class SlideGenerator(QMainWindow):
         else:
             self.save_slides_to_file(show_message=True)
 
+    def _get_default_load_directory(self) -> str:
+        """
+        Return the initial directory used by the slide file open dialog.
+
+        Returns:
+            str:
+                Directory path derived from the last opened/saved slide file,
+                or the current working directory if no usable record exists.
+        """
+        last_path = load_last_path()
+        if last_path and os.path.isfile(last_path):
+            return os.path.dirname(last_path)
+        return os.getcwd()
+
+    def _prompt_worship_title(self, default_title: str) -> str | None:
+        """
+        Ask the user for the worship title that should back the session filename.
+
+        The dialog is pre-filled with the selected JSON filename stem. Empty
+        values and filenames containing invalid characters are rejected and the
+        user is prompted again until a valid value is entered.
+
+        If the user presses Cancel or closes the dialog, the original default
+        title is used instead of aborting the load flow.
+
+        Args:
+            default_title (str):
+                Initial text shown in the input field.
+
+        Returns:
+            str | None:
+                Validated title text.
+        """
+        invalid_chars = '<>:"/\\\\|?*'
+        current_default = default_title
+
+        while True:
+            dialog = QInputDialog(self)
+            dialog.setWindowTitle("예배 제목을 입력하세요.")
+            dialog.setLabelText("예배 제목")
+            dialog.setInputMode(QInputDialog.TextInput)
+            dialog.setTextValue(current_default)
+
+            # dialog.setMinimumWidth(640)
+            dialog.resize(640, dialog.sizeHint().height())
+
+            if dialog.exec() != QDialog.DialogCode.Accepted:
+                title = default_title
+            else:
+                title = dialog.textValue()
+
+            title = title.strip()
+            if title.lower().endswith(".json"):
+                title = title[:-5].strip()
+
+            if not title:
+                QMessageBox.warning(self, "입력 오류", "예배 제목은 비워둘 수 없습니다.")
+                continue
+
+            if any(ch in invalid_chars for ch in title):
+                QMessageBox.warning(
+                    self,
+                    "입력 오류",
+                    "파일명에 사용할 수 없는 문자가 포함되어 있습니다."
+                )
+                current_default = title
+                continue
+
+            return title
+
+    def _resolve_selected_session_path(self, source_path: str) -> str | None:
+        """
+        Resolve the actual path to load after a user picks a session JSON file.
+
+        Keeping the default title loads the original file. Changing the title
+        creates a same-folder copy with the new filename and loads that copy.
+
+        Args:
+            source_path (str):
+                Path selected in the open-file dialog.
+
+        Returns:
+            str | None:
+                Path that should be loaded into the generator, or ``None`` if
+                the title step is canceled or the copy operation fails.
+        """
+        source_dir = os.path.dirname(source_path)
+        source_stem, source_ext = os.path.splitext(os.path.basename(source_path))
+        source_ext = source_ext or ".json"
+        default_title = source_stem
+
+        while True:
+            requested_title = self._prompt_worship_title(default_title)
+            if requested_title is None:
+                return None
+
+            if requested_title == source_stem:
+                return source_path
+
+            target_path = os.path.join(source_dir, f"{requested_title}{source_ext}")
+            if os.path.abspath(target_path) == os.path.abspath(source_path):
+                return source_path
+
+            if os.path.exists(target_path):
+                overwrite = QMessageBox.question(
+                    self,
+                    "같은 이름의 파일이 있습니다.",
+                    f"이미 같은 이름의 파일이 있습니다.\n\n{target_path}\n\n기존 파일을 덮어쓸까요?",
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                    QMessageBox.StandardButton.No
+                )
+                if overwrite != QMessageBox.StandardButton.Yes:
+                    default_title = requested_title
+                    continue
+
+            try:
+                shutil.copy2(source_path, target_path)
+            except Exception as exc:
+                QMessageBox.critical(
+                    self,
+                    "복제 실패",
+                    f"선택한 예배 파일을 새 이름으로 복제하지 못했습니다.\n{exc}"
+                )
+                return None
+
+            return target_path
+
+    def prompt_load_from_file(self):
+        """
+        Interactively select a slide JSON file and load it into the generator.
+
+        This wrapper owns the startup/manual-open flow that the user sees:
+
+        1. Show the OS file-open dialog.
+        2. Ask for the worship title using the filename stem as the default.
+        3. If the title changes, duplicate the JSON file in the same folder.
+        4. Load the chosen original/copy into the generator.
+
+        Returns:
+            str | None:
+                Loaded file path, or ``None`` if the flow is canceled.
+        """
+        path, _ = QFileDialog.getOpenFileName(
+            self,
+            "遺덈윭???뚯씪 ?좏깮",
+            self._get_default_load_directory(),
+            "JSON Files (*.json);;All Files (*)"
+        )
+        if not path:
+            return None
+
+        path = self._resolve_selected_session_path(path)
+        if not path:
+            return None
+
+        return self.load_from_file(path)
+
     def load_from_file(self, path=None):
         """
         Load a slide session JSON file into the generator.
@@ -285,6 +444,7 @@ class SlideGenerator(QMainWindow):
         self.ui_builder.set_worship_label(self.worship_name)
         self.last_saved_path = path
         self.first_save_done = False
+        save_last_path(path)
         return path
 
     def save_as(self):
@@ -352,6 +512,7 @@ class SlideGenerator(QMainWindow):
             json.dump(slide_data, f, ensure_ascii=False, indent=2)
 
         self.last_saved_path = path
+        save_last_path(path)
 
     def _get_announcement_import_settings_path(self) -> str:
         """
@@ -515,6 +676,140 @@ class SlideGenerator(QMainWindow):
             if str(slides[i].get("headline", "")).strip() == target:
                 return i
         return None
+
+    def _load_slide_list_into_table(self, slides: list[dict]) -> None:
+        """
+        Load an in-memory slide list into the generator table.
+
+        This helper clears the current table contents, recreates the required
+        rows, and writes each slide's style/caption/headline into the visible UI.
+
+        Args:
+            slides (list[dict]):
+                Slide dictionaries to render into the generator table.
+
+        Returns:
+            None
+        """
+        self.table.blockSignals(True)
+        self.table.setRowCount(0)
+
+        for _ in slides:
+            self.data_manager._insert_empty_row()
+
+        for row, slide in enumerate(slides):
+            combo = self.table.cellWidget(row, 0)
+            if combo:
+                combo.blockSignals(True)
+                combo.setCurrentText(
+                    style_map.STYLE_ALIASES.get(slide.get("style", "lyrics"), "찬양가사")
+                )
+                combo.blockSignals(False)
+
+            style = slide.get("style", "lyrics")
+            caption = slide.get("caption", "")
+            headline = slide.get("headline", "")
+
+            if style == "anthem":
+                caption = f"{slide.get('caption', '')} {slide.get('caption_choir', '')}".strip()
+
+            if style == "verse":
+                headline = self.data_manager._split_verse_headline(headline)
+
+            self.table.setItem(row, 1, QTableWidgetItem(caption))
+            self.table.setItem(row, 2, QTableWidgetItem(headline))
+
+        self.table.blockSignals(False)
+
+    def import_announcements_from_hwpx(self):
+        """
+        Import announcements from a HWPX bulletin and replace the current
+        announcement area between the fixed welcome slide and the fixed
+        closing-verse slide.
+
+        Imported items are intentionally inserted as ``lyrics`` style only.
+
+        The source HWPX file is parsed into announcement slides, and the
+        matching range in the current session is replaced using fixed headline
+        anchors that mark the start and end of the announcement block.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        start_anchor = "오늘 처음 오신 분들을 환영하고 축복합니다!"
+        end_anchor = "용서, 사랑의 시작입니다"
+        wrap_width = 28
+
+        src_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "광고를 가져올 HWPX 주보 파일 선택",
+            "",
+            "HWPX Files (*.hwpx)"
+        )
+        if not src_path:
+            return
+
+        try:
+            imported_slides = extract_announcement_slides_from_hwpx(
+                src_path,
+                wrap_width=wrap_width
+            )
+        except Exception as e:
+            QMessageBox.critical(self, "오류", f"HWPX에서 광고를 추출하지 못했습니다:\n{e}")
+            return
+
+        if not imported_slides:
+            QMessageBox.warning(self, "실패", "HWPX에서 광고 항목을 찾지 못했습니다.")
+            return
+
+        current_slides = self.data_manager.collect_slide_data()
+
+        start_idx = self._find_slide_index_by_headline(current_slides, start_anchor)
+        if start_idx is None:
+            QMessageBox.warning(
+                self,
+                "실패",
+                f"현재 파일에서 광고 시작 기준 슬라이드를 찾지 못했습니다.\n\n{start_anchor}"
+            )
+            return
+
+        end_idx = self._find_slide_index_by_headline(
+            current_slides,
+            end_anchor,
+            start_index=start_idx + 1
+        )
+        if end_idx is None:
+            QMessageBox.warning(
+                self,
+                "실패",
+                f"현재 파일에서 광고 끝 기준 슬라이드를 찾지 못했습니다.\n\n{end_anchor}"
+            )
+            return
+
+        if end_idx <= start_idx:
+            QMessageBox.warning(
+                self,
+                "실패",
+                "광고 끝 기준 슬라이드가 시작 기준 슬라이드보다 앞에 있습니다."
+            )
+            return
+
+        new_slides = (
+            current_slides[:start_idx + 1]
+            + imported_slides
+            + current_slides[end_idx:]
+        )
+
+        self._load_slide_list_into_table(new_slides)
+
+        QMessageBox.information(
+            self,
+            "완료",
+            f"HWPX 광고 {len(imported_slides)}개를 가져왔습니다."
+        )
 
     def import_announcements(self):
         """

@@ -538,7 +538,7 @@ class SlideController(QWidget):
 
         - Page number (1-based)
         - Caption
-        - First line preview of headline (trimmed)
+        - Full headline text
 
         Returns:
             None
@@ -548,7 +548,7 @@ class SlideController(QWidget):
             self.table.insertRow(i)
             self.table.setItem(i, 0, QTableWidgetItem(str(i + 1)))
             self.table.setItem(i, 1, QTableWidgetItem(slide.get("caption", "")))
-            headline = slide.get("headline", "").split("\n")[0][:50]
+            headline = slide.get("headline", "")
             self.table.setItem(i, 2, QTableWidgetItem(headline))
 
     def closeEvent(self, event):
