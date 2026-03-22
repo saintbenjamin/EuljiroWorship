@@ -17,7 +17,7 @@ class (:class:`core.generator.ui.slide_generator.SlideGenerator`) focused on wor
 
 The builder assembles:
 
-- A top row of action buttons with icons (load, save, add, insert, delete, move, export)
+- A top row of action buttons with icons (load, save, add, duplicate, insert, delete, move, export)
 - A tools menu containing church-specific announcement import actions and generator settings
 - A central table area for listing and managing slides
 - A label showing the current worship/session name
@@ -43,7 +43,7 @@ class SlideGeneratorUIBuilder:
 
     Constructed UI elements include:
 
-    - A horizontal toolbar of action buttons (SVG-icon buttons)
+    - A horizontal toolbar of action buttons (SVG-icon buttons), including row duplication
     - A label displaying the current worship/session name
     - The central slide table widget
     - ``도구`` menu actions for church-specific announcement import and settings
@@ -58,7 +58,8 @@ class SlideGeneratorUIBuilder:
     - ``menuBar()`` -> QMenuBar:
         Menu bar accessor for adding menus and actions.
     - ``table_manager`` (core.generator.ui.slide_table_manager.SlideTableManager):
-        Row manipulation logic for the slide table.
+        Row manipulation logic for the slide table, including insertion,
+        deletion, movement, and duplication.
     - ``prompt_load_from_file()``:
         Run the interactive file-open flow and load a slide session.
     - ``save_as()``:
@@ -117,6 +118,7 @@ class SlideGeneratorUIBuilder:
     
         - Registers keyboard shortcuts (e.g., Ctrl+S for saving)
         - Creates action buttons with SVG icons and connects them to parent handlers
+        - Provides direct row actions such as add, duplicate, insert, delete, and move
         - Assembles the button toolbar, label, and slide table into a vertical layout
         - Adds church-specific announcement import actions and a settings action to the Tools menu
         - Applies persisted font settings to the UI
@@ -141,6 +143,8 @@ class SlideGeneratorUIBuilder:
         set_svg_icon(save_btn, get_icon_path("save.svg"), size=30)
         add_btn = QPushButton()
         set_svg_icon(add_btn, get_icon_path("add.svg"), size=30)
+        duplicate_btn = QPushButton()
+        set_svg_icon(duplicate_btn, get_icon_path("clone.svg"), size=30)
         insert_above_btn = QPushButton()
         set_svg_icon(insert_above_btn, get_icon_path("insert_above.svg"), size=30)
         insert_below_btn = QPushButton()
@@ -155,7 +159,7 @@ class SlideGeneratorUIBuilder:
         set_svg_icon(export_btn, get_icon_path("export.svg"), size=30)
 
         # Apply consistent button height and layout policy
-        for btn in [load_btn, save_btn, add_btn, insert_above_btn,
+        for btn in [load_btn, save_btn, add_btn, duplicate_btn, insert_above_btn,
                     insert_below_btn, del_btn, up_btn, down_btn, export_btn]:
             btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
             btn.setMinimumHeight(28)
@@ -164,6 +168,7 @@ class SlideGeneratorUIBuilder:
         load_btn.clicked.connect(parent.prompt_load_from_file)
         save_btn.clicked.connect(parent.save_as)
         add_btn.clicked.connect(parent.table_manager.add_row)
+        duplicate_btn.clicked.connect(parent.table_manager.duplicate_selected_row)
         insert_above_btn.clicked.connect(lambda: parent.table_manager.insert_row(above=True))
         insert_below_btn.clicked.connect(lambda: parent.table_manager.insert_row(above=False))
         del_btn.clicked.connect(parent.table_manager.delete_selected_row)
@@ -175,7 +180,7 @@ class SlideGeneratorUIBuilder:
         btn_layout = QHBoxLayout()
         btn_layout.setContentsMargins(4, 2, 4, 2)
         btn_layout.setSpacing(4)
-        for btn in [load_btn, save_btn, add_btn, insert_above_btn,
+        for btn in [load_btn, save_btn, add_btn, duplicate_btn, insert_above_btn,
                     insert_below_btn, del_btn, up_btn, down_btn, export_btn]:
             btn_layout.addWidget(btn)
 

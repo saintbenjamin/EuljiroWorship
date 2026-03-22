@@ -25,9 +25,10 @@ class SlideTableManager:
     Manage row-level operations on the slide table.
 
     This class owns all logic related to modifying the table rows that
-    represent slides, including insertion, deletion, reordering, and
-    style selection handling. It delegates edit-safety checks to the
-    parent generator to ensure consistency with the controller state.
+    represent slides, including insertion, duplication, deletion,
+    reordering, and style selection handling. It delegates edit-safety
+    checks to the parent generator to ensure consistency with the
+    controller state.
 
     Attributes:
         table (QTableWidget):
@@ -156,6 +157,53 @@ class SlideTableManager:
         selected = self.table.currentRow()
         if selected >= 0:
             self.table.removeRow(selected)
+
+    def duplicate_selected_row(self):
+        """
+        Duplicate the currently selected slide row immediately below itself.
+
+        The duplicated row copies:
+
+        - The selected slide style
+        - The caption text
+        - The headline text
+
+        If no row is selected, this method does nothing. If the slide
+        controller is running, duplication is aborted.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        if self.generator.warn_if_controller_running():
+            return
+
+        source_row = self.table.currentRow()
+        if source_row < 0:
+            return
+
+        source_combo = self.table.cellWidget(source_row, 0)
+        style_text = source_combo.currentText() if source_combo else STYLE_LIST[0]
+
+        caption_item = self.table.item(source_row, 1)
+        headline_item = self.table.item(source_row, 2)
+
+        caption = caption_item.text() if caption_item else ""
+        headline = headline_item.text() if headline_item else ""
+
+        # Insert a new row directly below the selected row.
+        self.insert_row(row=source_row, above=False)
+
+        target_row = source_row + 1
+        target_combo = self.table.cellWidget(target_row, 0)
+        if target_combo:
+            target_combo.setCurrentText(style_text)
+
+        self.table.setItem(target_row, 1, QTableWidgetItem(caption))
+        self.table.setItem(target_row, 2, QTableWidgetItem(headline))
+        self.table.selectRow(target_row)
 
     def move_row_up(self):
         """
