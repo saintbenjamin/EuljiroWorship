@@ -1402,6 +1402,108 @@ class SlideGenerator(QMainWindow):
             f"HWPX 광고 {len(imported_slides)}개를 가져왔습니다."
         )
 
+    def import_worship_order_and_announcements_from_hwpx(self):
+        """
+        Import both first-service worship-order information and announcement
+        slides from a single HWPX bulletin and apply them in one pass.
+
+        The existing session is first updated with the imported worship order,
+        then the announcement block between the fixed anchors is replaced with
+        announcement slides extracted from the same HWPX file.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        start_anchor = "오늘 처음 오신 분들을 환영하고 축복합니다!"
+        end_anchor = "용서, 사랑의 시작입니다"
+        wrap_width = 28
+
+        src_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "예배순서와 광고를 가져올 HWPX 주보 파일 선택",
+            "",
+            "HWPX Files (*.hwpx)"
+        )
+        if not src_path:
+            return
+
+        try:
+            order_entries = extract_first_service_order_entries_from_hwpx(src_path)
+        except Exception as e:
+            QMessageBox.critical(self, "오류", f"HWPX에서 예배순서를 추출하지 못했습니다:\n{e}")
+            return
+
+        if not order_entries:
+            QMessageBox.warning(self, "실패", "HWPX에서 1부 예배순서를 찾지 못했습니다.")
+            return
+
+        try:
+            imported_slides = extract_announcement_slides_from_hwpx(
+                src_path,
+                wrap_width=wrap_width
+            )
+        except Exception as e:
+            QMessageBox.critical(self, "오류", f"HWPX에서 광고를 추출하지 못했습니다:\n{e}")
+            return
+
+        if not imported_slides:
+            QMessageBox.warning(self, "실패", "HWPX에서 광고 항목을 찾지 못했습니다.")
+            return
+
+        current_slides = self.data_manager.collect_slide_data()
+
+        # 1. Apply worship-order updates first.
+        updated_slides = self._apply_worship_order_entries(current_slides, order_entries)
+
+        # 2. Replace the announcement block in the updated slide list.
+        start_idx = self._find_slide_index_by_headline(updated_slides, start_anchor)
+        if start_idx is None:
+            QMessageBox.warning(
+                self,
+                "실패",
+                f"현재 파일에서 광고 시작 기준 슬라이드를 찾지 못했습니다.\n\n{start_anchor}"
+            )
+            return
+
+        end_idx = self._find_slide_index_by_headline(
+            updated_slides,
+            end_anchor,
+            start_index=start_idx + 1
+        )
+        if end_idx is None:
+            QMessageBox.warning(
+                self,
+                "실패",
+                f"현재 파일에서 광고 끝 기준 슬라이드를 찾지 못했습니다.\n\n{end_anchor}"
+            )
+            return
+
+        if end_idx <= start_idx:
+            QMessageBox.warning(
+                self,
+                "실패",
+                "광고 끝 기준 슬라이드가 시작 기준 슬라이드보다 앞에 있습니다."
+            )
+            return
+
+        new_slides = (
+            updated_slides[:start_idx + 1]
+            + imported_slides
+            + updated_slides[end_idx:]
+        )
+
+        self._load_slide_list_into_table(new_slides)
+
+        QMessageBox.information(
+            self,
+            "완료",
+            f"HWPX 예배순서 {len(order_entries)}개 항목과 "
+            f"광고 {len(imported_slides)}개를 함께 반영했습니다."
+        )
+
     def import_announcements(self):
         """
         Import a configurable slide block from an external slide JSON file and
