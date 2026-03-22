@@ -18,9 +18,9 @@ class (:class:`core.generator.ui.slide_generator.SlideGenerator`) focused on wor
 The builder assembles:
 
 - A top row of action buttons with icons (load, save, add, insert, delete, move, export)
+- A tools menu containing church-specific announcement import actions and generator settings
 - A central table area for listing and managing slides
 - A label showing the current worship/session name
-- A menu bar entry for accessing generator settings
 - Keyboard shortcuts (e.g., Ctrl+S) and signal connections
 """
 
@@ -46,7 +46,7 @@ class SlideGeneratorUIBuilder:
     - A horizontal toolbar of action buttons (SVG-icon buttons)
     - A label displaying the current worship/session name
     - The central slide table widget
-    - A ``도구 > 설정`` menu entry
+    - ``도구`` menu actions for church-specific announcement import and settings
     - Keyboard shortcuts and signal-slot connections
 
     Required parent interface:
@@ -65,6 +65,10 @@ class SlideGeneratorUIBuilder:
         Save the current slide session using a Save As flow.
     - ``export_slides_for_overlay()``:
         Export overlay-ready JSON and launch the slide controller if needed.
+    - ``import_announcements()``:
+        Import announcement slides from another worship JSON file.
+    - ``import_announcements_from_hwpx()``:
+        Import announcement slides from a HWPX bulletin file.
     - ``open_settings_dialog()``:
         Open the generator settings dialog.
     - ``handle_table_double_click(row: int, column: int)``:
@@ -114,7 +118,7 @@ class SlideGeneratorUIBuilder:
         - Registers keyboard shortcuts (e.g., Ctrl+S for saving)
         - Creates action buttons with SVG icons and connects them to parent handlers
         - Assembles the button toolbar, label, and slide table into a vertical layout
-        - Adds a 'Tools > Settings' menu entry to the menu bar
+        - Adds church-specific announcement import actions and a settings action to the Tools menu
         - Applies persisted font settings to the UI
         - Connects table double-click events to the slide editor dialog
         - Installs the composed layout as the parent's central widget
@@ -147,14 +151,12 @@ class SlideGeneratorUIBuilder:
         set_svg_icon(up_btn, get_icon_path("up.svg"), size=30)
         down_btn = QPushButton()
         set_svg_icon(down_btn, get_icon_path("down.svg"), size=30)
-        import_btn = QPushButton()
-        set_svg_icon(import_btn, get_icon_path("import.svg"), size=30)
         export_btn = QPushButton()
         set_svg_icon(export_btn, get_icon_path("export.svg"), size=30)
 
         # Apply consistent button height and layout policy
         for btn in [load_btn, save_btn, add_btn, insert_above_btn,
-                    insert_below_btn, del_btn, up_btn, down_btn, import_btn, export_btn]:
+                    insert_below_btn, del_btn, up_btn, down_btn, export_btn]:
             btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
             btn.setMinimumHeight(28)
 
@@ -167,7 +169,6 @@ class SlideGeneratorUIBuilder:
         del_btn.clicked.connect(parent.table_manager.delete_selected_row)
         up_btn.clicked.connect(parent.table_manager.move_row_up)
         down_btn.clicked.connect(parent.table_manager.move_row_down)
-        import_btn.clicked.connect(parent.import_announcements)
         export_btn.clicked.connect(parent.export_slides_for_overlay)
 
         # Arrange buttons horizontally
@@ -175,7 +176,7 @@ class SlideGeneratorUIBuilder:
         btn_layout.setContentsMargins(4, 2, 4, 2)
         btn_layout.setSpacing(4)
         for btn in [load_btn, save_btn, add_btn, insert_above_btn,
-                    insert_below_btn, del_btn, up_btn, down_btn, import_btn, export_btn]:
+                    insert_below_btn, del_btn, up_btn, down_btn, export_btn]:
             btn_layout.addWidget(btn)
 
         # Wrap button layout in a QWidget container
@@ -199,7 +200,11 @@ class SlideGeneratorUIBuilder:
         menubar = parent.menuBar()
         tool_menu = menubar.addMenu("도구")
 
-        hwpx_announcement_action = QAction("주보 HWPX 광고 가져오기 (을지로교회 전용)", parent)
+        import_announcements_action = QAction("다른 예배 광고 가져오기 (을지로교회 전용)", parent)
+        import_announcements_action.triggered.connect(parent.import_announcements)
+        tool_menu.addAction(import_announcements_action)
+
+        hwpx_announcement_action = QAction("HWPX 광고 가져오기 (을지로교회 전용)", parent)
         hwpx_announcement_action.triggered.connect(parent.import_announcements_from_hwpx)
         tool_menu.addAction(hwpx_announcement_action)
 

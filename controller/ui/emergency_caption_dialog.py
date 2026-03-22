@@ -26,21 +26,27 @@ slides on demand. It supports the following workflows:
 
 If the first input is not recognized as a Bible reference, the dialog can also
 build non-Bible emergency slides using a selected slide style (e.g., "lyrics",
-"hymn", "respo") and optional preset numbers.
+"hymn", "respo", "image", "video") and optional preset numbers or referenced
+media files.
 
 The dialog returns a list of slide dictionaries via :meth:`controller.ui.emergency_caption_dialog.EmergencyCaptionDialog.get_final_slides`,
 ready to be written to the slide output file and broadcast by the controller.
 """
 
 import os
+import shutil
+
 from PySide6.QtWidgets import (
-    QDialog, QLabel, QLineEdit, 
-    QTextEdit, QVBoxLayout, QPushButton, 
-    QComboBox, QHeaderView, QHBoxLayout, 
-    QRadioButton, QButtonGroup, QTableView
+    QDialog, QLabel, QLineEdit,
+    QTextEdit, QVBoxLayout, QPushButton,
+    QComboBox, QHeaderView, QHBoxLayout,
+    QRadioButton, QButtonGroup, QTableView,
+    QFileDialog, QMessageBox, QWidget,
 )
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QTextCursor
+from PySide6.QtCore import Qt, QUrl
+from PySide6.QtGui import QTextCursor, QPixmap
+from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
+from PySide6.QtMultimediaWidgets import QVideoWidget
 
 from controller.utils.emergency_slide_factory import EmergencySlideFactory
 from controller.utils.keyword_highlight_delegate import KeywordHighlightDelegate
@@ -69,6 +75,8 @@ class EmergencyCaptionDialog(QDialog):
     - Non-Bible emergency slide generation
         - User chooses a slide style from :py:data:`core.config.style_map.STYLE_ALIASES`.
         - For preset-based styles (e.g., "respo" / "hymn"), numeric inputs can load presets.
+        - For media styles (e.g., "image" / "video"), a referenced asset can be selected,
+          copied into the overlay asset directory, and previewed inside the dialog.
         - Otherwise, a manual slide is created from caption/headline inputs.
 
     Generated slides are stored in ``self.finalized_slides`` and can be retrieved
@@ -92,6 +100,7 @@ class EmergencyCaptionDialog(QDialog):
         - Bible reference input and preview
         - Keyword-based Bible search and result selection
         - Manual emergency message and style-based slide generation
+        - Conditional media selection and preview for image/video manual slides
 
         Args:
             parent (QDialog | None):
@@ -148,26 +157,80 @@ class EmergencyCaptionDialog(QDialog):
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.Stretch)
 
-        # --- Input field for additional message ---
+        # --- Default labels/placeholders for the manual section ---
+        self.default_manual_label_text = "기타 긴급 메시지"
+        self.default_input3_placeholder = "제목 또는 번호 (예: 123)"
+        self.default_input2_placeholder = "두 줄 이상의 긴급 메시지나 안내문을 입력하세요..."
+
+        # --- Input field for additional message / caption ---
         self.input2 = QTextEdit()
-        self.input2.setPlaceholderText("예: 하나님이 세상을 이처럼 사랑하사...")
+        self.input2.setPlaceholderText(self.default_input2_placeholder)
 
         # --- Button to confirm and output the emergency caption ---
         self.ok_button = QPushButton()
         set_svg_icon(self.ok_button, get_icon_path("export.svg"), size=30)
         self.ok_button.clicked.connect(self.on_confirm_clicked)
 
-        # --- Style dropdown and caption input (input3) ---
+        # --- Style dropdown and single-line input (caption / number / media path) ---
         self.style_dropdown = QComboBox()
         self.style_dropdown.addItems(style_map.STYLE_ALIASES.values())
 
         self.input3 = QLineEdit()
-        self.input3.setPlaceholderText("제목 또는 번호 (예: 123)")
+        self.input3.setPlaceholderText(self.default_input3_placeholder)
 
-        # Horizontal layout for style + caption input
+        self.media_button = QPushButton("참조")
+        self.media_button.clicked.connect(self.select_media_file)
+        self.media_button.hide()
+
+        # Horizontal layout for style + caption/path input
         self.caption_row = QHBoxLayout()
         self.caption_row.addWidget(self.style_dropdown)
         self.caption_row.addWidget(self.input3)
+        self.caption_row.addWidget(self.media_button)
+
+        # Shared status label for selected media path
+        self.media_status = QLabel("")
+        self.media_status.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.media_status.setWordWrap(True)
+        self.media_status.hide()
+
+        # Image preview
+        self.image_preview = QLabel("선택된 그림 없음")
+        self.image_preview.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.image_preview.setFixedHeight(220)
+        self.image_preview.setScaledContents(True)
+        self.image_preview.hide()
+
+        # Video preview
+        self.video_status = QLabel("선택된 비디오 없음")
+        self.video_status.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.video_status.hide()
+
+        self.video_widget = QVideoWidget()
+        self.video_widget.setMinimumHeight(240)
+        self.video_widget.hide()
+
+        self.video_controls_widget = QWidget()
+        self.video_controls = QHBoxLayout(self.video_controls_widget)
+        self.video_controls.setContentsMargins(0, 0, 0, 0)
+
+        self.play_button = QPushButton("재생")
+        self.pause_button = QPushButton("일시정지")
+        self.stop_button = QPushButton("정지")
+
+        self.play_button.clicked.connect(self.play_preview)
+        self.pause_button.clicked.connect(self.pause_preview)
+        self.stop_button.clicked.connect(self.stop_preview)
+
+        self.video_controls.addWidget(self.play_button)
+        self.video_controls.addWidget(self.pause_button)
+        self.video_controls.addWidget(self.stop_button)
+        self.video_controls_widget.hide()
+
+        self.player = QMediaPlayer(self)
+        self.audio = QAudioOutput(self)
+        self.player.setAudioOutput(self.audio)
+        self.player.setVideoOutput(self.video_widget)
 
         # Insert caption row above the message input
         layout = QVBoxLayout()
@@ -197,15 +260,344 @@ class EmergencyCaptionDialog(QDialog):
         layout.addLayout(self.search_row)
         layout.addWidget(self.search_results, stretch=2)
 
-        layout.addWidget(QLabel("기타 긴급 메시지"))
+        self.manual_label = QLabel(self.default_manual_label_text)
+        layout.addWidget(self.manual_label)
         layout.addLayout(self.caption_row)
         layout.addWidget(self.input2, stretch=1)
+        layout.addWidget(self.media_status)
+        layout.addWidget(self.image_preview)
+        layout.addWidget(self.video_status)
+        layout.addWidget(self.video_widget)
+        layout.addWidget(self.video_controls_widget)
         layout.addWidget(self.ok_button)
 
         self.setLayout(layout)
 
+        self.style_dropdown.currentTextChanged.connect(self.update_manual_media_ui)
+        self.input3.textChanged.connect(self.on_manual_media_path_changed)
+        self.update_manual_media_ui(self.style_dropdown.currentText())
+
         # --- Tracks whether preview has been shown ---
         self.previewed_once = False
+
+    def _current_manual_style_code(self) -> str:
+        """
+        Return the internal style code for the current manual-style selection.
+
+        Args:
+            None
+
+        Returns:
+            str:
+                Internal style code such as ``lyrics``, ``image``, or ``video``.
+        """
+        from core.config.style_map import REVERSE_ALIASES
+        return REVERSE_ALIASES.get(self.style_dropdown.currentText(), "verse")
+
+    def update_manual_media_ui(self, _style_display: str):
+        """
+        Update the manual input area when the selected style changes.
+
+        This method toggles the visibility and wording of the manual-input
+        widgets so that ``image`` and ``video`` styles can reuse the existing
+        manual entry area. It also shows or hides the appropriate preview
+        widgets and reloads previews when a stored media path is already present.
+
+        Args:
+            _style_display (str):
+                Current display text emitted by the style dropdown.
+
+        Returns:
+            None
+        """
+        style_code = self._current_manual_style_code()
+        is_media = style_code in {"image", "video"}
+
+        self.media_button.setVisible(is_media)
+
+        if not is_media:
+            self.manual_label.setText(self.default_manual_label_text)
+            self.input3.setPlaceholderText(self.default_input3_placeholder)
+            self.input2.setPlaceholderText(self.default_input2_placeholder)
+
+            self.media_status.hide()
+            self.image_preview.hide()
+            self.video_status.hide()
+            self.video_widget.hide()
+            self.video_controls_widget.hide()
+            self.stop_preview()
+            return
+
+        self.manual_label.setText("기타 긴급 미디어")
+        self.input3.setPlaceholderText("미디어 파일 경로")
+        self.input2.setPlaceholderText("부제 / 설명 (선택)")
+        self.media_status.show()
+
+        if style_code == "image":
+            self.stop_preview()
+            self.video_status.hide()
+            self.video_widget.hide()
+            self.video_controls_widget.hide()
+            self.image_preview.show()
+
+            if self.input3.text().strip():
+                self._load_image_preview(self.input3.text().strip())
+            else:
+                self.image_preview.clear()
+                self.image_preview.setText("선택된 그림 없음")
+
+        else:
+            self.image_preview.hide()
+            self.video_status.show()
+            self.video_widget.show()
+            self.video_controls_widget.show()
+
+            if self.input3.text().strip():
+                self._load_video_preview(self.input3.text().strip())
+            else:
+                self.video_status.setText("선택된 비디오 없음")
+
+    def on_manual_media_path_changed(self, text: str):
+        """
+        Refresh media preview when the path input changes.
+
+        This method only reacts when the currently selected manual style is
+        ``image`` or ``video``. The single-line manual input is interpreted as
+        a media path and the corresponding preview area is refreshed.
+
+        Args:
+            text (str):
+                Current contents of the single-line manual input.
+
+        Returns:
+            None
+        """
+        style_code = self._current_manual_style_code()
+        path = text.strip()
+
+        if style_code not in {"image", "video"}:
+            return
+
+        self.media_status.show()
+        self.media_status.setText(path)
+
+        if not path:
+            if style_code == "image":
+                self.image_preview.clear()
+                self.image_preview.setText("선택된 그림 없음")
+            else:
+                self.stop_preview()
+                self.video_status.setText("선택된 비디오 없음")
+            return
+
+        if style_code == "image":
+            self._load_image_preview(path)
+        else:
+            self._load_video_preview(path)
+
+    def select_media_file(self):
+        """
+        Open a file picker for the currently selected media style.
+
+        The selected file is copied into ``./html/img`` and the relative path is
+        stored in the single-line manual input field.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        style_code = self._current_manual_style_code()
+
+        if style_code == "image":
+            title = "그림 선택"
+            file_filter = "Images (*.png *.jpg *.jpeg *.bmp *.gif *.webp)"
+        elif style_code == "video":
+            title = "비디오 선택"
+            file_filter = "Videos (*.mp4 *.mov *.m4v *.webm *.mkv *.avi)"
+        else:
+            return
+
+        source_path, _ = QFileDialog.getOpenFileName(self, title, "", file_filter)
+        if not source_path:
+            return
+
+        relative_path = self.copy_media_to_img_folder(source_path).replace("\\", "/")
+        self.input3.setText(relative_path)
+        self.media_status.setToolTip(source_path)
+
+    def copy_media_to_img_folder(self, source_path: str) -> str:
+        """
+        Copy the selected media file into ``./html/img``.
+
+        If the target directory does not exist, it is created. If a file with
+        the same name already exists there, the existing file is reused and no
+        second copy is made.
+
+        Args:
+            source_path (str):
+                Absolute path to the source media file.
+
+        Returns:
+            str:
+                Relative media path for overlay usage, e.g. ``img/example.png``.
+        """
+        overlay_root = "."
+        img_dir = os.path.join(overlay_root, "html", "img")
+        os.makedirs(img_dir, exist_ok=True)
+
+        fname = os.path.basename(source_path)
+        dest_path = os.path.join(img_dir, fname)
+
+        if not os.path.exists(dest_path):
+            shutil.copy2(source_path, dest_path)
+
+        return os.path.join("img", fname)
+
+    def _resolve_preview_path(self, raw_path: str) -> str:
+        """
+        Resolve either an absolute path or an overlay-relative ``img/...`` path.
+
+        The resolution order is:
+
+        1. Existing absolute path
+        2. Overlay-relative path under ``./html/``
+        3. Existing local relative path from the current working directory
+
+        Args:
+            raw_path (str):
+                Raw path text entered by the user.
+
+        Returns:
+            str:
+                Absolute path if the file exists; otherwise an empty string.
+        """
+        candidate = raw_path.strip()
+        if not candidate:
+            return ""
+
+        if os.path.isabs(candidate) and os.path.exists(candidate):
+            return candidate
+
+        if candidate.startswith("img/") or candidate.startswith("img\\"):
+            html_relative = os.path.abspath(os.path.join(".", "html", candidate))
+            if os.path.exists(html_relative):
+                return html_relative
+
+        local_relative = os.path.abspath(candidate)
+        if os.path.exists(local_relative):
+            return local_relative
+
+        return ""
+
+    def _load_image_preview(self, path_or_rel: str):
+        """
+        Load an image preview from either an absolute or relative path.
+
+        The resolved image is shown in ``self.image_preview`` and the resolved
+        absolute path is mirrored into the media status tooltip for operator
+        visibility.
+
+        Args:
+            path_or_rel (str):
+                Absolute source path or stored relative overlay path.
+
+        Returns:
+            None
+        """
+        abs_path = self._resolve_preview_path(path_or_rel)
+        self.image_preview.show()
+
+        if not abs_path:
+            self.image_preview.clear()
+            self.image_preview.setText("그림 로딩 실패")
+            return
+
+        pixmap = QPixmap(abs_path)
+        if pixmap.isNull():
+            self.image_preview.clear()
+            self.image_preview.setText("그림 로딩 실패")
+            return
+
+        self.image_preview.setPixmap(pixmap)
+        self.image_preview.setToolTip(abs_path)
+        self.media_status.setText(self.input3.text().strip() or abs_path)
+        self.media_status.setToolTip(abs_path)
+
+    def _load_video_preview(self, path_or_rel: str):
+        """
+        Load a video preview from either an absolute or relative path.
+
+        The resolved media source is loaded into ``self.player`` and the video
+        preview widgets are shown. If the path cannot be resolved, the preview
+        is stopped and a failure message is displayed instead.
+
+        Args:
+            path_or_rel (str):
+                Absolute source path or stored relative overlay path.
+
+        Returns:
+            None
+        """
+        abs_path = self._resolve_preview_path(path_or_rel)
+        self.video_status.show()
+        self.video_widget.show()
+        self.video_controls_widget.show()
+
+        if not abs_path:
+            self.stop_preview()
+            self.video_status.setText("비디오 로딩 실패")
+            return
+
+        self.video_status.setText(os.path.basename(abs_path))
+        self.video_status.setToolTip(abs_path)
+        self.media_status.setText(self.input3.text().strip() or abs_path)
+        self.media_status.setToolTip(abs_path)
+
+        try:
+            self.player.setSource(QUrl.fromLocalFile(abs_path))
+        except Exception:
+            self.video_status.setText("비디오 로딩 실패")
+
+    def play_preview(self):
+        """
+        Start playing the current video preview.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        if self.player:
+            self.player.play()
+
+    def pause_preview(self):
+        """
+        Pause the current video preview.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        if self.player:
+            self.player.pause()
+
+    def stop_preview(self):
+        """
+        Stop the current video preview.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        if self.player:
+            self.player.stop()
 
     def get_inputs(self):
         """
@@ -257,7 +649,12 @@ class EmergencyCaptionDialog(QDialog):
 
         If the primary input is recognized as a Bible reference,
         a preview is generated if not already shown.
-        Otherwise, non-Bible emergency slides are built directly.
+        Otherwise, non-Bible emergency slides are built directly. For media
+        styles, validation failures keep the dialog open so the operator can
+        choose a file or correct the referenced path.
+
+        Args:
+            None
 
         Returns:
             None
@@ -269,8 +666,8 @@ class EmergencyCaptionDialog(QDialog):
                 self.previewed_once = True
             self.accept()
         else:
-            self.build_non_bible_slides()
-            self.accept()
+            if self.build_non_bible_slides():
+                self.accept()
 
     def show_preview(self):
         """
@@ -385,39 +782,65 @@ class EmergencyCaptionDialog(QDialog):
 
         self.accept()
 
-    def build_non_bible_slides(self):
+    def build_non_bible_slides(self) -> bool:
         """
         Build emergency slides from manual inputs and selected style.
 
         Depending on the chosen style and caption input, this may:
 
-        - Load a preset responsive reading or "hymn" slide.
+        - Load a preset responsive reading or hymn slide.
         - Create a manual emergency slide with custom caption and text.
+        - Create an image/video slide using a selected media file path.
+
+        For media styles, the single-line input stores the referenced asset
+        path while the multiline editor stores optional caption/description text.
+
+        Args:
+            None
 
         Returns:
-            None
+            bool:
+                ``True`` if the build step completed and the dialog may close.
+                ``False`` if validation failed and the dialog should remain open.
         """
         from core.config.style_map import REVERSE_ALIASES
 
-        # Gather user inputs
-        caption_input = self.input3.text().strip()
-        headline = self.input2.toPlainText().strip()
         style_display = self.style_dropdown.currentText()
         style_code = REVERSE_ALIASES.get(style_display, "verse")
-
         factory = EmergencySlideFactory()
 
-        # Create responsive reading slide if applicable
+        # Media slides: input3 stores the selected media path, input2 stores optional caption.
+        if style_code in {"image", "video"}:
+            media_path = self.input3.text().strip()
+            caption_input = self.input2.toPlainText().strip()
+
+            if not media_path:
+                QMessageBox.warning(
+                    self,
+                    "입력 오류",
+                    "미디어 파일을 먼저 선택하거나 경로를 입력하세요."
+                )
+                self.finalized_slides = []
+                return False
+
+            self.finalized_slides = factory.create_manual_slide(
+                style=style_code,
+                caption=caption_input,
+                text=media_path
+            )
+            return True
+
+        # Existing non-media behavior
+        caption_input = self.input3.text().strip()
+        headline = self.input2.toPlainText().strip()
+
         if style_code == "respo" and caption_input.isdigit():
             self.finalized_slides = factory.create_from_respo(int(caption_input))
 
-        # Create hymn slide if applicable
         elif style_code == "hymn" and caption_input.isdigit():
             self.finalized_slides = factory.create_from_hymn(int(caption_input))
 
-        # Create manual slide with input text
         else:
-            # Use fallback caption if none provided
             if not caption_input and headline:
                 caption_input = "대한예수교장로회(통합) 을지로교회"
 
@@ -426,6 +849,8 @@ class EmergencyCaptionDialog(QDialog):
                 caption=caption_input,
                 text=headline
             )
+
+        return True
 
     def get_final_slides(self):
         """
