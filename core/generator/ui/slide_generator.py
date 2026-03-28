@@ -1210,7 +1210,7 @@ class SlideGenerator(QMainWindow):
         if kind == "communion":
             return [{
                 "style": "corner",
-                "caption": str(entry.get("caption", "")).strip(),
+                "caption": "당회장",
                 "headline": "성찬식",
             }]
 
@@ -1331,7 +1331,7 @@ class SlideGenerator(QMainWindow):
             if style == "corner":
                 imported_caption = str(entry.get("caption", "")).strip()
                 if imported_caption:
-                    first_slide["caption"] = imported_caption
+                    first_slide["caption"] = "당회장"
                 first_slide["headline"] = "성찬식"
                 return slides
             return self._build_new_worship_order_block(entry)
