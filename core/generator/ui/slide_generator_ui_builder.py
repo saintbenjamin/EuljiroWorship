@@ -18,8 +18,8 @@ class (:class:`core.generator.ui.slide_generator.SlideGenerator`) focused on wor
 The builder assembles:
 
 - A top row of action buttons with icons (load, save, add, duplicate, insert, delete, move, export)
-- A tools menu containing church-specific combined HWPX import, worship-order import,
-  announcement import, and settings actions
+- A tools menu containing church-specific Sunday worship-order actions,
+  afternoon praise-service actions, announcement import actions, and settings
 - A central table area for listing and managing slides
 - A label showing the current worship/session name
 - Keyboard shortcuts (e.g., Ctrl+S) and signal connections
@@ -47,8 +47,9 @@ class SlideGeneratorUIBuilder:
     - A horizontal toolbar of action buttons (SVG-icon buttons), including row duplication
     - A label displaying the current worship/session name
     - The central slide table widget
-    - ``도구`` menu actions for church-specific combined HWPX import,
-      worship-order import, announcement import, and settings
+    - ``도구`` menu actions for church-specific Sunday worship-order actions,
+      afternoon praise-service actions, announcement import actions, and
+      settings
     - Keyboard shortcuts and signal-slot connections
 
     Required parent interface:
@@ -73,6 +74,11 @@ class SlideGeneratorUIBuilder:
         single HWPX bulletin file.
     - ``import_worship_order_from_hwpx()``:
         Import worship-order information from a HWPX bulletin file.
+    - ``import_praise_service_order_and_announcements_from_hwpx()``:
+        Import both afternoon praise-service order information and
+        announcement slides from a single HWPX bulletin file.
+    - ``import_praise_service_order_from_hwpx()``:
+        Import afternoon praise-service order information from a HWPX bulletin file.
     - ``import_announcements()``:
         Import announcement slides from another worship JSON file.
     - ``import_announcements_from_hwpx()``:
@@ -129,8 +135,9 @@ class SlideGeneratorUIBuilder:
         - Creates action buttons with SVG icons and connects them to parent handlers
         - Provides direct row actions such as add, duplicate, insert, delete, and move
         - Assembles the button toolbar, label, and slide table into a vertical layout
-        - Adds church-specific combined HWPX import, worship-order import,
-          announcement import, and settings actions to the Tools menu
+        - Adds grouped church-specific Sunday worship-order, afternoon
+          praise-service, announcement import, and settings actions to the
+          Tools menu
         - Applies persisted font settings to the UI
         - Connects table double-click events to the slide editor dialog
         - Installs the composed layout as the parent's central widget
@@ -215,13 +222,25 @@ class SlideGeneratorUIBuilder:
         menubar = parent.menuBar()
         tool_menu = menubar.addMenu("도구")
 
+        hwpx_worship_order_action = QAction("HWPX 예배순서 가져오기 (을지로교회 전용)", parent)
+        hwpx_worship_order_action.triggered.connect(parent.import_worship_order_from_hwpx)
+        tool_menu.addAction(hwpx_worship_order_action)
+
         hwpx_full_action = QAction("HWPX 예배순서+광고 가져오기 (을지로교회 전용)", parent)
         hwpx_full_action.triggered.connect(parent.import_worship_order_and_announcements_from_hwpx)
         tool_menu.addAction(hwpx_full_action)
 
-        hwpx_worship_order_action = QAction("HWPX 예배순서 가져오기 (을지로교회 전용)", parent)
-        hwpx_worship_order_action.triggered.connect(parent.import_worship_order_from_hwpx)
-        tool_menu.addAction(hwpx_worship_order_action)
+        tool_menu.addSeparator()
+
+        hwpx_praise_service_action = QAction("HWPX 오후찬양예배 순서 가져오기 (을지로교회 전용)", parent)
+        hwpx_praise_service_action.triggered.connect(parent.import_praise_service_order_from_hwpx)
+        tool_menu.addAction(hwpx_praise_service_action)
+
+        hwpx_praise_service_full_action = QAction("HWPX 오후찬양예배 순서+광고 가져오기 (을지로교회 전용)", parent)
+        hwpx_praise_service_full_action.triggered.connect(parent.import_praise_service_order_and_announcements_from_hwpx)
+        tool_menu.addAction(hwpx_praise_service_full_action)
+
+        tool_menu.addSeparator()
 
         hwpx_announcement_action = QAction("HWPX 광고 가져오기 (을지로교회 전용)", parent)
         hwpx_announcement_action.triggered.connect(parent.import_announcements_from_hwpx)

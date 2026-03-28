@@ -49,7 +49,10 @@ from core.generator.utils.slide_exporter import SlideExporter
 from core.generator.utils.slide_generator_data_manager import SlideGeneratorDataManager
 from core.generator.utils.hwpx_announcement_parser import extract_announcement_slides_from_hwpx
 from core.plugin.slide_controller_launcher import SlideControllerLauncher
-from core.generator.utils.hwpx_worship_order_parser import extract_first_service_order_entries_from_hwpx
+from core.generator.utils.hwpx_worship_order_parser import (
+    extract_first_service_order_entries_from_hwpx,
+    extract_praise_service_order_entries_from_hwpx,
+)
 from core.utils.bible_parser import parse_reference
 from core.utils.bible_data_loader import BibleDataLoader
 
@@ -1268,6 +1271,575 @@ class SlideGenerator(QMainWindow):
 
         return slides
 
+    def _split_music_group_parts(self, group_name: str) -> tuple[str, str]:
+        """
+        Split a music-group label into its main caption and suffix.
+
+        Args:
+            group_name (str):
+                Full group label such as ``마리아찬양대`` or ``여호수아중창단``.
+
+        Returns:
+            tuple[str, str]:
+                Two-element tuple of ``(caption, caption_choir)``.
+            If no supported suffix is found, returns ``(group_name, "")``.
+        """
+        group_name = str(group_name or "").strip()
+        if not group_name:
+            return "", ""
+
+        for suffix in ("찬양대", "중창단"):
+            if group_name.endswith(suffix):
+                main = group_name[:-len(suffix)].strip()
+                return main or group_name, suffix if main else ""
+
+        return group_name, ""
+
+    def _classify_praise_service_slide(self, slides: list[dict], index: int) -> str | None:
+        """
+        Classify a slide into an afternoon praise-service slot category.
+
+        Args:
+            slides (list[dict]):
+                Full slide list currently being analyzed.
+            index (int):
+                Index of the slide to classify.
+
+        Returns:
+            str | None:
+                Normalized afternoon-service kind such as ``hymn`` or
+                ``special_praise``, or ``None`` when the slide does not match
+                a managed category.
+        """
+        slide = slides[index]
+        style = slide.get("style", "")
+        caption = self._compact_order_text(slide.get("caption", ""))
+        headline = self._compact_order_text(slide.get("headline", ""))
+
+        if style == "intro":
+            return "service_leader"
+
+        if style == "hymn":
+            return "hymn"
+
+        if style == "verse":
+            return "verse"
+
+        if style == "anthem":
+            if "봉헌송" in headline or "봉헌" in headline:
+                return "offering"
+            return "special_praise"
+
+        if style == "prayer":
+            if "전주" in caption or "전주" in headline:
+                return "prelude"
+            if caption.startswith("인도"):
+                return "service_leader"
+            if "교회소식" in caption or "교회소식" in headline:
+                return "church_news"
+            if "봉헌기도" in caption or "봉헌기도" in headline:
+                return "offering_prayer"
+            if "사업보고" in caption or "사업보고" in headline:
+                return "report"
+            if "인사" in caption or "인사" in headline:
+                return "greeting"
+            if "기도" in caption:
+                if "설교자" in headline or "설교자" in caption:
+                    return "post_sermon_prayer"
+                return "prayer"
+
+        if style == "corner":
+            if headline == "기원":
+                return "invocation"
+            if headline == "봉헌":
+                return "offering"
+            if headline == "봉헌기도":
+                return "offering_prayer"
+            if headline == "교회소식":
+                return "church_news"
+            if headline == "인사":
+                return "greeting"
+            if headline == "사업보고" or headline == "사업 보고":
+                return "report"
+            if headline == "축도":
+                return "benediction"
+            if headline == "기도" and ("설교자" in caption or "설교자" in headline):
+                return "post_sermon_prayer"
+            if ("목사" in caption or "전도사" in caption or "설교자" in caption) and headline:
+                return "sermon"
+
+        return None
+
+    def _build_praise_service_blocks(self, slides: list[dict]) -> list[dict]:
+        """
+        Group the current slide list into afternoon-service update blocks.
+
+        Args:
+            slides (list[dict]):
+                Existing slide dictionaries collected from the generator table.
+
+        Returns:
+            list[dict]:
+                Ordered block dictionaries. Each block stores its classified
+                kind and the slides that should move together during updates.
+        """
+        blocks = []
+        index = 0
+
+        while index < len(slides):
+            kind = self._classify_praise_service_slide(slides, index)
+            end_index = index + 1
+
+            if slides[index].get("style") == "anthem":
+                while end_index < len(slides) and slides[end_index].get("style") == "lyrics":
+                    end_index += 1
+
+            blocks.append({
+                "kind": kind,
+                "slides": [dict(slide) for slide in slides[index:end_index]],
+            })
+            index = end_index
+
+        return blocks
+
+    def _remove_exact_caption_suffix_from_imported_text(
+        self,
+        imported_text: str,
+        current_caption: str,
+    ) -> str:
+        """
+        Remove an exact trailing caption suffix from imported text when present.
+
+        Args:
+            imported_text (str):
+                Imported text that may include a glued leader or preacher suffix.
+            current_caption (str):
+                Existing slide caption used as the authoritative suffix to strip.
+
+        Returns:
+            str:
+                Imported text with the exact compacted caption suffix removed
+                from the end when a match exists. Otherwise returns the input
+                text unchanged.
+        """
+        imported_text = str(imported_text or "").strip()
+        current_caption = str(current_caption or "").strip()
+        if not imported_text or not current_caption:
+            return imported_text
+
+        compact_suffix = re.sub(r"\s+", "", current_caption)
+        if not compact_suffix:
+            return imported_text
+
+        suffix_pattern = r"\s*".join(re.escape(char) for char in compact_suffix)
+        return re.sub(rf"{suffix_pattern}\s*$", "", imported_text).strip()
+
+    def _build_new_praise_service_block(self, entry: dict) -> list[dict]:
+        """
+        Build a new generic afternoon-service slide block for a parsed entry.
+
+        Args:
+            entry (dict):
+                Parsed afternoon praise-service entry dictionary.
+
+        Returns:
+            list[dict]:
+                New slide dictionaries that represent the requested entry.
+            The block may contain one or more slides depending on the kind.
+        """
+        kind = entry["kind"]
+
+        if kind == "service_leader":
+            return [{
+                "style": "intro",
+                "caption": f"인도: {entry.get('leader', '')}".strip(),
+                "headline": "오후찬양예배",
+            }]
+
+        if kind == "prelude":
+            return [{
+                "style": "prayer",
+                "caption": "전주",
+                "headline": entry.get("leader", "반주자") or "반주자",
+            }]
+
+        if kind == "invocation":
+            return [{
+                "style": "corner",
+                "caption": entry.get("leader", "인도자") or "인도자",
+                "headline": "기원",
+            }]
+
+        if kind == "hymn":
+            return [self._build_hymn_slide_from_number(entry["number"])]
+
+        if kind == "prayer":
+            return [{
+                "style": "prayer",
+                "caption": "기도",
+                "headline": entry.get("leader", ""),
+            }]
+
+        if kind == "verse":
+            return [self._build_verse_slide_from_reference(entry["reference"])]
+
+        if kind == "special_praise":
+            group_caption, group_suffix = self._split_music_group_parts(entry.get("group", "찬양"))
+            return [{
+                "style": "anthem",
+                "caption": group_caption,
+                "headline": "찬양",
+                "caption_choir": group_suffix,
+            }]
+
+        if kind == "sermon":
+            return [{
+                "style": "corner",
+                "caption": "설교자",
+                "headline": entry.get("title", ""),
+            }]
+
+        if kind == "post_sermon_prayer":
+            return [{
+                "style": "corner",
+                "caption": "설교자",
+                "headline": "기도",
+            }]
+
+        if kind == "offering":
+            return [{
+                "style": "corner",
+                "caption": entry.get("text", "다같이") or "다같이",
+                "headline": "봉헌",
+            }]
+
+        if kind == "offering_prayer":
+            return [{
+                "style": "corner",
+                "caption": entry.get("leader", ""),
+                "headline": "봉헌기도",
+            }]
+
+        if kind == "greeting":
+            return [{
+                "style": "corner",
+                "caption": entry.get("person", ""),
+                "headline": "인사",
+            }]
+
+        if kind == "report":
+            return [{
+                "style": "corner",
+                "caption": entry.get("text", ""),
+                "headline": "사업 보고",
+            }]
+
+        if kind == "church_news":
+            return [{
+                "style": "corner",
+                "caption": entry.get("leader", "인도자") or "인도자",
+                "headline": "교회소식",
+            }]
+
+        if kind == "benediction":
+            return [{
+                "style": "corner",
+                "caption": entry.get("leader", ""),
+                "headline": "축도",
+            }]
+
+        return []
+
+    def _update_praise_service_block(
+        self,
+        existing_slides: list[dict],
+        entry: dict,
+    ) -> list[dict]:
+        """
+        Update an existing afternoon-service block using a parsed entry.
+
+        Args:
+            existing_slides (list[dict]):
+                Existing slide dictionaries that make up the matched block.
+            entry (dict):
+                Parsed afternoon praise-service entry dictionary.
+
+        Returns:
+            list[dict]:
+                Updated slide dictionaries for the block. When the existing
+                block cannot be updated safely, a new generic block is returned.
+        """
+        slides = [dict(slide) for slide in existing_slides]
+        if not slides:
+            return self._build_new_praise_service_block(entry)
+
+        kind = entry["kind"]
+        first_slide = slides[0]
+        style = first_slide.get("style", "")
+
+        if kind == "hymn":
+            return [self._build_hymn_slide_from_number(entry["number"])]
+
+        if kind == "verse":
+            return [self._build_verse_slide_from_reference(entry["reference"])]
+
+        if kind == "service_leader":
+            if style == "intro":
+                first_slide["caption"] = f"인도: {entry.get('leader', '')}".strip()
+                first_slide["headline"] = first_slide.get("headline", "") or "오후찬양예배"
+                return slides
+
+            if style == "prayer":
+                first_slide["caption"] = "인도"
+                first_slide["headline"] = entry.get("leader", "")
+                return slides
+
+            return self._build_new_praise_service_block(entry)
+
+        if kind == "prelude":
+            if style == "prayer":
+                first_slide["caption"] = "전주"
+                first_slide["headline"] = entry.get("leader", "반주자") or "반주자"
+                return slides
+
+            return self._build_new_praise_service_block(entry)
+
+        if kind == "invocation":
+            if style == "corner":
+                first_slide["caption"] = first_slide.get("caption", "") or "인도자"
+                first_slide["headline"] = "기원"
+                return slides
+
+            return self._build_new_praise_service_block(entry)
+
+        if kind == "prayer":
+            if style == "prayer":
+                first_slide["caption"] = "기도"
+                first_slide["headline"] = entry.get("leader", "")
+                return slides
+
+            return self._build_new_praise_service_block(entry)
+
+        if kind == "special_praise":
+            if style == "anthem":
+                group_caption, group_suffix = self._split_music_group_parts(entry.get("group", ""))
+                if group_caption:
+                    first_slide["caption"] = group_caption
+                if group_suffix:
+                    first_slide["caption_choir"] = group_suffix
+                return slides
+
+            return self._build_new_praise_service_block(entry)
+
+        if kind == "sermon":
+            if style == "corner":
+                imported_title = self._remove_exact_caption_suffix_from_imported_text(
+                    entry.get("title", ""),
+                    first_slide.get("caption", ""),
+                )
+                first_slide["headline"] = imported_title
+                return slides
+
+            return self._build_new_praise_service_block(entry)
+
+        if kind == "post_sermon_prayer":
+            if style == "corner":
+                first_slide["caption"] = "설교자"
+                first_slide["headline"] = "기도"
+                return slides
+
+            if style == "prayer":
+                first_slide["caption"] = "기도"
+                first_slide["headline"] = "설교자"
+                return slides
+
+            return self._build_new_praise_service_block(entry)
+
+        if kind == "offering":
+            if style == "corner":
+                first_slide["caption"] = entry.get("text", "다같이") or "다같이"
+                first_slide["headline"] = "봉헌"
+                return slides
+
+            if style == "anthem":
+                return slides
+
+            return self._build_new_praise_service_block(entry)
+
+        if kind == "offering_prayer":
+            if style == "corner":
+                first_slide["caption"] = entry.get("leader", "")
+                first_slide["headline"] = "봉헌기도"
+                return slides
+
+            if style == "prayer":
+                first_slide["caption"] = "봉헌기도"
+                first_slide["headline"] = entry.get("leader", "")
+                return slides
+
+            return self._build_new_praise_service_block(entry)
+
+        if kind == "greeting":
+            if style == "corner":
+                first_slide["caption"] = entry.get("person", "")
+                first_slide["headline"] = "인사"
+                return slides
+
+            if style == "prayer":
+                first_slide["caption"] = "인사"
+                first_slide["headline"] = entry.get("person", "")
+                return slides
+
+            return self._build_new_praise_service_block(entry)
+
+        if kind == "report":
+            if style == "corner":
+                first_slide["caption"] = entry.get("text", "")
+                first_slide["headline"] = "사업 보고"
+                return slides
+
+            if style == "prayer":
+                first_slide["caption"] = "사업 보고"
+                first_slide["headline"] = entry.get("text", "")
+                return slides
+
+            return self._build_new_praise_service_block(entry)
+
+        if kind == "church_news":
+            if style == "corner":
+                first_slide["caption"] = entry.get("leader", "인도자") or "인도자"
+                first_slide["headline"] = "교회소식"
+                return slides
+
+            if style == "prayer":
+                first_slide["caption"] = "교회소식"
+                first_slide["headline"] = entry.get("leader", "인도자") or "인도자"
+                return slides
+
+            return self._build_new_praise_service_block(entry)
+
+        if kind == "benediction":
+            if style == "corner":
+                first_slide["caption"] = entry.get("leader", "")
+                first_slide["headline"] = "축도"
+                return slides
+
+            return self._build_new_praise_service_block(entry)
+
+        return slides
+
+    def _flatten_slide_blocks(self, blocks: list[dict]) -> list[dict]:
+        """
+        Flatten a block list back into a single slide list.
+
+        Args:
+            blocks (list[dict]):
+                Block dictionaries that each contain a ``slides`` list.
+
+        Returns:
+            list[dict]:
+                Flat slide dictionary list in block order.
+        """
+        flattened = []
+        for block in blocks:
+            flattened.extend(dict(slide) for slide in block.get("slides", []))
+        return flattened
+
+    def _apply_praise_service_order_entries(
+        self,
+        current_slides: list[dict],
+        order_entries: list[dict],
+    ) -> list[dict]:
+        """
+        Apply imported afternoon praise-service entries to the current session.
+
+        Args:
+            current_slides (list[dict]):
+                Existing slide dictionaries collected from the generator table.
+            order_entries (list[dict]):
+                Parsed afternoon praise-service entry dictionaries extracted
+                from HWPX.
+
+        Returns:
+            list[dict]:
+                Updated slide list ready to be reloaded into the generator
+                table.
+        """
+        managed_kinds = {
+            "service_leader",
+            "prelude",
+            "invocation",
+            "hymn",
+            "prayer",
+            "verse",
+            "special_praise",
+            "sermon",
+            "post_sermon_prayer",
+            "offering",
+            "offering_prayer",
+            "greeting",
+            "report",
+            "church_news",
+            "benediction",
+        }
+
+        current_blocks = self._build_praise_service_blocks(current_slides)
+        result_blocks = []
+        cursor = 0
+
+        for entry in order_entries:
+            match_index = None
+            for index in range(cursor, len(current_blocks)):
+                if current_blocks[index].get("kind") == entry["kind"]:
+                    match_index = index
+                    break
+
+            if match_index is None:
+                new_block_slides = self._build_new_praise_service_block(entry)
+                if new_block_slides:
+                    result_blocks.append({
+                        "kind": entry["kind"],
+                        "slides": new_block_slides,
+                    })
+                continue
+
+            for index in range(cursor, match_index):
+                block = current_blocks[index]
+                block_kind = block.get("kind")
+
+                if block_kind in managed_kinds:
+                    if self._prompt_remove_missing_worship_order(block["slides"][0]):
+                        continue
+
+                result_blocks.append({
+                    "kind": block_kind,
+                    "slides": [dict(slide) for slide in block["slides"]],
+                })
+
+            result_blocks.append({
+                "kind": entry["kind"],
+                "slides": self._update_praise_service_block(
+                    current_blocks[match_index]["slides"],
+                    entry,
+                ),
+            })
+            cursor = match_index + 1
+
+        for index in range(cursor, len(current_blocks)):
+            block = current_blocks[index]
+            block_kind = block.get("kind")
+
+            if block_kind in managed_kinds:
+                if self._prompt_remove_missing_worship_order(block["slides"][0]):
+                    continue
+
+            result_blocks.append({
+                "kind": block_kind,
+                "slides": [dict(slide) for slide in block["slides"]],
+            })
+
+        return self._flatten_slide_blocks(result_blocks)
+
     def import_worship_order_from_hwpx(self):
         """
         Import first-service worship-order information from a HWPX bulletin and
@@ -1310,6 +1882,116 @@ class SlideGenerator(QMainWindow):
             self,
             "완료",
             f"HWPX 예배순서 {len(order_entries)}개 항목을 기준으로 현재 JSON을 갱신했습니다."
+        )
+
+    def import_praise_service_order_from_hwpx(self):
+        """
+        Import afternoon praise-service order information from a HWPX bulletin
+        and conservatively update matching slots in the current generator
+        session.
+
+        Missing special-order items are inserted with generic blocks when
+        needed, while unmatched existing afternoon-service blocks can be kept
+        or removed through confirmation prompts.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        src_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "오후찬양예배 순서를 가져올 HWPX 주보 파일 선택",
+            "",
+            "HWPX Files (*.hwpx)"
+        )
+        if not src_path:
+            return
+
+        try:
+            order_entries = extract_praise_service_order_entries_from_hwpx(src_path)
+        except Exception as e:
+            QMessageBox.critical(self, "오류", f"HWPX에서 오후찬양예배 순서를 추출하지 못했습니다:\n{e}")
+            return
+
+        if not order_entries:
+            QMessageBox.warning(self, "실패", "HWPX에서 오후찬양예배 순서를 찾지 못했습니다.")
+            return
+
+        current_slides = self.data_manager.collect_slide_data()
+        updated_slides = self._apply_praise_service_order_entries(current_slides, order_entries)
+
+        self._load_slide_list_into_table(updated_slides)
+
+        QMessageBox.information(
+            self,
+            "완료",
+            f"HWPX 오후찬양예배 순서 {len(order_entries)}개 항목을 기준으로 현재 JSON을 갱신했습니다."
+        )
+
+    def _replace_announcement_block_in_slides(
+        self,
+        slides: list[dict],
+        imported_slides: list[dict],
+        start_anchor: str = "오늘 처음 오신 분들을 환영하고 축복합니다!",
+        end_anchor: str = "용서, 사랑의 시작입니다",
+    ) -> list[dict] | None:
+        """
+        Replace the announcement block in a slide list using fixed headline anchors.
+
+        Args:
+            slides (list[dict]):
+                Working slide list that already contains the surrounding fixed
+                welcome and closing slides.
+            imported_slides (list[dict]):
+                Announcement slides extracted from a source HWPX or JSON file.
+            start_anchor (str):
+                Headline text that marks the first fixed slide before the
+                announcement block.
+            end_anchor (str):
+                Headline text that marks the first fixed slide after the
+                announcement block.
+
+        Returns:
+            list[dict] | None:
+                Updated slide list with the announcement block replaced, or
+                ``None`` if the anchor range cannot be resolved safely.
+        """
+        start_idx = self._find_slide_index_by_headline(slides, start_anchor)
+        if start_idx is None:
+            QMessageBox.warning(
+                self,
+                "실패",
+                f"현재 파일에서 광고 시작 기준 슬라이드를 찾지 못했습니다.\n\n{start_anchor}"
+            )
+            return None
+
+        end_idx = self._find_slide_index_by_headline(
+            slides,
+            end_anchor,
+            start_index=start_idx + 1
+        )
+        if end_idx is None:
+            QMessageBox.warning(
+                self,
+                "실패",
+                f"현재 파일에서 광고 끝 기준 슬라이드를 찾지 못했습니다.\n\n{end_anchor}"
+            )
+            return None
+
+        if end_idx <= start_idx:
+            QMessageBox.warning(
+                self,
+                "실패",
+                "광고 끝 기준 슬라이드가 시작 기준 슬라이드보다 앞에 있습니다."
+            )
+            return None
+
+        return (
+            slides[:start_idx + 1]
+            + imported_slides
+            + slides[end_idx:]
         )
 
     def import_announcements_from_hwpx(self):
@@ -1357,42 +2039,14 @@ class SlideGenerator(QMainWindow):
             return
 
         current_slides = self.data_manager.collect_slide_data()
-
-        start_idx = self._find_slide_index_by_headline(current_slides, start_anchor)
-        if start_idx is None:
-            QMessageBox.warning(
-                self,
-                "실패",
-                f"현재 파일에서 광고 시작 기준 슬라이드를 찾지 못했습니다.\n\n{start_anchor}"
-            )
-            return
-
-        end_idx = self._find_slide_index_by_headline(
+        new_slides = self._replace_announcement_block_in_slides(
             current_slides,
-            end_anchor,
-            start_index=start_idx + 1
+            imported_slides,
+            start_anchor=start_anchor,
+            end_anchor=end_anchor,
         )
-        if end_idx is None:
-            QMessageBox.warning(
-                self,
-                "실패",
-                f"현재 파일에서 광고 끝 기준 슬라이드를 찾지 못했습니다.\n\n{end_anchor}"
-            )
+        if new_slides is None:
             return
-
-        if end_idx <= start_idx:
-            QMessageBox.warning(
-                self,
-                "실패",
-                "광고 끝 기준 슬라이드가 시작 기준 슬라이드보다 앞에 있습니다."
-            )
-            return
-
-        new_slides = (
-            current_slides[:start_idx + 1]
-            + imported_slides
-            + current_slides[end_idx:]
-        )
 
         self._load_slide_list_into_table(new_slides)
 
@@ -1459,41 +2113,14 @@ class SlideGenerator(QMainWindow):
         updated_slides = self._apply_worship_order_entries(current_slides, order_entries)
 
         # 2. Replace the announcement block in the updated slide list.
-        start_idx = self._find_slide_index_by_headline(updated_slides, start_anchor)
-        if start_idx is None:
-            QMessageBox.warning(
-                self,
-                "실패",
-                f"현재 파일에서 광고 시작 기준 슬라이드를 찾지 못했습니다.\n\n{start_anchor}"
-            )
-            return
-
-        end_idx = self._find_slide_index_by_headline(
+        new_slides = self._replace_announcement_block_in_slides(
             updated_slides,
-            end_anchor,
-            start_index=start_idx + 1
+            imported_slides,
+            start_anchor=start_anchor,
+            end_anchor=end_anchor,
         )
-        if end_idx is None:
-            QMessageBox.warning(
-                self,
-                "실패",
-                f"현재 파일에서 광고 끝 기준 슬라이드를 찾지 못했습니다.\n\n{end_anchor}"
-            )
+        if new_slides is None:
             return
-
-        if end_idx <= start_idx:
-            QMessageBox.warning(
-                self,
-                "실패",
-                "광고 끝 기준 슬라이드가 시작 기준 슬라이드보다 앞에 있습니다."
-            )
-            return
-
-        new_slides = (
-            updated_slides[:start_idx + 1]
-            + imported_slides
-            + updated_slides[end_idx:]
-        )
 
         self._load_slide_list_into_table(new_slides)
 
@@ -1501,6 +2128,79 @@ class SlideGenerator(QMainWindow):
             self,
             "완료",
             f"HWPX 예배순서 {len(order_entries)}개 항목과 "
+            f"광고 {len(imported_slides)}개를 함께 반영했습니다."
+        )
+
+    def import_praise_service_order_and_announcements_from_hwpx(self):
+        """
+        Import both afternoon praise-service order information and announcement
+        slides from a single HWPX bulletin and apply them in one pass.
+
+        The existing session is first updated with the imported afternoon
+        praise-service order, then the announcement block between the fixed
+        anchors is replaced with announcement slides extracted from the same
+        HWPX file.
+
+        Args:
+            None
+
+        Returns:
+            None
+        """
+        start_anchor = "오늘 처음 오신 분들을 환영하고 축복합니다!"
+        end_anchor = "용서, 사랑의 시작입니다"
+        wrap_width = 28
+
+        src_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "오후찬양예배 순서와 광고를 가져올 HWPX 주보 파일 선택",
+            "",
+            "HWPX Files (*.hwpx)"
+        )
+        if not src_path:
+            return
+
+        try:
+            order_entries = extract_praise_service_order_entries_from_hwpx(src_path)
+        except Exception as e:
+            QMessageBox.critical(self, "오류", f"HWPX에서 오후찬양예배 순서를 추출하지 못했습니다:\n{e}")
+            return
+
+        if not order_entries:
+            QMessageBox.warning(self, "실패", "HWPX에서 오후찬양예배 순서를 찾지 못했습니다.")
+            return
+
+        try:
+            imported_slides = extract_announcement_slides_from_hwpx(
+                src_path,
+                wrap_width=wrap_width
+            )
+        except Exception as e:
+            QMessageBox.critical(self, "오류", f"HWPX에서 광고를 추출하지 못했습니다:\n{e}")
+            return
+
+        if not imported_slides:
+            QMessageBox.warning(self, "실패", "HWPX에서 광고 항목을 찾지 못했습니다.")
+            return
+
+        current_slides = self.data_manager.collect_slide_data()
+        updated_slides = self._apply_praise_service_order_entries(current_slides, order_entries)
+
+        new_slides = self._replace_announcement_block_in_slides(
+            updated_slides,
+            imported_slides,
+            start_anchor=start_anchor,
+            end_anchor=end_anchor,
+        )
+        if new_slides is None:
+            return
+
+        self._load_slide_list_into_table(new_slides)
+
+        QMessageBox.information(
+            self,
+            "완료",
+            f"HWPX 오후찬양예배 순서 {len(order_entries)}개 항목과 "
             f"광고 {len(imported_slides)}개를 함께 반영했습니다."
         )
 
