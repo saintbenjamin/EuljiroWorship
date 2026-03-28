@@ -232,6 +232,31 @@ def _strip_role_suffix(text: str) -> str:
     return ROLE_SUFFIX_RE.sub("", text).strip()
 
 
+def _space_person_role_suffix(text: str) -> str:
+    """
+    Insert a single display-friendly space before a trailing role suffix.
+
+    Args:
+        text (str):
+            Person-like text that may end with a role such as ``목사``,
+            ``장로``, ``집사``, ``권사``, or ``전도사``.
+
+    Returns:
+        str:
+            Text with a single space inserted before the trailing role suffix
+            when one is detected. Existing spacing is preserved.
+        """
+    text = _normalize_line(text)
+    if not text:
+        return text
+
+    return re.sub(
+        r"(?<!\s)(목사|장로|집사|권사|전도사)(\s*\([^)]*\))?$",
+        r" \1\2",
+        text,
+    )
+
+
 def _load_section_paragraphs(hwpx_path: str) -> list[str]:
     """
     Read all section XML files in a HWPX archive and collect paragraph text.
@@ -545,7 +570,7 @@ def _parse_praise_service_token(token: str, payload: str, raw: str) -> list[dict
 
         return [{
             "kind": "prayer",
-            "leader": payload,
+            "leader": _space_person_role_suffix(payload),
             "raw": raw,
         }]
 
@@ -596,7 +621,7 @@ def _parse_praise_service_token(token: str, payload: str, raw: str) -> list[dict
     if token == "봉헌기도":
         return [{
             "kind": "offering_prayer",
-            "leader": payload,
+            "leader": _space_person_role_suffix(payload),
             "raw": raw,
         }]
 
@@ -604,7 +629,7 @@ def _parse_praise_service_token(token: str, payload: str, raw: str) -> list[dict
         return [
             {
                 "kind": "greeting",
-                "person": person,
+                "person": _space_person_role_suffix(person),
                 "raw": raw,
             }
             for person in _split_numbered_people_entries(payload)
@@ -620,14 +645,14 @@ def _parse_praise_service_token(token: str, payload: str, raw: str) -> list[dict
     if token == "교회소식":
         return [{
             "kind": "church_news",
-            "leader": payload or "인도자",
+            "leader": _space_person_role_suffix(payload or "인도자"),
             "raw": raw,
         }]
 
     if token == "축도":
         return [{
             "kind": "benediction",
-            "leader": payload,
+            "leader": _space_person_role_suffix(payload),
             "raw": raw,
         }]
 
@@ -663,7 +688,7 @@ def _parse_praise_service_segment(segment: str) -> list[dict]:
         next_marker = len(compact_text)
 
     leader_raw = _slice_by_compact_range(segment, index_map, cursor, next_marker)
-    leader = _clean_praise_service_payload(leader_raw)
+    leader = _space_person_role_suffix(_clean_praise_service_payload(leader_raw))
     if leader:
         entries.append({
             "kind": "service_leader",
@@ -832,7 +857,7 @@ def _parse_order_line(line: str) -> dict | None:
             return {"kind": "post_sermon_prayer", "raw": line}
         return {
             "kind": "prayer",
-            "leader": payload,
+            "leader": _space_person_role_suffix(payload),
             "raw": line,
         }
 
