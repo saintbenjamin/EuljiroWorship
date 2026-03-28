@@ -1058,50 +1058,285 @@ class SlideGenerator(QMainWindow):
 
         del slides[index]
 
-    def _find_communion_insert_index(self, slides: list[dict]) -> int:
+    def _build_worship_order_blocks(self, slides: list[dict]) -> list[dict]:
         """
-        Determine where a communion block should be inserted in the slide list.
+        Group the current slide list into first-service worship-order blocks.
 
         Args:
             slides (list[dict]):
-                Working slide list after other worship-order updates.
-
-        Returns:
-            int:
-                Insertion index for the communion block, typically after the
-                last hymn if one exists.
-        """
-        hymn_indices = [
-            idx for idx in range(len(slides))
-            if self._classify_worship_order_slide(slides, idx) == "hymn"
-        ]
-        if hymn_indices:
-            return hymn_indices[-1]
-        return len(slides)
-
-    def _build_special_worship_order_block(self, kind: str) -> list[dict]:
-        """
-        Build predefined slide blocks for special worship-order items.
-
-        Args:
-            kind (str):
-                Special worship-order kind to generate, such as ``communion``.
+                Existing slide dictionaries collected from the generator table.
 
         Returns:
             list[dict]:
-                New slide dictionaries representing the requested special block.
-                Returns an empty list when no template is defined.
+                Ordered block dictionaries. Each block stores its classified
+                kind and the slides that should move together during updates.
         """
-        templates = {
-            "communion": [
-                {
-                    "style": "corner",
-                    "caption": "성찬식",
-                    "headline": "성찬",
-                }
-            ]
-        }
-        return [dict(row) for row in templates.get(kind, [])]
+        blocks = []
+        index = 0
+
+        while index < len(slides):
+            kind = self._classify_worship_order_slide(slides, index)
+            end_index = index + 1
+
+            if slides[index].get("style") == "anthem":
+                while end_index < len(slides) and slides[end_index].get("style") == "lyrics":
+                    end_index += 1
+
+            blocks.append({
+                "kind": kind,
+                "slides": [dict(slide) for slide in slides[index:end_index]],
+            })
+            index = end_index
+
+        return blocks
+
+    def _build_new_worship_order_block(self, entry: dict) -> list[dict]:
+        """
+        Build a new generic first-service slide block for a parsed entry.
+
+        Args:
+            entry (dict):
+                Parsed first-service worship-order entry dictionary.
+
+        Returns:
+            list[dict]:
+                New slide dictionaries that represent the requested entry.
+            The block may contain one or more slides depending on the kind.
+        """
+        kind = entry["kind"]
+
+        if kind == "hymn":
+            return [self._build_hymn_slide_from_number(entry["number"])]
+
+        if kind == "respo":
+            return [self._build_respo_slide_from_number(entry["number"])]
+
+        if kind == "verse":
+            return [self._build_verse_slide_from_reference(entry["reference"])]
+
+        if kind == "prayer":
+            return [{
+                "style": "prayer",
+                "caption": "기도",
+                "headline": entry.get("leader", ""),
+            }]
+
+        if kind == "anthem":
+            choir_caption, choir_suffix = self._split_choir_caption_parts(entry.get("choir", "찬양대"))
+            return [{
+                "style": "anthem",
+                "caption": choir_caption,
+                "headline": entry.get("title", ""),
+                "caption_choir": choir_suffix,
+            }]
+
+        if kind == "sermon":
+            return [{
+                "style": "corner",
+                "caption": "설교자",
+                "headline": entry.get("title", ""),
+            }]
+
+        if kind == "call_to_worship":
+            return [{
+                "style": "corner",
+                "caption": "인도자",
+                "headline": "예배의 부름",
+            }]
+
+        if kind == "response_song":
+            return [{
+                "style": "corner",
+                "caption": "",
+                "headline": "화답송",
+            }]
+
+        if kind == "response_doxology":
+            return [{
+                "style": "corner",
+                "caption": "찬양대",
+                "headline": "화답송영",
+            }]
+
+        if kind == "invocation":
+            return [{
+                "style": "corner",
+                "caption": "인도자",
+                "headline": "기원",
+            }]
+
+        if kind == "creed":
+            return [{
+                "style": "lyrics",
+                "caption": "사도신경",
+                "headline": "",
+            }]
+
+        if kind == "confession_prayer":
+            return [{
+                "style": "corner",
+                "caption": "인도자",
+                "headline": "고백의 기도",
+            }]
+
+        if kind == "post_sermon_prayer":
+            return [{
+                "style": "corner",
+                "caption": "설교자",
+                "headline": "기도",
+            }]
+
+        if kind == "offering":
+            return [{
+                "style": "corner",
+                "caption": "다같이",
+                "headline": "봉헌",
+            }]
+
+        if kind == "offering_prayer":
+            return [{
+                "style": "corner",
+                "caption": "당회장",
+                "headline": "봉헌기도",
+            }]
+
+        if kind == "benediction":
+            return [{
+                "style": "corner",
+                "caption": "설교자",
+                "headline": "축도",
+            }]
+
+        if kind == "communion":
+            return [{
+                "style": "corner",
+                "caption": str(entry.get("caption", "")).strip(),
+                "headline": "성찬식",
+            }]
+
+        return []
+
+    def _update_worship_order_block(
+        self,
+        existing_slides: list[dict],
+        entry: dict,
+    ) -> list[dict]:
+        """
+        Update an existing first-service block using a parsed entry.
+
+        Args:
+            existing_slides (list[dict]):
+                Existing slide dictionaries that make up the matched block.
+            entry (dict):
+                Parsed first-service worship-order entry dictionary.
+
+        Returns:
+            list[dict]:
+                Updated slide dictionaries for the block. When the existing
+                block cannot be updated safely, a new generic block is returned.
+        """
+        slides = [dict(slide) for slide in existing_slides]
+        if not slides:
+            return self._build_new_worship_order_block(entry)
+
+        kind = entry["kind"]
+        first_slide = slides[0]
+        style = first_slide.get("style", "")
+
+        if kind == "hymn":
+            return [self._build_hymn_slide_from_number(entry["number"])]
+
+        if kind == "respo":
+            return [self._build_respo_slide_from_number(entry["number"])]
+
+        if kind == "verse":
+            return [self._build_verse_slide_from_reference(entry["reference"])]
+
+        if kind == "prayer":
+            if style == "prayer":
+                first_slide["headline"] = entry.get("leader", "")
+                return slides
+            return self._build_new_worship_order_block(entry)
+
+        if kind == "anthem":
+            if style == "anthem":
+                parsed_choir_name = str(entry.get("choir", "")).strip()
+                choir_caption = first_slide.get("caption", "")
+                choir_suffix = first_slide.get("caption_choir", "")
+
+                if parsed_choir_name:
+                    parsed_caption, parsed_suffix = self._split_choir_caption_parts(parsed_choir_name)
+                    if parsed_caption:
+                        choir_caption = parsed_caption
+                    if parsed_suffix:
+                        choir_suffix = parsed_suffix
+
+                first_slide["caption"] = choir_caption
+                first_slide["caption_choir"] = choir_suffix
+                first_slide["headline"] = entry.get("title", "")
+
+                if len(slides) > 1 and slides[1].get("style") == "lyrics":
+                    slides[1]["caption"] = entry.get("title", "")
+
+                return slides
+            return self._build_new_worship_order_block(entry)
+
+        if kind == "sermon":
+            if style == "corner":
+                imported_title = str(entry.get("title", "")).strip()
+                current_caption = str(first_slide.get("caption", "")).strip()
+
+                preacher_suffix = ""
+                preacher_match = re.search(
+                    r"([가-힣A-Za-z·]{2,4}\s*목사)\s*$",
+                    current_caption,
+                )
+                if preacher_match:
+                    preacher_suffix = preacher_match.group(1).strip()
+
+                if preacher_suffix:
+                    compact_suffix = re.sub(r"\s+", "", preacher_suffix)
+                    suffix_pattern = r"\s*".join(re.escape(ch) for ch in compact_suffix)
+                    imported_title = re.sub(
+                        rf"{suffix_pattern}\s*$",
+                        "",
+                        imported_title,
+                    ).strip()
+
+                first_slide["headline"] = imported_title
+                return slides
+            return self._build_new_worship_order_block(entry)
+
+        if kind == "post_sermon_prayer":
+            if style == "corner":
+                first_slide["caption"] = "설교자"
+                first_slide["headline"] = "기도"
+                return slides
+            return self._build_new_worship_order_block(entry)
+
+        if kind in {
+            "call_to_worship",
+            "response_song",
+            "response_doxology",
+            "invocation",
+            "creed",
+            "confession_prayer",
+            "offering",
+            "offering_prayer",
+            "benediction",
+        }:
+            return slides
+
+        if kind == "communion":
+            if style == "corner":
+                imported_caption = str(entry.get("caption", "")).strip()
+                if imported_caption:
+                    first_slide["caption"] = imported_caption
+                first_slide["headline"] = "성찬식"
+                return slides
+            return self._build_new_worship_order_block(entry)
+
+        return slides
 
     def _apply_worship_order_entries(
         self,
@@ -1128,102 +1363,10 @@ class SlideGenerator(QMainWindow):
                 Updated slide list ready to be reloaded into the generator
                 table.
         """
-        slides = [dict(slide) for slide in current_slides]
-
-        kind_indices: dict[str, list[int]] = {}
-        for idx in range(len(slides)):
-            kind = self._classify_worship_order_slide(slides, idx)
-            if kind and kind != "anthem_lyrics":
-                kind_indices.setdefault(kind, []).append(idx)
-
-        consumed_counts: dict[str, int] = {}
-        parsed_counts: dict[str, int] = {}
-
-        for entry in order_entries:
-            kind = entry["kind"]
-            parsed_counts[kind] = parsed_counts.get(kind, 0) + 1
-
-            if kind == "communion":
-                continue
-
-            current_list = kind_indices.get(kind, [])
-            cursor = consumed_counts.get(kind, 0)
-            if cursor >= len(current_list):
-                continue
-
-            idx = current_list[cursor]
-            consumed_counts[kind] = cursor + 1
-
-            if kind == "hymn":
-                slides[idx] = self._build_hymn_slide_from_number(entry["number"])
-
-            elif kind == "respo":
-                slides[idx] = self._build_respo_slide_from_number(entry["number"])
-
-            elif kind == "verse":
-                slides[idx] = self._build_verse_slide_from_reference(entry["reference"])
-
-            elif kind == "anthem":
-                parsed_choir_name = str(entry.get("choir", "")).strip()
-
-                choir_caption = slides[idx].get("caption", "")
-                choir_suffix = slides[idx].get("caption_choir", "")
-
-                if parsed_choir_name:
-                    parsed_caption, parsed_suffix = self._split_choir_caption_parts(parsed_choir_name)
-                    if parsed_caption:
-                        choir_caption = parsed_caption
-                    if parsed_suffix:
-                        choir_suffix = parsed_suffix
-
-                slides[idx]["caption"] = choir_caption
-                slides[idx]["caption_choir"] = choir_suffix
-                slides[idx]["headline"] = entry["title"]
-
-                if idx + 1 < len(slides) and slides[idx + 1].get("style") == "lyrics":
-                    slides[idx + 1]["caption"] = entry["title"]
-
-            elif kind == "sermon":
-                imported_title = str(entry.get("title", "")).strip()
-                current_caption = str(slides[idx].get("caption", "")).strip()
-
-                # If the current sermon slide already contains preacher info in
-                # its caption, strip only that exact preacher suffix from the
-                # imported HWPX payload. This avoids sacrificing any sermon-title
-                # text while still removing duplicated preacher names when the
-                # HWPX line is glued together.
-                preacher_suffix = ""
-                preacher_match = re.search(
-                    r"([가-힣A-Za-z·]{2,4}\s*목사)\s*$",
-                    current_caption,
-                )
-                if preacher_match:
-                    preacher_suffix = preacher_match.group(1).strip()
-
-                if preacher_suffix:
-                    compact_suffix = re.sub(r"\s+", "", preacher_suffix)
-                    suffix_pattern = r"\s*".join(re.escape(ch) for ch in compact_suffix)
-                    imported_title = re.sub(
-                        rf"{suffix_pattern}\s*$",
-                        "",
-                        imported_title,
-                    ).strip()
-
-                slides[idx]["headline"] = imported_title
-
-            elif kind == "prayer":
-                slides[idx]["headline"] = entry.get("leader", "")
-
-            elif kind == "post_sermon_prayer":
-                slides[idx]["caption"] = "설교자"
-                slides[idx]["headline"] = "기도"
-
-            # Fixed liturgy items are only presence-checked for now.
-
-        remove_candidates: list[tuple[int, str]] = []
         managed_kinds = {
             "call_to_worship",
             "response_song",
+            "response_doxology",
             "invocation",
             "creed",
             "confession_prayer",
@@ -1237,39 +1380,64 @@ class SlideGenerator(QMainWindow):
             "offering",
             "offering_prayer",
             "benediction",
-            "response_doxology",
             "communion",
         }
+        current_blocks = self._build_worship_order_blocks(current_slides)
+        result_blocks = []
+        cursor = 0
 
-        for kind, idx_list in kind_indices.items():
-            if kind not in managed_kinds:
+        for entry in order_entries:
+            match_index = None
+            for index in range(cursor, len(current_blocks)):
+                if current_blocks[index].get("kind") == entry["kind"]:
+                    match_index = index
+                    break
+
+            if match_index is None:
+                new_block_slides = self._build_new_worship_order_block(entry)
+                if new_block_slides:
+                    result_blocks.append({
+                        "kind": entry["kind"],
+                        "slides": new_block_slides,
+                    })
                 continue
 
-            keep_count = parsed_counts.get(kind, 0)
-            for idx in idx_list[keep_count:]:
-                remove_candidates.append((idx, kind))
+            for index in range(cursor, match_index):
+                block = current_blocks[index]
+                block_kind = block.get("kind")
 
-        approved_remove_indices: list[tuple[int, str]] = []
-        for idx, kind in sorted(remove_candidates, key=lambda item: item[0]):
-            if idx >= len(slides):
-                continue
-            if self._classify_worship_order_slide(slides, idx) != kind:
-                continue
-            if self._prompt_remove_missing_worship_order(slides[idx]):
-                approved_remove_indices.append((idx, kind))
+                if block_kind in managed_kinds:
+                    if self._prompt_remove_missing_worship_order(block["slides"][0]):
+                        continue
 
-        for idx, kind in sorted(approved_remove_indices, key=lambda item: item[0], reverse=True):
-            if idx >= len(slides):
-                continue
-            if self._classify_worship_order_slide(slides, idx) != kind:
-                continue
-            self._remove_worship_order_block(slides, idx)
+                result_blocks.append({
+                    "kind": block_kind,
+                    "slides": [dict(slide) for slide in block["slides"]],
+                })
 
-        if parsed_counts.get("communion", 0) > 0 and not kind_indices.get("communion"):
-            insert_at = self._find_communion_insert_index(slides)
-            slides[insert_at:insert_at] = self._build_special_worship_order_block("communion")
+            result_blocks.append({
+                "kind": entry["kind"],
+                "slides": self._update_worship_order_block(
+                    current_blocks[match_index]["slides"],
+                    entry,
+                ),
+            })
+            cursor = match_index + 1
 
-        return slides
+        for index in range(cursor, len(current_blocks)):
+            block = current_blocks[index]
+            block_kind = block.get("kind")
+
+            if block_kind in managed_kinds:
+                if self._prompt_remove_missing_worship_order(block["slides"][0]):
+                    continue
+
+            result_blocks.append({
+                "kind": block_kind,
+                "slides": [dict(slide) for slide in block["slides"]],
+            })
+
+        return self._flatten_slide_blocks(result_blocks)
 
     def _split_music_group_parts(self, group_name: str) -> tuple[str, str]:
         """
