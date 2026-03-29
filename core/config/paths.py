@@ -60,6 +60,12 @@ SETTING_DIR = os.path.join(BASE_DIR, "json")
 #: Directory for SVG icon assets (under ``BASE_DIR/assets/svg``).
 ICON_DIR = os.path.join(BASE_DIR, "assets", "svg")
 
+#: Directory containing application icon files (under ``BASE_DIR/assets/icons``).
+APP_ICON_DIR = os.path.join(BASE_DIR, "assets", "icons")
+
+#: Primary application icon file used for Windows executable / Qt window icons.
+ICON_FILE = os.path.join(APP_ICON_DIR, "thepck.ico")
+
 # ───── Emergency overlay file ─────
 #: Emergency verse output file path (typically ``BASE_DIR/verse_output.txt``).
 #:

@@ -97,3 +97,27 @@ def ensure_runtime_cwd() -> Path:
     root = get_runtime_base_dir()
     os.chdir(root)
     return root
+
+def set_windows_app_user_model_id(app_id: str) -> None:
+    """
+    Set the Windows AppUserModelID for the current process when available.
+
+    This helps Windows display the intended application identity and icon in
+    the taskbar for GUI processes, especially when launching from Python or
+    from a frozen executable that spawns alternate modes.
+
+    Args:
+        app_id (str):
+            Stable Windows application identifier for the current process.
+
+    Returns:
+        None
+    """
+    if os.name != "nt":
+        return
+
+    try:
+        import ctypes
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
+    except Exception:
+        pass

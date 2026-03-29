@@ -36,7 +36,15 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from core.utils.runtime_launcher import build_entry_command, ensure_runtime_cwd, get_runtime_base_dir
+from PySide6.QtGui import QIcon
+
+from core.config import paths
+from core.utils.runtime_launcher import (
+    build_entry_command,
+    ensure_runtime_cwd,
+    get_runtime_base_dir,
+    set_windows_app_user_model_id,
+)
 
 def _project_root() -> Path:
     """
@@ -290,6 +298,7 @@ def main() -> None:
         return
 
     root = ensure_runtime_cwd()
+    set_windows_app_user_model_id("org.euljirochurch.EuljiroWorship")
 
     # Adjust this if your overlay/static files live under a specific directory.
     # For example: http_cwd = root / "web"
@@ -319,6 +328,8 @@ def main() -> None:
     from core.generator.ui.slide_generator import SlideGenerator
 
     app = QApplication(sys.argv)
+    if Path(paths.ICON_FILE).exists():
+        app.setWindowIcon(QIcon(paths.ICON_FILE))
 
     # Apply a consistent style across platforms
     app.setStyle("Fusion")
@@ -332,6 +343,8 @@ def main() -> None:
 
     # Instantiate and display the main Slide Generator window
     generator = SlideGenerator()
+    if Path(paths.ICON_FILE).exists():
+        generator.setWindowIcon(QIcon(paths.ICON_FILE))
     generator.show()
 
     # Enter Qt event loop and run the application

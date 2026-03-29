@@ -37,7 +37,7 @@ from PySide6.QtWidgets import (
     QTableWidgetItem, QDialogButtonBox,
     QVBoxLayout, QFormLayout, QLineEdit
 )
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QIcon
 
 from core.config import paths, style_map, constants
 from core.generator.settings_generator import load_generator_settings
@@ -137,6 +137,8 @@ class SlideGenerator(QMainWindow):
 
         self.setWindowTitle("대한예수교장로회(통합) 을지로교회 예배 슬라이드 제너레이터")
         self.resize(1000, 600)
+        if os.path.exists(paths.ICON_FILE):
+            self.setWindowIcon(QIcon(paths.ICON_FILE))
 
         self.first_save_done = False
 

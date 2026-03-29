@@ -41,6 +41,7 @@ import shutil
 # PySide6 GUI essentials
 from PySide6.QtWidgets import QApplication, QWidget, QAbstractItemView, QTableWidgetItem
 from PySide6.QtCore import Qt, QEvent, QThread, QTimer, Slot
+from PySide6.QtGui import QIcon
 
 # Project imports
 from controller.utils.emergency_caption_handler import EmergencyCaptionHandler
@@ -52,7 +53,7 @@ from controller.ui.slide_controller_ui_builder import SlideControllerUIBuilder
 from controller.utils.slide_websocket_manager import SlideWebSocketManager
 from core.config import paths
 from core.generator.settings_generator import get_font_from_settings
-from core.utils.runtime_launcher import build_entry_command, ensure_runtime_cwd
+from core.utils.runtime_launcher import build_entry_command, ensure_runtime_cwd, set_windows_app_user_model_id
 
 def launch_interruptor():
     """
@@ -140,6 +141,8 @@ class SlideController(QWidget):
         super().__init__()
         self.setWindowTitle("대한예수교장로회(통합) 을지로교회 슬라이드 컨트롤러")
         self.resize(1000, 600)
+        if os.path.exists(paths.ICON_FILE):
+            self.setWindowIcon(QIcon(paths.ICON_FILE))
 
         # File path and WebSocket info
         self.slide_file = slide_file
@@ -584,6 +587,7 @@ def main():
     and starts the GUI event loop.
     """
     ensure_runtime_cwd()
+    set_windows_app_user_model_id("org.euljirochurch.EuljiroWorship.Controller")
 
     SlideControllerDataManager(paths.SLIDE_FILE).backup_slides()
 
@@ -591,6 +595,8 @@ def main():
 
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
+    if os.path.exists(paths.ICON_FILE):
+        app.setWindowIcon(QIcon(paths.ICON_FILE))
     app.setFont(get_font_from_settings())
 
     controller = SlideController(paths.SLIDE_FILE, "ws://127.0.0.1:8765/ws")
