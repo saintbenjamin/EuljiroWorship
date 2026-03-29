@@ -2401,15 +2401,15 @@ class SlideGenerator(QMainWindow):
 
         Notes:
             - Range boundaries are detected by exact headline matching after
-            stripping leading and trailing whitespace.
+              stripping leading and trailing whitespace.
             - If the end marker is empty, the import block extends to the end
-            of the file.
+              of the file.
             - If either the source file or the current session does not contain
-            the requested start marker, no changes are applied.
+              the requested start marker, no changes are applied.
             - This function modifies the generator table in place and does not
-            automatically save the session file.
+              automatically save the session file.
             - User-edited start/end marker values are persisted and reused as
-            defaults in subsequent imports.
+              defaults in subsequent imports.
         """
         from PySide6.QtWidgets import QFileDialog, QMessageBox
 
