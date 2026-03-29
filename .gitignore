@@ -1,9 +1,16 @@
 __pycache__
 .DS_Store
+build/
+dist/
+_internal/
+release_stage/
+build_and_stage_release.py
+EuljiroWorship.spec
 verse_output.txt
 docs/build
 html/img/*.*
 store/*.json
+data_public/
 data/그리스어 신약 Society of Biblical Literature (2010).json
 data/그리스어 신약 Textus Receptus (1884) copy.json
 data/그리스어 신약 Textus Receptus Parsed (1884).json

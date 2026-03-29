@@ -25,10 +25,31 @@ consistent behavior across platforms (Windows, macOS, Linux).
 """
 
 import os
+import sys
+from pathlib import Path
+
+def _resolve_base_dir() -> str:
+    """
+    Resolve the runtime application root directory.
+
+    In source execution, the root is derived from this module's location.
+    In frozen execution (e.g., a `PyInstaller <https://pyinstaller.org/>`_
+    one-dir build), user-facing resource folders such as ``data/`` and
+    ``json/`` live next to the executable rather than next to the bundled
+    Python modules under ``_internal/``.
+
+    Returns:
+        str:
+            Absolute path to the runtime application root directory.
+    """
+    if getattr(sys, "frozen", False):
+        return str(Path(sys.executable).resolve().parent)
+
+    return str(Path(__file__).resolve().parents[2])
 
 # ───── Base directories ─────
 #: Absolute path to the project root directory.
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+BASE_DIR = _resolve_base_dir()
 
 #: Directory for slide output and backup files (under ``BASE_DIR/store``).
 STORE_DIR = os.path.join(BASE_DIR, "store")

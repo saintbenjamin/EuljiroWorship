@@ -13,8 +13,8 @@ Main entry point for the EuljiroWorship application.
 This module launches the `Qt <https://doc.qt.io/qt-6/index.html>`_-based Slide Generator UI and starts the background
 servers required for the browser-based overlay:
 
-- An HTTP server (static file hosting; default: ``python -m http.server 8080``)
-- A `WebSocket <https://websocket-client.readthedocs.io/en/latest/index.html>`_ server (real-time slide updates; launched via ``server/websocket_server.py``)
+- An HTTP server (static file hosting; default: port ``8080``)
+- A `WebSocket <https://websocket-client.readthedocs.io/en/latest/index.html>`_ server (real-time slide updates; default: port ``8765``)
 
 Typical usage::
 
@@ -23,43 +23,42 @@ Typical usage::
 Note:
     - The HTTP document root is currently set to the project root directory. If your overlay/static files live under a specific subdirectory (e.g. ``web/``), update ``http_cwd`` accordingly.
     - Both servers are started as subprocesses. They are terminated on normal `Qt <https://doc.qt.io/qt-6/index.html>`_ exit and also via ``atexit`` as a fallback.
+    - Alternate launcher modes (controller / HTTP server / WebSocket server / interruptor) are exposed so the same entry point can be reused in frozen executable builds.
     - If the server subprocess exits immediately (e.g., port already in use), the launcher raises a ``RuntimeError``.
 """
 
-import sys
 import atexit
+import argparse
 import subprocess
+import sys
 import time
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from PySide6.QtWidgets import QApplication
-
-# Load font settings from persistent configuration
-from core.generator.settings_generator import get_font_from_settings
-
-# Import the main Slide Generator UI
-from core.generator.ui.slide_generator import SlideGenerator
+from core.utils.runtime_launcher import build_entry_command, ensure_runtime_cwd, get_runtime_base_dir
 
 def _project_root() -> Path:
     """
     Return the project root directory.
 
-    This function assumes that ``EuljiroWorship.py`` is located at the repository
-    root (i.e., the root directory of the project).
+    In source execution, this resolves to the repository root.
+    In frozen execution, this resolves to the directory containing the
+    bundled executable and its staged resource folders.
 
     Returns:
         pathlib.Path:
             Absolute path to the project root directory.
     """
-    return Path(__file__).resolve().parent
+    return get_runtime_base_dir()
 
 def _start_http_server(cwd: Path, port: int = 8080) -> subprocess.Popen:
     """
-    Start a static-file HTTP server as a subprocess.
+    Start the static-file HTTP server as a subprocess.
 
-    Internally, this runs Python's built-in module::
-
-        python -m http.server <port>
+    The subprocess relaunches the main application entry point in dedicated
+    ``--http-server`` mode so the same implementation works in both source
+    and frozen executable builds.
 
     Args:
         cwd (pathlib.Path):
@@ -76,7 +75,7 @@ def _start_http_server(cwd: Path, port: int = 8080) -> subprocess.Popen:
         - Standard output/error are inherited by default (``stdout=None``, ``stderr=None``).
 
     """
-    cmd = [sys.executable, "-m", "http.server", str(port)]
+    cmd = build_entry_command("--http-server", "--root", str(cwd), "--port", str(port))
     return subprocess.Popen(
         cmd,
         cwd=str(cwd),
@@ -90,17 +89,13 @@ def _start_ws_server(root: Path) -> subprocess.Popen:
     """
     Start the `WebSocket <https://websocket-client.readthedocs.io/en/latest/index.html>`_ server as a subprocess.
 
-    This launches::
-
-        <project_root>/server/websocket_server.py
+    The subprocess relaunches the main application entry point in dedicated
+    ``--ws-server`` mode so the same launcher path works in both source
+    and frozen executable builds.
 
     Args:
         root (pathlib.Path):
             Absolute path to the project root directory.
-
-    Raises:
-        FileNotFoundError
-            If ``server/websocket_server.py`` does not exist under ``root``.
 
     Returns:
         subprocess.Popen:
@@ -110,11 +105,7 @@ def _start_ws_server(root: Path) -> subprocess.Popen:
         - The process is spawned with its working directory set to the project root.
         - ``start_new_session=True`` is used to improve shutdown reliability across platforms.
     """
-    ws_path = root / "server" / "websocket_server.py"
-    if not ws_path.exists():
-        raise FileNotFoundError(f"WebSocket server not found: {ws_path}")
-
-    cmd = [sys.executable, str(ws_path)]
+    cmd = build_entry_command("--ws-server", "--port", "8765")
     return subprocess.Popen(
         cmd,
         cwd=str(root),
@@ -185,8 +176,120 @@ def _ensure_alive(p: subprocess.Popen, name: str) -> None:
     if rc is not None:
         raise RuntimeError(f"{name} exited immediately (return code: {rc}).")
 
-if __name__ == "__main__":
-    root = _project_root()
+def _parse_mode_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """
+    Parse launcher mode arguments.
+
+    Args:
+        argv (list[str] | None):
+            Optional explicit argument list. If None, ``sys.argv[1:]`` is used.
+
+    Returns:
+        argparse.Namespace:
+            Parsed launcher arguments.
+    """
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--controller", action="store_true")
+    parser.add_argument("--interruptor", action="store_true")
+    parser.add_argument("--ws-server", action="store_true")
+    parser.add_argument("--http-server", action="store_true")
+    parser.add_argument("--port", type=int, default=None)
+    parser.add_argument("--root", default=None)
+    return parser.parse_args(argv)
+
+def _run_static_http_server(root: Path, port: int = 8080) -> None:
+    """
+    Run a static-file HTTP server in the current process.
+
+    Args:
+        root (pathlib.Path):
+            Directory to expose as the HTTP document root.
+        port (int, optional):
+            TCP port to bind. Defaults to ``8080``.
+
+    Returns:
+        None
+    """
+    class QuietStaticHandler(SimpleHTTPRequestHandler):
+        """
+        Static-file handler that suppresses console-bound request logging.
+
+        This avoids write failures in windowed executable builds where
+        ``sys.stderr`` may be unavailable.
+        """
+
+        def log_message(self, format: str, *args) -> None:
+            """
+            Suppress per-request log output.
+
+            Args:
+                format (str):
+                    Logging format string provided by the base handler.
+                *args:
+                    Positional values for the format string.
+
+            Returns:
+                None
+            """
+            return
+
+    handler = partial(QuietStaticHandler, directory=str(root))
+    httpd = ThreadingHTTPServer(("0.0.0.0", port), handler)
+    print(f"[*] HTTP server starting on http://0.0.0.0:{port}/")
+    httpd.serve_forever()
+
+def _run_mode_from_cli(args: argparse.Namespace) -> bool:
+    """
+    Dispatch alternate launcher modes.
+
+    Args:
+        args (argparse.Namespace):
+            Parsed launcher arguments.
+
+    Returns:
+        bool:
+            True if an alternate mode was executed and normal GUI startup
+            should be skipped, False otherwise.
+    """
+    ensure_runtime_cwd()
+
+    if args.http_server:
+        root = Path(args.root).resolve() if args.root else _project_root()
+        _run_static_http_server(root, port=args.port or 8080)
+        return True
+
+    if args.ws_server:
+        from server.websocket_server import main as websocket_main
+
+        websocket_main(port=args.port or 8765)
+        return True
+
+    if args.controller:
+        from controller.slide_controller import main as controller_main
+
+        controller_main()
+        return True
+
+    if args.interruptor:
+        from controller.helper.verse_interruptor import start_interruptor
+
+        start_interruptor()
+        return True
+
+    return False
+
+def main() -> None:
+    """
+    Launch the default Slide Generator application workflow.
+
+    Returns:
+        None
+    """
+    args = _parse_mode_args()
+    if _run_mode_from_cli(args):
+        return
+
+    root = ensure_runtime_cwd()
 
     # Adjust this if your overlay/static files live under a specific directory.
     # For example: http_cwd = root / "web"
@@ -211,6 +314,10 @@ if __name__ == "__main__":
     atexit.register(_terminate_process, ws_p)
 
     # Create the Qt application object
+    from PySide6.QtWidgets import QApplication
+    from core.generator.settings_generator import get_font_from_settings
+    from core.generator.ui.slide_generator import SlideGenerator
+
     app = QApplication(sys.argv)
 
     # Apply a consistent style across platforms
@@ -229,3 +336,6 @@ if __name__ == "__main__":
 
     # Enter Qt event loop and run the application
     sys.exit(app.exec())
+
+if __name__ == "__main__":
+    main()

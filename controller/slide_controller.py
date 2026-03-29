@@ -52,6 +52,7 @@ from controller.ui.slide_controller_ui_builder import SlideControllerUIBuilder
 from controller.utils.slide_websocket_manager import SlideWebSocketManager
 from core.config import paths
 from core.generator.settings_generator import get_font_from_settings
+from core.utils.runtime_launcher import build_entry_command, ensure_runtime_cwd
 
 def launch_interruptor():
     """
@@ -73,7 +74,8 @@ def launch_interruptor():
     try:
         with open(os.devnull, "w") as devnull:
             subprocess.Popen(
-                [sys.executable, "launcher/verse_interruptor.py"],
+                build_entry_command("--interruptor"),
+                cwd=paths.BASE_DIR,
                 stdout=devnull,
                 stderr=devnull,
                 stdin=devnull,
@@ -574,13 +576,15 @@ class SlideController(QWidget):
         self.ws_manager.disconnect()
         super().closeEvent(event)
 
-if __name__ == "__main__":
+def main():
     """
     Entry point for the slide controller application.
 
     This launches the verse interruptor, applies font settings,
     and starts the GUI event loop.
     """
+    ensure_runtime_cwd()
+
     SlideControllerDataManager(paths.SLIDE_FILE).backup_slides()
 
     launch_interruptor()
@@ -594,3 +598,6 @@ if __name__ == "__main__":
     controller.show()
 
     sys.exit(app.exec())
+
+if __name__ == "__main__":
+    main()

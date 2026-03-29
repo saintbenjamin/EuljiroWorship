@@ -176,6 +176,20 @@ app = web.Application()
 app.router.add_get("/ws", websocket_handler)
 app.on_shutdown.append(on_shutdown)
 
+def main(port: int = 8765) -> None:
+    """
+    Start the WebSocket server.
+
+    Args:
+        port (int, optional):
+            TCP port exposed for incoming WebSocket connections.
+            Defaults to ``8765``.
+
+    Returns:
+        None
+    """
+    logger.info("[*] WebSocket server starting on ws://0.0.0.0:%d/ws", port)
+    web.run_app(app, port=port)
+
 if __name__ == "__main__":
-    logger.info("[*] WebSocket server starting on ws://0.0.0.0:8765/ws")
-    web.run_app(app, port=8765)
+    main()

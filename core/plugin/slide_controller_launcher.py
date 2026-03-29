@@ -20,9 +20,9 @@ application entry point, allowing the controller to behave as a managed
 child process rather than a standalone application.
 """
 
-import sys
 import subprocess
 from PySide6.QtWidgets import QMessageBox
+from core.utils.runtime_launcher import build_entry_command, get_runtime_base_dir
 
 class SlideControllerLauncher:
     """
@@ -104,7 +104,10 @@ class SlideControllerLauncher:
 
         try:
             # Attempt to launch the controller subprocess
-            self.proc = subprocess.Popen([sys.executable, "controller/slide_controller.py"])
+            self.proc = subprocess.Popen(
+                build_entry_command("--controller"),
+                cwd=str(get_runtime_base_dir())
+            )
             print("[✓] Slide controller started")
 
         except Exception as e:
