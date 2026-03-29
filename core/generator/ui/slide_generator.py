@@ -55,6 +55,7 @@ from core.generator.utils.hwpx_worship_order_parser import (
 )
 from core.utils.bible_parser import parse_reference
 from core.utils.bible_data_loader import BibleDataLoader
+from core.version import APP_VERSION
 
 class SlideGenerator(QMainWindow):
     """
@@ -135,7 +136,7 @@ class SlideGenerator(QMainWindow):
         """
         super().__init__()
 
-        self.setWindowTitle("대한예수교장로회(통합) 을지로교회 예배 슬라이드 제너레이터")
+        self.setWindowTitle(f"대한예수교장로회(통합) 을지로교회 예배 슬라이드 제너레이터 - v{APP_VERSION}")
         self.resize(1000, 600)
         if os.path.exists(paths.ICON_FILE):
             self.setWindowIcon(QIcon(paths.ICON_FILE))

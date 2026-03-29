@@ -4,6 +4,7 @@ build/
 dist/
 _internal/
 release_stage/
+auto_release.py
 build_and_stage_release.py
 EuljiroWorship.spec
 verse_output.txt

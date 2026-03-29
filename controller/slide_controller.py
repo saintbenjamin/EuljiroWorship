@@ -54,6 +54,7 @@ from controller.utils.slide_websocket_manager import SlideWebSocketManager
 from core.config import paths
 from core.generator.settings_generator import get_font_from_settings
 from core.utils.runtime_launcher import build_entry_command, ensure_runtime_cwd, set_windows_app_user_model_id
+from core.version import APP_VERSION
 
 def launch_interruptor():
     """
@@ -139,7 +140,7 @@ class SlideController(QWidget):
             None
         """
         super().__init__()
-        self.setWindowTitle("대한예수교장로회(통합) 을지로교회 슬라이드 컨트롤러")
+        self.setWindowTitle(f"대한예수교장로회(통합) 을지로교회 슬라이드 컨트롤러 - v{APP_VERSION}")
         self.resize(1000, 600)
         if os.path.exists(paths.ICON_FILE):
             self.setWindowIcon(QIcon(paths.ICON_FILE))
