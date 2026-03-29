@@ -1,7 +1,7 @@
-controller.utils.runtime_launcher
-=================================
+core.utils.runtime_launcher
+===========================
 
-.. automodule:: controller.utils.runtime_launcher
+.. automodule:: core.utils.runtime_launcher
    :members:
    :private-members:
    :undoc-members:
