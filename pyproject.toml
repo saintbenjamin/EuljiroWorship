@@ -1,6 +1,6 @@
 [project]
 name = "EuljiroWorship"
-version = "1.0.1"
+version = "1.0.2"
 description = "Real-time worship slide generator and controller with emergency caption support"
 readme = "README.md"
 requires-python = ">=3.9"
