@@ -36,6 +36,7 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+from PySide6.QtCore import QTimer
 from PySide6.QtGui import QIcon
 
 from core.config import paths
@@ -184,6 +185,41 @@ def _ensure_alive(p: subprocess.Popen, name: str) -> None:
     if rc is not None:
         raise RuntimeError(f"{name} exited immediately (return code: {rc}).")
 
+def _restart_process_if_needed(
+    p: subprocess.Popen | None,
+    name: str,
+    starter,
+) -> subprocess.Popen | None:
+    """
+    Restart a background subprocess if it exited unexpectedly.
+
+    Args:
+        p (subprocess.Popen | None):
+            Current subprocess handle.
+        name (str):
+            Human-readable process name for status output.
+        starter (Callable[[], subprocess.Popen]):
+            Zero-argument factory that starts a replacement subprocess.
+
+    Returns:
+        subprocess.Popen | None:
+            The still-running original process, a newly restarted process,
+            or the original handle if restart failed.
+    """
+    if p is None or p.poll() is None:
+        return p
+
+    print(f"[!] {name} exited unexpectedly (return code: {p.returncode}). Restarting...")
+
+    try:
+        new_process = starter()
+        _ensure_alive(new_process, name)
+        print(f"[i] {name} restarted successfully.")
+        return new_process
+    except Exception as e:
+        print(f"[x] Failed to restart {name}: {e}")
+        return p
+
 def _parse_mode_args(argv: list[str] | None = None) -> argparse.Namespace:
     """
     Parse launcher mode arguments.
@@ -318,9 +354,14 @@ def main() -> None:
         _terminate_process(ws_p)
         raise
 
+    server_processes = {
+        "http": http_p,
+        "ws": ws_p,
+    }
+
     # Ensure background servers are terminated when the application exits
-    atexit.register(_terminate_process, http_p)
-    atexit.register(_terminate_process, ws_p)
+    atexit.register(lambda: _terminate_process(server_processes["http"]))
+    atexit.register(lambda: _terminate_process(server_processes["ws"]))
 
     # Create the Qt application object
     from PySide6.QtWidgets import QApplication
@@ -337,9 +378,33 @@ def main() -> None:
     # Apply user-configured font settings globally
     app.setFont(get_font_from_settings())
 
+    def maintain_background_servers() -> None:
+        """
+        Keep the embedded HTTP and WebSocket helper servers alive.
+
+        Returns:
+            None
+        """
+        server_processes["http"] = _restart_process_if_needed(
+            server_processes["http"],
+            "http.server",
+            lambda: _start_http_server(http_cwd, port=8080),
+        )
+        server_processes["ws"] = _restart_process_if_needed(
+            server_processes["ws"],
+            "websocket_server",
+            lambda: _start_ws_server(root),
+        )
+
+    server_watchdog = QTimer(app)
+    server_watchdog.setInterval(2000)
+    server_watchdog.timeout.connect(maintain_background_servers)
+    server_watchdog.start()
+
     # Also terminate servers on normal Qt shutdown
-    app.aboutToQuit.connect(lambda: _terminate_process(http_p))
-    app.aboutToQuit.connect(lambda: _terminate_process(ws_p))
+    app.aboutToQuit.connect(server_watchdog.stop)
+    app.aboutToQuit.connect(lambda: _terminate_process(server_processes["http"]))
+    app.aboutToQuit.connect(lambda: _terminate_process(server_processes["ws"]))
 
     # Instantiate and display the main Slide Generator window
     generator = SlideGenerator()

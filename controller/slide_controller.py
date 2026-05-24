@@ -162,6 +162,7 @@ class SlideController(QWidget):
         # WebSocket manager
         self.ws_manager = SlideWebSocketManager(self.ws_uri)
         self.ws_manager.connect()
+        self._ws_last_healthy = self.ws_manager.is_connected()
 
         # UI setup
         SlideControllerUIBuilder(self).build_ui()
@@ -169,6 +170,11 @@ class SlideController(QWidget):
         # Emergency caption handler
         self.caption_handler = EmergencyCaptionHandler(self)
         self.send_current_slide()
+
+        self.ws_health_timer = QTimer(self)
+        self.ws_health_timer.setInterval(3000)
+        self.ws_health_timer.timeout.connect(self.maintain_websocket_connection)
+        self.ws_health_timer.start()
 
         # Set up SlideFileWatcher thread
         self.slide_thread = QThread()
@@ -266,8 +272,9 @@ class SlideController(QWidget):
         """
         Send the current slide to the overlay via WebSocket.
 
-        If the WebSocket is connected, the slide dict at ``self.index`` is sent.
-        If not connected, a warning is printed.
+        The underlying WebSocket manager will attempt bounded reconnect/retry
+        recovery if the local WebSocket server was temporarily unavailable.
+        If the slide still cannot be sent, a warning is printed.
 
         When not in emergency mode, also updates ``self.data.index`` so the current
         position can be persisted by the data manager.
@@ -277,14 +284,33 @@ class SlideController(QWidget):
         """
         slide = self.slides[self.index]
 
-        if self.ws_manager.is_connected():
-            self.ws_manager.send(slide)
-            # print(f"[→] Sent slide {self.index+1}")
+        if self.ws_manager.send(slide):
+            self._ws_last_healthy = True
         else:
+            self._ws_last_healthy = False
             print("[!] WebSocket not connected.")
 
         if not self.emergency_mode:
             self.data.index = self.index
+
+    def maintain_websocket_connection(self):
+        """
+        Periodically keep the controller WebSocket connection healthy.
+
+        This timer probes the existing connection, reconnects if needed, and
+        re-broadcasts the current slide once a broken connection has been
+        restored. This prevents a transient local socket failure from requiring
+        a full controller restart.
+
+        Returns:
+            None
+        """
+        was_healthy = self._ws_last_healthy
+        is_healthy = self.ws_manager.ensure_healthy_connection(quiet=True)
+        self._ws_last_healthy = is_healthy
+
+        if is_healthy and not was_healthy and self.slides:
+            self._ws_last_healthy = self.ws_manager.send(self.slides[self.index])
 
     def next_slide(self):
         """
@@ -571,6 +597,7 @@ class SlideController(QWidget):
         Returns:
             None
         """
+        self.ws_health_timer.stop()
         self.slide_watcher.stop()
         self.interruptor_watcher.stop()
         self.slide_thread.quit()

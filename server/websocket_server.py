@@ -28,20 +28,37 @@ to be JSON representations of slide data, which are then forwarded to
 all connected overlay clients.
 """
 
+import asyncio
 import json
 import logging
-import asyncio
+import os
 from aiohttp import web, WSMsgType
+
+from core.config import paths
 
 # ─────────────────────────────
 # Logging setup
 logger = logging.getLogger("slide_socket_server")
 logger.setLevel(logging.INFO)
-handler = logging.StreamHandler()
-formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
-handler.setFormatter(formatter)
+logger.propagate = False
+
 if not logger.handlers:
-    logger.addHandler(handler)
+    formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
+
+    try:
+        os.makedirs(paths.STORE_DIR, exist_ok=True)
+        file_handler = logging.FileHandler(
+            os.path.join(paths.STORE_DIR, "websocket_server.log"),
+            encoding="utf-8",
+        )
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+    except Exception:
+        pass
 
 # ─────────────────────────────
 # Connected clients set
@@ -119,7 +136,7 @@ async def broadcast(slide_dict):
         logger.debug("[!] No clients connected")
         return
 
-    message = json.dumps(slide_dict)
+    message = json.dumps(slide_dict, ensure_ascii=False)
     logger.debug("[→] Broadcasting: %s", message)
 
     for ws in connected_clients.copy():
@@ -189,7 +206,11 @@ def main(port: int = 8765) -> None:
         None
     """
     logger.info("[*] WebSocket server starting on ws://0.0.0.0:%d/ws", port)
-    web.run_app(app, port=port)
+    try:
+        web.run_app(app, port=port)
+    except Exception:
+        logger.exception("[!] WebSocket server crashed unexpectedly.")
+        raise
 
 if __name__ == "__main__":
     main()

@@ -10,7 +10,8 @@
 
 WebSocket manager for broadcasting slide data to overlay clients.
 
-This module provides a thin wrapper around the `websocket-client <https://pypi.org/project/websocket-client/>`_ library
+This module provides a thin wrapper around the
+`websocket-client <https://pypi.org/project/websocket-client/>`_ library
 to manage a single outbound WebSocket connection used by the slide controller.
 It is responsible for:
 
@@ -18,35 +19,40 @@ It is responsible for:
 - Serializing slide dictionaries to JSON
 - Sending slide data to overlay clients in real time
 - Tracking basic connection state
+- Performing bounded local reconnect/retry recovery
 
-The manager is intentionally lightweight and synchronous, as it is used
-from the GUI thread with short-lived send operations.
+The manager remains synchronous because it is used from the GUI thread, but
+it now includes small self-healing steps so that a temporarily lost local
+WebSocket server does not leave the controller permanently unable to
+broadcast slides.
 """
 
 import json
 
+
 class SlideWebSocketManager:
     """
-    Manages a WebSocket connection for sending slide data to overlay systems.
+    Manage a WebSocket connection for sending slide data to overlay systems.
 
     This class wraps a single WebSocket connection created via the
-    `websocket-client <https://pypi.org/project/websocket-client/>`_ library and provides simple methods for:
+    `websocket-client <https://pypi.org/project/websocket-client/>`_ library
+    and provides methods for:
 
     - Connecting to a WebSocket server
+    - Probing the connection for local health
     - Sending slide dictionaries as JSON payloads
-    - Querying connection state
+    - Performing one-shot reconnect/retry recovery
     - Closing the connection safely
-
-    It intentionally does **not** implement reconnection logic, background threads,
-    or retry loops. Higher-level controller components are expected to manage
-    lifecycle and recovery behavior if needed.
 
     Attributes:
         uri (str):
             WebSocket server URI (e.g., ``ws://127.0.0.1:8765/ws``).
         ws (websocket.WebSocket | None):
-            Active WebSocket connection object created by ``websocket.create_connection``.
-            Set to ``None`` when disconnected or on connection failure.
+            Active WebSocket connection object created by
+            ``websocket.create_connection``. Set to ``None`` when disconnected
+            or on connection failure.
+        connect_timeout (float):
+            Timeout in seconds used for connect and socket operations.
     """
 
     def __init__(self, uri):
@@ -63,59 +69,158 @@ class SlideWebSocketManager:
         """
         self.uri = uri
         self.ws = None
+        self.connect_timeout = 1.5
 
-    def connect(self):
+    def _drop_connection(self):
+        """
+        Dispose of the current socket object and clear connection state.
+
+        Returns:
+            None
+        """
+        if self.ws:
+            try:
+                self.ws.close()
+            except Exception:
+                pass
+        self.ws = None
+
+    def connect(self, quiet: bool = False) -> bool:
         """
         Establish a connection to the WebSocket server.
 
         Attempts to create a WebSocket connection using the configured URI.
         On failure, the internal connection state is cleared.
 
+        Args:
+            quiet (bool):
+                If True, suppress status prints for expected background
+                reconnect attempts.
+
         Returns:
-            None
+            bool:
+                True if the connection was established successfully,
+                False otherwise.
         """
+        self._drop_connection()
+
         try:
             import websocket  # pip install websocket-client
-            self.ws = websocket.create_connection(self.uri)
-            print(f"[✓] Connected to WebSocket: {self.uri}")
-        except Exception as e:
-            print(f"[x] WebSocket connection failed: {e}")
-            self.ws = None
 
-    def send(self, slide_dict: dict):
+            self.ws = websocket.create_connection(
+                self.uri,
+                timeout=self.connect_timeout,
+            )
+            self.ws.settimeout(self.connect_timeout)
+            if not quiet:
+                print(f"[OK] Connected to WebSocket: {self.uri}")
+            return True
+        except Exception as e:
+            if not quiet:
+                print(f"[x] WebSocket connection failed: {e}")
+            self.ws = None
+            return False
+
+    def probe(self) -> bool:
+        """
+        Check whether the existing WebSocket transport is still usable.
+
+        A lightweight WebSocket ping frame is sent to verify that the local
+        transport has not silently gone stale. If the probe fails, the socket
+        is dropped so a later reconnect can start from a clean state.
+
+        Returns:
+            bool:
+                True if the current socket appears healthy,
+                False otherwise.
+        """
+        if not self.is_connected():
+            return False
+
+        try:
+            self.ws.ping()
+            return True
+        except Exception:
+            self._drop_connection()
+            return False
+
+    def ensure_healthy_connection(self, quiet: bool = True) -> bool:
+        """
+        Ensure that a usable WebSocket connection is available.
+
+        This first probes the current socket. If the probe fails or no socket
+        exists, it attempts a fresh reconnect.
+
+        Args:
+            quiet (bool):
+                If True, suppress expected background reconnect prints.
+
+        Returns:
+            bool:
+                True if a healthy connection is available after probing and
+                optional reconnect, False otherwise.
+        """
+        if self.probe():
+            return True
+
+        return self.connect(quiet=quiet)
+
+    def send(self, slide_dict: dict) -> bool:
         """
         Send a slide dictionary to the WebSocket server.
 
         The slide data is serialized to JSON using UTF-8 encoding
-        (``ensure_ascii=False``) before transmission.
+        (``ensure_ascii=False``) before transmission. If the existing socket
+        has gone stale, this method performs one reconnect and one resend
+        attempt before giving up.
 
         Args:
             slide_dict (dict):
                 Dictionary containing slide data to send.
 
         Returns:
-            None
+            bool:
+                True if the slide payload was sent successfully,
+                False otherwise.
         """
-        if not self.ws:
+        data = json.dumps(slide_dict, ensure_ascii=False)
+
+        if not self.ensure_healthy_connection(quiet=True):
             print("[!] Cannot send: WebSocket is not connected.")
-            return
+            return False
+
         try:
-            data = json.dumps(slide_dict, ensure_ascii=False)
             self.ws.send(data)
-            # print("[→] Sent slide")
+            return True
         except Exception as e:
             print(f"[!] Send failed: {e}")
-            self.ws = None  # Optional: trigger reconnect on next attempt
+            self._drop_connection()
 
-    def is_connected(self):
+        if not self.connect(quiet=True):
+            print("[!] Reconnect failed after send failure.")
+            return False
+
+        try:
+            self.ws.send(data)
+            print("[i] Recovered WebSocket connection and resent current slide.")
+            return True
+        except Exception as e:
+            print(f"[!] Resend after reconnect failed: {e}")
+            self._drop_connection()
+            return False
+
+    def is_connected(self) -> bool:
         """
         Check whether the WebSocket connection is active.
 
         Returns:
             bool:
-                True if a WebSocket connection exists, False otherwise.
+                True if a connected WebSocket object exists, False otherwise.
         """
-        return self.ws is not None
+        if self.ws is None:
+            return False
+
+        return bool(getattr(self.ws, "connected", False))
 
     def disconnect(self):
         """
@@ -130,7 +235,7 @@ class SlideWebSocketManager:
         if self.ws:
             try:
                 self.ws.close()
-                print("[✓] WebSocket closed.")
+                print("[OK] WebSocket closed.")
             except Exception as e:
                 print(f"[!] Error closing WebSocket: {e}")
         self.ws = None

@@ -1,0 +1,28 @@
+[2026-05-24 10:31:27,553] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-05-24 10:31:27,576] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-05-24 10:31:27,577] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "C:\work\EuljiroWorship\server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "C:\Users\방송실 3층 영상\AppData\Roaming\Python\Python311\site-packages\aiohttp\web.py", line 530, in run_app
+    loop.run_until_complete(main_task)
+  File "C:\Program Files\Python311\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+OSError: [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8765): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-05-24 10:31:29,818] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-05-24 10:31:29,822] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-05-24 10:31:29,823] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "C:\work\EuljiroWorship\server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "C:\Users\방송실 3층 영상\AppData\Roaming\Python\Python311\site-packages\aiohttp\web.py", line 530, in run_app
+    loop.run_until_complete(main_task)
+  File "C:\Program Files\Python311\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+OSError: [Errno 10048] error while attempting to bind on address ('::', 8765, 0, 0): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-05-24 10:31:46,667] [INFO] [*] WebSocket server starting on ws://0.0.0.0:9876/ws
+[2026-05-24 10:31:50,025] [INFO] [*] WebSocket server starting on ws://0.0.0.0:9876/ws
+[2026-05-24 10:34:10,530] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-05-24 10:34:26,310] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
