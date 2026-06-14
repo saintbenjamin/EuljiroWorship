@@ -48,3 +48,4 @@ OSError: [Errno 10048] error while attempting to bind on address ('::', 8765, 0,
 [2026-06-14 10:48:48,932] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
 [2026-06-14 13:32:32,810] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
 [2026-06-14 14:08:12,144] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-06-14 14:17:36,850] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
