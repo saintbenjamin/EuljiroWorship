@@ -8,12 +8,18 @@
 :E-mail: euljirochurch [at] G.M.A.I.L. (replace [at] with @ and G.M.A.I.L as you understood.)
 :License: MIT License with Attribution Requirement (see LICENSE file for details); Copyright (c) 2025 The Eulji-ro Presbyterian Church.
 
-Watches :py:data:`core.config.paths.VERSE_FILE` and converts it into slide JSON
-written to :py:data:`core.config.paths.SLIDE_FILE` for real-time display by the slide controller.
+Legacy helper for the deprecated :py:data:`core.config.paths.VERSE_FILE`
+interrupt channel.
 
-This module runs as a small background helper process. It uses `watchdog <https://pypi.org/project/watchdog/>`_ to
-monitor the project base directory for changes to the :py:data:`core.config.paths.VERSE_FILE`, then
-parses the content into one or more slide dictionaries.
+This module historically ran as a small background helper process. It used
+`watchdog <https://pypi.org/project/watchdog/>`_ to monitor the project base
+directory for changes to :py:data:`core.config.paths.VERSE_FILE`, then parsed
+that text and overwrote :py:data:`core.config.paths.SLIDE_FILE`.
+
+That automatic bridge is now intentionally disabled. Modern emergency caption
+and emergency Bible workflows write directly to the slide output JSON through
+the controller's active UI workflow, so changes to ``verse_output.txt`` must
+never mutate the live slide file.
 
 Key behaviors:
 
@@ -196,26 +202,20 @@ class VerseFileHandler(FileSystemEventHandler):
     """
     Watchdog event handler for updates to :py:data:`core.config.paths.VERSE_FILE`.
 
-    This handler listens for filesystem modification events and, when the target
-    file is modified, parses it into slides and writes the resulting JSON to
-    :py:data:`core.config.paths.SLIDE_FILE`. If slides are generated, it attempts to create a backup
-    via :func:`controller.helper.verse_interruptor.backup_slide_if_not_emergency` before overwriting the slide file.
+    The legacy ``verse_output.txt -> slide_output.json`` bridge is disabled, so
+    this handler now observes changes for compatibility logging only and never
+    mutates the live slide output file.
     """
 
     def on_modified(self, event):
         """
-        Handle `watchdog <https://pypi.org/project/watchdog/>`_ "modified" events for :py:data:`core.config.paths.VERSE_FILE`.
+        Handle `watchdog <https://pypi.org/project/watchdog/>`_ "modified"
+        events for :py:data:`core.config.paths.VERSE_FILE`.
 
-        If the modified path matches the target :py:data:`core.config.paths.VERSE_FILE`, this callback:
-
-        1) Parses :py:data:`core.config.paths.VERSE_FILE` into slide dictionaries.
-
-        2) If any slides were produced:
-
-            - Creates a backup (if applicable)
-            - Writes slides to :py:data:`core.config.paths.SLIDE_FILE`
-
-        3) Otherwise logs that no slides were generated.
+        If the modified path matches the target file, this callback logs the
+        event and returns immediately. Automatic promotion of ``verse_output``
+        text into ``slide_output.json`` is intentionally blocked so that saving
+        or regenerating the verse output file cannot hijack the live controller.
 
         Args:
             event (FileSystemEvent):
@@ -225,23 +225,16 @@ class VerseFileHandler(FileSystemEventHandler):
             None
         """
         if event.src_path.endswith(paths.VERSE_FILE):
-            print("[INFO] verse_output.txt changed. Parsing...")
-            slides = parse_verse_output(paths.VERSE_FILE, constants.MAX_CHARS)
-
-            if slides:
-                backup_slide_if_not_emergency()
-                save_slides(slides, paths.SLIDE_FILE)
-                print(f"[INFO] Saved {len(slides)} slide(s) to {paths.SLIDE_FILE}")
-            else:
-                print("[WARN] No slides generated.")
+            print("[INFO] verse_output.txt changed. Legacy slide sync is disabled.")
 
 def start_interruptor():
     """
-    Start the `watchdog <https://pypi.org/project/watchdog/>`_ observer loop for :py:data:`core.config.paths.VERSE_FILE`.
+    Start the `watchdog <https://pypi.org/project/watchdog/>`_ observer loop for
+    :py:data:`core.config.paths.VERSE_FILE`.
 
-    This sets up an Observer to watch :py:data:`core.config.paths.BASE_DIR` (non-recursive) and uses
-    :class:`controller.helper.verse_interruptor.VerseFileHandler` to react to modifications. The function then blocks the
-    main thread in a sleep loop until interrupted (Ctrl+C).
+    The observer remains available for compatibility, but the handler no longer
+    writes to :py:data:`core.config.paths.SLIDE_FILE`. This means the process can
+    still log verse-file changes without affecting the live controller state.
 
     Returns:
         None

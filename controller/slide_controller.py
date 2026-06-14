@@ -12,17 +12,17 @@ Main slide controller module for managing and broadcasting slides in real-time.
 
 This module provides the GUI entry point and the main controller widget
 used by the slide controller application. It wires together the `PySide6 <https://pypi.org/project/PySide6/>`_ UI,
-file watchers, WebSocket broadcasting, and the emergency verse interruptor.
+file watchers, WebSocket broadcasting, and the modern emergency caption flow.
 
 Key responsibilities in this module:
 
 - Ensure the project root is importable (sys.path injection for direct execution)
-- Define :func:`controller.slide_controller.launch_interruptor` to start the verse interruptor as a detached process
+- Preserve the old verse interruptor launch hook as a disabled compatibility stub
 - Define :class:`controller.slide_controller.SlideController`, the main `QWidget <https://doc.qt.io/qt-6/qwidget.html>`_ that:
 
     - loads and displays slide data
     - sends slides via WebSocket
-    - reacts to slide file changes / emergency interruptor clear events
+    - reacts to slide file changes / emergency caption actions
 """
 
 import sys, os
@@ -35,7 +35,6 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 # ─────────────────────────────────────────────
 import json
-import subprocess
 import shutil
 
 # PySide6 GUI essentials
@@ -46,26 +45,23 @@ from PySide6.QtGui import QIcon
 # Project imports
 from controller.utils.emergency_caption_handler import EmergencyCaptionHandler
 from controller.utils.emergency_slide_factory import EmergencySlideFactory
-from controller.utils.interruptor_watcher import InterruptorWatcher
 from controller.utils.slide_controller_data_manager import SlideControllerDataManager
 from controller.utils.slide_file_watcher import SlideFileWatcher
 from controller.ui.slide_controller_ui_builder import SlideControllerUIBuilder
 from controller.utils.slide_websocket_manager import SlideWebSocketManager
 from core.config import paths
 from core.generator.settings_generator import get_font_from_settings
-from core.utils.runtime_launcher import build_entry_command, ensure_runtime_cwd, set_windows_app_user_model_id
+from core.utils.runtime_launcher import ensure_runtime_cwd, set_windows_app_user_model_id
 from core.version import APP_VERSION
 
 def launch_interruptor():
     """
-    Launch the verse interruptor script as a detached background process.
+    Preserve the legacy interruptor entry point as an inert compatibility stub.
 
-    This starts :mod:`controller.helper.verse_interruptor` using the current Python
-    interpreter (``sys.executable``) and suppresses ``stdin``/``stdout``/``stderr`` to
-    avoid blocking or cluttering the controller GUI.
-
-    The interruptor script is expected to watch the emergency verse output
-    file (e.g., :py:data:`core.config.paths.VERSE_FILE`) and handle its own logic independently.
+    The old ``verse_output.txt`` interrupt path is intentionally disabled.
+    Modern emergency caption and emergency Bible workflows write directly to
+    :py:data:`core.config.paths.SLIDE_FILE` and must not depend on the legacy
+    helper process.
 
     Args:
         None
@@ -73,19 +69,7 @@ def launch_interruptor():
     Returns:
         None
     """
-    try:
-        with open(os.devnull, "w") as devnull:
-            subprocess.Popen(
-                build_entry_command("--interruptor"),
-                cwd=paths.BASE_DIR,
-                stdout=devnull,
-                stderr=devnull,
-                stdin=devnull,
-                close_fds=True
-            )
-        print("[✓] Launched verse_interruptor.py")
-    except Exception as e:
-        print("[x] Failed to launch interruptor:", e)
+    print("[INFO] Legacy verse_output.txt interruptor launch is disabled.")
 
 class SlideController(QWidget):
     """
@@ -124,10 +108,9 @@ class SlideController(QWidget):
         Initialize the :class:`controller.slide_controller.SlideController` UI and subsystems.
 
         This sets up the window, loads slides, connects to the WebSocket server,
-        builds the UI, and starts background threads for:
-
-        - Watching slide file changes
-        - Watching interruptor (emergency verse) clear events
+        builds the UI, and starts the slide-file watcher thread. The legacy
+        ``verse_output.txt`` interrupt channel is intentionally disabled; modern
+        emergency caption flows write directly to the slide output JSON file.
 
         Args:
             slide_file (str):
@@ -185,13 +168,12 @@ class SlideController(QWidget):
         self.slide_thread.started.connect(self.slide_watcher.run)
         self.slide_thread.start()
 
-        # Set up InterruptorWatcher thread
-        self.interruptor_thread = QThread()
-        self.interruptor_watcher = InterruptorWatcher()
-        self.interruptor_watcher.moveToThread(self.interruptor_thread)
-        self.interruptor_watcher.interruptor_cleared.connect(self.on_interruptor_cleared)
-        self.interruptor_thread.started.connect(self.interruptor_watcher.run)
-        self.interruptor_thread.start()
+        # Disable the legacy verse_output.txt interrupt channel.
+        # Emergency caption / emergency Bible workflows now write directly
+        # to slide_output.json via EmergencyCaptionHandler, so this watcher
+        # is no longer needed for live operation.
+        self.interruptor_thread = None
+        self.interruptor_watcher = None
 
         # Apply user font settings (font is set but not directly applied here)
         font = get_font_from_settings()
@@ -536,10 +518,15 @@ class SlideController(QWidget):
 
     def clear_emergency_caption(self):
         """
-        Clear the emergency verse output file and restore normal slides.
+        Clear the emergency slide output and restore normal slides.
 
-        This writes an empty string to :py:data:`core.config.paths.VERSE_FILE`, clears :py:data:`core.config.paths.SLIDE_FILE`,
-        then attempts restoration from backup via :class:`controller.utils.slide_controller_data_manager.SlideControllerDataManager`.
+        This clears :py:data:`core.config.paths.SLIDE_FILE` and attempts
+        restoration from backup via
+        :class:`controller.utils.slide_controller_data_manager.SlideControllerDataManager`.
+
+        The legacy ``verse_output.txt`` channel is intentionally not touched
+        here so that ordinary edits or saves to that file can never influence
+        the live controller state.
 
         After restoration, rebuilds the table, updates the label, and scrolls
         the restored index into view.
@@ -547,8 +534,6 @@ class SlideController(QWidget):
         Returns:
             None
         """
-        with open(paths.VERSE_FILE, "w", encoding="utf-8") as f:
-            f.write("")
         with open(paths.SLIDE_FILE, "w", encoding="utf-8") as f:
             json.dump([], f, ensure_ascii=False)
 
@@ -597,29 +582,42 @@ class SlideController(QWidget):
         Returns:
             None
         """
-        self.ws_health_timer.stop()
+        # self.ws_health_timer.stop()
+        # self.slide_watcher.stop()
+        # self.interruptor_watcher.stop()
+        # self.slide_thread.quit()
+        # self.interruptor_thread.quit()
+        # self.slide_thread.wait()
+        # self.interruptor_thread.wait()
+        # self.ws_manager.disconnect()
+        # super().closeEvent(event)
         self.slide_watcher.stop()
-        self.interruptor_watcher.stop()
+
+        if self.interruptor_watcher is not None:
+            self.interruptor_watcher.stop()
+
         self.slide_thread.quit()
-        self.interruptor_thread.quit()
         self.slide_thread.wait()
-        self.interruptor_thread.wait()
+
+        if self.interruptor_thread is not None:
+            self.interruptor_thread.quit()
+            self.interruptor_thread.wait()
+
         self.ws_manager.disconnect()
         super().closeEvent(event)
+
 
 def main():
     """
     Entry point for the slide controller application.
 
-    This launches the verse interruptor, applies font settings,
-    and starts the GUI event loop.
+    This applies font settings and starts the GUI event loop. The legacy
+    ``verse_output.txt`` interrupt subprocess is intentionally not launched.
     """
     ensure_runtime_cwd()
     set_windows_app_user_model_id("org.euljirochurch.EuljiroWorship.Controller")
 
     SlideControllerDataManager(paths.SLIDE_FILE).backup_slides()
-
-    launch_interruptor()
 
     app = QApplication(sys.argv)
     app.setStyle("Fusion")

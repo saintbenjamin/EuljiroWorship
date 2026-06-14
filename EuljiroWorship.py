@@ -315,9 +315,7 @@ def _run_mode_from_cli(args: argparse.Namespace) -> bool:
         return True
 
     if args.interruptor:
-        from controller.helper.verse_interruptor import start_interruptor
-
-        start_interruptor()
+        print("[INFO] Legacy verse_output.txt interruptor mode is disabled.")
         return True
 
     return False
