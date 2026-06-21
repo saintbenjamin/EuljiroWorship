@@ -214,4 +214,8 @@
 
     /* Add right padding to avoid touching the container edge */
     padding-right: 20px;
+
+    position: relative;
+
+    z-index: 2;
 }
