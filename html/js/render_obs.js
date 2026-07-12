@@ -213,6 +213,54 @@ function renderVideo(data) {
 
   const src = data.headline || "";
 
+  // container.innerHTML = `
+  //   <div class="video-box" style="
+  //     position: relative;
+  //     width: 100%;
+  //     height: 100%;
+  //     display: flex;
+  //     align-items: center;
+  //     justify-content: center;
+  //     background: #000;
+  //     overflow: hidden;
+  //   ">
+  //     <video class="video-player" style="
+  //       width: 100%;
+  //       height: 100%;
+  //       object-fit: contain;     /* keep original aspect ratio, letterbox if needed */
+  //       object-position: center; /* always centered */
+  //       background: #000;
+  //     "
+  //       src="${src}"
+  //       autoplay
+  //       muted
+  //       playsinline
+  //       preload="metadata"
+  //     ></video>
+
+  //     <div class="video-controls" style="
+  //       position: absolute;
+  //       left: 50%;
+  //       bottom: 24px;
+  //       transform: translateX(-50%);
+  //       display: flex;
+  //       gap: 10px;
+  //       padding: 10px 12px;
+  //       border-radius: 12px;
+  //       background: rgba(0,0,0,0.55);
+  //       opacity: 0;
+  //       pointer-events: none;
+  //       transition: opacity 160ms ease;
+  //       user-select: none;
+  //     ">
+  //       <button data-act="toggle" style="padding:8px 10px; border-radius:10px;">▶︎/❚❚</button>
+  //       <button data-act="stop"   style="padding:8px 10px; border-radius:10px;">■</button>
+  //       <button data-act="back"   style="padding:8px 10px; border-radius:10px;">-5s</button>
+  //       <button data-act="fwd"    style="padding:8px 10px; border-radius:10px;">+5s</button>
+  //     </div>
+  //   </div>
+  // `;
+
   container.innerHTML = `
     <div class="video-box" style="
       position: relative;
@@ -233,7 +281,6 @@ function renderVideo(data) {
       "
         src="${src}"
         autoplay
-        muted
         playsinline
         preload="metadata"
       ></video>
