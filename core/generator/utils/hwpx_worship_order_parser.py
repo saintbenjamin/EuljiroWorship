@@ -46,7 +46,10 @@ ROLE_SUFFIX_RE = re.compile(
     r"(?:다같이|인도자|설교자|앉아서|[가-힣A-Za-z·0-9()]+(?:목사|장로|집사|권사))+$"
 )
 
-PRAISE_SERVICE_START_MARKER = "오후2:30인도:"
+PRAISE_SERVICE_START_MARKERS = (
+    "오후2:00인도:",
+    "오후2:30인도:",
+)
 PRAISE_SERVICE_END_MARKERS = (
     "*다음주",
     "영유아유치부",
@@ -426,6 +429,19 @@ def _find_next_marker(
     return min(candidates) if candidates else -1
 
 
+def _find_praise_service_start(compact_text: str) -> tuple[int, str]:
+    """Return the earliest supported afternoon-service start marker."""
+    matches = (
+        (compact_text.find(marker), marker)
+        for marker in PRAISE_SERVICE_START_MARKERS
+    )
+    return min(
+        (match for match in matches if match[0] != -1),
+        default=(-1, ""),
+        key=lambda match: match[0],
+    )
+
+
 def _extract_praise_service_segment(paragraphs: list[str]) -> str:
     """
     Extract the afternoon praise-service order segment from the bulletin.
@@ -451,13 +467,13 @@ def _extract_praise_service_segment(paragraphs: list[str]) -> str:
     joined_text = " ".join(paragraphs)
     compact_text, index_map = _compact_with_index_map(joined_text)
 
-    start_index = compact_text.find(PRAISE_SERVICE_START_MARKER)
+    start_index, start_marker = _find_praise_service_start(compact_text)
     if start_index == -1:
         raise ValueError("HWPX에서 오후찬양예배 순서 시작 지점을 찾지 못했습니다.")
 
     end_index = _find_next_marker(
         compact_text,
-        start_index + len(PRAISE_SERVICE_START_MARKER),
+        start_index + len(start_marker),
         PRAISE_SERVICE_END_MARKERS,
     )
     if end_index == -1:
@@ -672,12 +688,12 @@ def _parse_praise_service_segment(segment: str) -> list[dict]:
             Ordered list of normalized afternoon-service entry dictionaries.
     """
     compact_text, index_map = _compact_with_index_map(segment)
-    start_index = compact_text.find(PRAISE_SERVICE_START_MARKER)
+    start_index, start_marker = _find_praise_service_start(compact_text)
     if start_index == -1:
         return []
 
     entries = []
-    cursor = start_index + len(PRAISE_SERVICE_START_MARKER)
+    cursor = start_index + len(start_marker)
 
     next_marker = _find_next_marker(
         compact_text,
