@@ -53,6 +53,10 @@ from core.generator.utils.hwpx_worship_order_parser import (
     extract_first_service_order_entries_from_hwpx,
     extract_praise_service_order_entries_from_hwpx,
 )
+from core.generator.utils.hwpx_danseok_parser import (
+    extract_announcement_slides_from_hwpx_danseok,
+    extract_first_service_order_entries_from_hwpx_danseok,
+)
 from core.utils.bible_parser import parse_reference
 from core.utils.bible_data_loader import BibleDataLoader
 from core.version import APP_VERSION
@@ -2374,6 +2378,214 @@ class SlideGenerator(QMainWindow):
             f"HWPX 오후찬양예배 순서 {len(order_entries)}개 항목과 "
             f"광고 {len(imported_slides)}개를 함께 반영했습니다."
         )
+
+    def import_worship_order_from_hwpx_danseok(self):
+        """Import the Sunday morning order from a Danseok Church HWPX bulletin."""
+        src_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "예배순서를 가져올 단석교회 HWPX 주보 파일 선택",
+            "",
+            "HWPX Files (*.hwpx)",
+        )
+        if not src_path:
+            return
+
+        try:
+            order_entries = extract_first_service_order_entries_from_hwpx_danseok(src_path)
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                "오류",
+                f"단석교회 HWPX에서 예배순서를 추출하지 못했습니다:\n{e}",
+            )
+            return
+
+        current_slides = self.data_manager.collect_slide_data()
+        updated_slides = self._apply_worship_order_entries_danseok(
+            current_slides,
+            order_entries,
+        )
+        self._load_slide_list_into_table(updated_slides)
+        QMessageBox.information(
+            self,
+            "완료",
+            f"단석교회 HWPX 예배순서 {len(order_entries)}개 항목을 반영했습니다.",
+        )
+
+    def import_announcements_from_hwpx_danseok(self):
+        """Import church-news slides from a Danseok Church HWPX bulletin."""
+        start_anchor = "☺진심으로 환영합니다☺"
+        end_anchor = "용서, 사랑의 시작입니다."
+        wrap_width = 28
+        src_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "광고를 가져올 단석교회 HWPX 주보 파일 선택",
+            "",
+            "HWPX Files (*.hwpx)",
+        )
+        if not src_path:
+            return
+
+        try:
+            imported_slides = extract_announcement_slides_from_hwpx_danseok(
+                src_path,
+                wrap_width=wrap_width,
+            )
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                "오류",
+                f"단석교회 HWPX에서 광고를 추출하지 못했습니다:\n{e}",
+            )
+            return
+
+        current_slides = self.data_manager.collect_slide_data()
+        new_slides = self._replace_announcement_block_in_slides(
+            current_slides,
+            imported_slides,
+            start_anchor=start_anchor,
+            end_anchor=end_anchor,
+        )
+        if new_slides is None:
+            return
+
+        self._load_slide_list_into_table(new_slides)
+        QMessageBox.information(
+            self,
+            "완료",
+            f"단석교회 HWPX 광고 {len(imported_slides)}개를 가져왔습니다.",
+        )
+
+    def import_worship_order_and_announcements_from_hwpx_danseok(self):
+        """Import morning worship order and church news from one Danseok HWPX."""
+        start_anchor = "☺진심으로 환영합니다☺"
+        end_anchor = "용서, 사랑의 시작입니다."
+        wrap_width = 28
+        src_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "예배순서와 광고를 가져올 단석교회 HWPX 주보 파일 선택",
+            "",
+            "HWPX Files (*.hwpx)",
+        )
+        if not src_path:
+            return
+
+        try:
+            order_entries = extract_first_service_order_entries_from_hwpx_danseok(src_path)
+            imported_slides = extract_announcement_slides_from_hwpx_danseok(
+                src_path,
+                wrap_width=wrap_width,
+            )
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                "오류",
+                f"단석교회 HWPX에서 예배순서 또는 광고를 추출하지 못했습니다:\n{e}",
+            )
+            return
+
+        current_slides = self.data_manager.collect_slide_data()
+        updated_slides = self._apply_worship_order_entries_danseok(
+            current_slides,
+            order_entries,
+        )
+        new_slides = self._replace_announcement_block_in_slides(
+            updated_slides,
+            imported_slides,
+            start_anchor=start_anchor,
+            end_anchor=end_anchor,
+        )
+        if new_slides is None:
+            return
+
+        self._load_slide_list_into_table(new_slides)
+        QMessageBox.information(
+            self,
+            "완료",
+            f"단석교회 HWPX 예배순서 {len(order_entries)}개 항목과 "
+            f"광고 {len(imported_slides)}개를 함께 반영했습니다.",
+        )
+
+    def _apply_worship_order_entries_danseok(
+        self,
+        current_slides: list[dict],
+        order_entries: list[dict],
+    ) -> list[dict]:
+        """
+        Apply Danseok order entries while preserving Korean verse captions.
+
+        Danseok bulletins use display references such as ``14장 1절-5절``.
+        Verse lookup uses the normalized ``14:1-5`` value, after which this
+        helper restores the original bulletin wording as the slide caption.
+        """
+        updated_slides = self._apply_worship_order_entries(
+            current_slides,
+            order_entries,
+        )
+        verse_entries = [
+            entry
+            for entry in order_entries
+            if entry.get("kind") == "verse"
+        ]
+        verse_index = 0
+
+        for index, slide in enumerate(updated_slides):
+            if slide.get("style") != "verse":
+                continue
+            if verse_index >= len(verse_entries):
+                break
+            entry = verse_entries[verse_index]
+            updated_slides[index] = self._build_verse_slide_from_reference_danseok(
+                entry.get("reference", ""),
+                entry.get("display_reference", entry.get("reference", "")),
+            )
+            verse_index += 1
+
+        return updated_slides
+
+    def _build_verse_slide_from_reference_danseok(
+        self,
+        reference: str,
+        display_reference: str,
+    ) -> dict:
+        """Build a Danseok verse slide with full per-verse display captions."""
+        parsed = parse_reference(reference)
+        if not parsed:
+            return {
+                "style": "verse",
+                "caption": display_reference,
+                "headline": "",
+            }
+
+        version = self._get_default_bible_version_for_order_import()
+        loader = BibleDataLoader()
+        loader.load_version(version)
+        version_alias = loader.aliases_version.get(version, version)
+
+        book_id, chapter, verses = parsed
+        if isinstance(verses, tuple) and verses[1] == -1:
+            max_verse = len(loader.get_verses(version)[book_id][str(chapter)])
+            verse_numbers = list(range(1, max_verse + 1))
+        elif isinstance(verses, tuple):
+            verse_numbers = list(range(verses[0], verses[1] + 1))
+        else:
+            verse_numbers = list(verses)
+
+        book_name = loader.get_standard_book(book_id, "ko")
+        blocks = []
+        for verse_num in verse_numbers:
+            verse_text = loader.get_verse(version, book_id, chapter, verse_num)
+            if verse_text:
+                verse_caption = (
+                    f"{book_name} {chapter}장 {verse_num}절 ({version_alias})"
+                )
+                blocks.append(f"{verse_caption}\n{verse_text.strip()}")
+
+        return {
+            "style": "verse",
+            "caption": display_reference,
+            "headline": "\n\n".join(blocks),
+        }
 
     def import_announcements(self):
         """

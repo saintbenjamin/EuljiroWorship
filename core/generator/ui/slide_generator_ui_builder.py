@@ -252,6 +252,20 @@ class SlideGeneratorUIBuilder:
 
         tool_menu.addSeparator()
 
+        hwpx_worship_order_action_danseok = QAction("HWPX 예배순서 가져오기 (단석교회 전용)", parent)
+        hwpx_worship_order_action_danseok.triggered.connect(parent.import_worship_order_from_hwpx_danseok)
+        tool_menu.addAction(hwpx_worship_order_action_danseok)
+
+        hwpx_full_action_danseok = QAction("HWPX 예배순서+광고 가져오기 (단석교회 전용)", parent)
+        hwpx_full_action_danseok.triggered.connect(parent.import_worship_order_and_announcements_from_hwpx_danseok)
+        tool_menu.addAction(hwpx_full_action_danseok)
+
+        hwpx_announcement_action_danseok = QAction("HWPX 광고 가져오기 (단석교회 전용)", parent)
+        hwpx_announcement_action_danseok.triggered.connect(parent.import_announcements_from_hwpx_danseok)
+        tool_menu.addAction(hwpx_announcement_action_danseok)
+
+        tool_menu.addSeparator()
+
         settings_action = QAction("설정", parent)
         settings_action.triggered.connect(parent.open_settings_dialog)
         tool_menu.addAction(settings_action)
