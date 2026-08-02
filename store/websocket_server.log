@@ -569,3 +569,141 @@ OSError: [Errno 10048] error while attempting to bind on address ('0.0.0.0', 876
 [2026-07-26 13:43:43,797] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
 [2026-07-26 13:51:55,252] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
 [2026-07-26 13:56:19,534] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 07:17:48,340] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 07:49:51,165] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 07:49:51,168] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 07:49:51,170] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('::', 8765, 0, 0): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 07:49:55,473] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 07:49:55,476] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 07:49:55,477] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('::', 8765, 0, 0): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 07:50:08,368] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:32:52,566] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:32:52,570] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 12:32:52,570] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('::', 8765, 0, 0): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 12:32:56,860] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:32:56,863] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 12:32:56,863] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('::', 8765, 0, 0): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 12:33:00,865] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:33:00,870] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 12:33:00,870] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('::', 8765, 0, 0): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 12:33:06,863] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:33:06,867] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 12:33:06,867] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8765): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 12:33:10,851] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:33:10,855] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 12:33:10,856] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('::', 8765, 0, 0): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 12:33:12,868] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:33:12,871] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 12:33:12,872] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('::', 8765, 0, 0): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 12:33:14,860] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:33:14,864] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 12:33:14,865] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8765): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 12:33:16,860] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:33:16,864] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 12:33:16,865] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8765): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 12:33:18,856] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:33:18,859] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 12:33:18,860] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('::', 8765, 0, 0): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 12:39:02,863] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:39:02,868] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 12:39:02,868] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('::', 8765, 0, 0): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 12:42:00,870] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:42:00,874] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 12:42:00,875] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('::', 8765, 0, 0): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 12:42:10,853] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:42:10,857] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 12:42:10,858] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8765): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 12:43:22,839] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
+[2026-08-02 12:43:22,843] [INFO] [⇓] Server shutting down: closing 0 clients
+[2026-08-02 12:43:22,844] [ERROR] [!] WebSocket server crashed unexpectedly.
+Traceback (most recent call last):
+  File "server\websocket_server.py", line 210, in main
+    web.run_app(app, port=port)
+  File "aiohttp\web.py", line 530, in run_app
+  File "asyncio\base_events.py", line 654, in run_until_complete
+OSError: [Errno 10048] error while attempting to bind on address ('::', 8765, 0, 0): 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
+[2026-08-02 12:46:22,925] [INFO] [*] WebSocket server starting on ws://0.0.0.0:8765/ws
