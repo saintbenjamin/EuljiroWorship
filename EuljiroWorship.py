@@ -46,6 +46,7 @@ from core.utils.runtime_launcher import (
     get_runtime_base_dir,
     set_windows_app_user_model_id,
 )
+from core.utils.single_instance import SingleInstanceCoordinator
 
 def _project_root() -> Path:
     """
@@ -334,6 +335,35 @@ def main() -> None:
     root = ensure_runtime_cwd()
     set_windows_app_user_model_id("org.euljirochurch.EuljiroWorship")
 
+    # Create QApplication before the local IPC coordinator, but acquire the
+    # single-instance endpoint before starting either background server or
+    # showing the startup dialogs.
+    from PySide6.QtWidgets import QApplication
+    from core.generator.settings_generator import get_font_from_settings
+    from core.generator.ui.slide_generator import SlideGenerator
+
+    app = QApplication(sys.argv)
+    instance = SingleInstanceCoordinator("org.euljirochurch.EuljiroWorship")
+    if not instance.acquire_or_notify():
+        return
+
+    def activate_existing_window() -> None:
+        """Restore and focus the active dialog or generator window."""
+        window = app.activeModalWidget() or app.activeWindow()
+        if window is None:
+            visible_windows = [w for w in app.topLevelWidgets() if w.isVisible()]
+            window = visible_windows[0] if visible_windows else None
+        if window is None:
+            return
+        if window.isMinimized():
+            window.showNormal()
+        else:
+            window.show()
+        window.raise_()
+        window.activateWindow()
+
+    instance.activation_requested.connect(activate_existing_window)
+
     # Adjust this if your overlay/static files live under a specific directory.
     # For example: http_cwd = root / "web"
     http_cwd = root
@@ -361,12 +391,6 @@ def main() -> None:
     atexit.register(lambda: _terminate_process(server_processes["http"]))
     atexit.register(lambda: _terminate_process(server_processes["ws"]))
 
-    # Create the Qt application object
-    from PySide6.QtWidgets import QApplication
-    from core.generator.settings_generator import get_font_from_settings
-    from core.generator.ui.slide_generator import SlideGenerator
-
-    app = QApplication(sys.argv)
     if Path(paths.ICON_FILE).exists():
         app.setWindowIcon(QIcon(paths.ICON_FILE))
 
