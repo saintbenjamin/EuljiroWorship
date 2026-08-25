@@ -11,6 +11,7 @@ let pingTimer = null;
 
 // Timeout handler used to detect missing pong responses
 let pongTimeout = null;
+let reconnectTimer = null;
 
 /**
  * Establishes a WebSocket connection for OBS overlay updates.
@@ -23,11 +24,23 @@ function connectWebSocket(onSlideJsonString) {
     // Abort if already connecting or if an active connection exists
     if (connecting || (ws && ws.readyState === WebSocket.OPEN)) return;
 
+    clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+
     // Mark that a connection attempt is in progress
     connecting = true;
 
-    // Create a WebSocket connection to the local slide server
-    ws = new WebSocket(`ws://${location.hostname}:8765/ws`);
+    const host = location.hostname || "127.0.0.1";
+    let socket;
+    try {
+        socket = new WebSocket(`ws://${host}:8765/ws`);
+        ws = socket;
+    } catch (e) {
+        console.error("[!] WebSocket construction failed", e);
+        connecting = false;
+        reconnectTimer = setTimeout(() => connectWebSocket(onSlideJsonString), 3000);
+        return;
+    }
 
     // Called when the WebSocket connection is successfully opened
     ws.onopen = () => {
@@ -38,14 +51,14 @@ function connectWebSocket(onSlideJsonString) {
 
         // Start heartbeat mechanism (ping / pong)
         pingTimer = setInterval(() => {
-            if (ws.readyState === WebSocket.OPEN) {
+            if (socket.readyState === WebSocket.OPEN) {
                 // Send ping to verify connection health
-                ws.send("ping");
+                socket.send("ping");
 
                 // If pong is not received within the timeout, close the connection
                 pongTimeout = setTimeout(() => {
                     console.warn("🧟 pong 응답 없음 → 연결 끊기");
-                    ws.close();
+                    socket.close();
                 }, 5000);
             }
         }, 30000);
@@ -67,7 +80,10 @@ function connectWebSocket(onSlideJsonString) {
         connecting = false;
 
         // Attempt reconnection after a short delay
-        setTimeout(() => connectWebSocket(onSlideJsonString), 3000);
+        if (ws === socket) {
+            ws = null;
+            reconnectTimer = setTimeout(() => connectWebSocket(onSlideJsonString), 3000);
+        }
 
         // Clean up heartbeat timers
         clearInterval(pingTimer);

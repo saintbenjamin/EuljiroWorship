@@ -63,6 +63,7 @@ if not logger.handlers:
 # ─────────────────────────────
 # Connected clients set
 connected_clients = set()
+last_slide_message = None
 
 async def websocket_handler(request):
     """
@@ -86,6 +87,16 @@ async def websocket_handler(request):
 
     connected_clients.add(ws)
     logger.debug("[+] Client connected")
+
+    # A browser source may connect after the controller's initial broadcast.
+    # Replay the latest state so WebSocket timing never leaves it blank.
+    if last_slide_message is not None:
+        try:
+            await ws.send_str(last_slide_message)
+        except Exception:
+            connected_clients.discard(ws)
+            await ws.close()
+            return ws
 
     try:
         async for msg in ws:
@@ -132,12 +143,14 @@ async def broadcast(slide_dict):
     Returns:
         None
     """
-    if not connected_clients:
-        logger.debug("[!] No clients connected")
-        return
-
+    global last_slide_message
     message = json.dumps(slide_dict, ensure_ascii=False)
+    last_slide_message = message
     logger.debug("[→] Broadcasting: %s", message)
+
+    if not connected_clients:
+        logger.debug("[!] No clients connected; cached latest slide")
+        return
 
     for ws in connected_clients.copy():
         if ws.closed or ws.close_code or ws.exception() is not None:
