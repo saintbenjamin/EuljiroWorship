@@ -167,6 +167,7 @@
 
     /* Fixed logo height with preserved aspect ratio */
     height: 180px;
+    width: auto;
 
     /* Ensure logo appears above badge and container */
     z-index: 3;

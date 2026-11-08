@@ -73,6 +73,14 @@ html, body {
     display: block;
 }
 
+/* Keep slide images visible even if the image layout stylesheet fails to load.
+   Reserve room for the logo and caption in the unstyled document flow. */
+.image-headline img {
+    max-width: 100vw;
+    max-height: calc(100vh - 200px);
+    object-fit: contain;
+}
+
 /* 
 @media screen and (min-aspect-ratio: 1/1) {
     #background-logo {

@@ -150,7 +150,7 @@ function renderAnthem(data) {
 
     container.innerHTML = `
     <div class="anthem-container">
-        <img class="anthem-logo" src="resources/svg/thepck.svg" alt="logo" />
+        <img class="anthem-logo" src="resources/svg/thepck.svg" width="78" height="120" alt="logo" />
         <div class="anthem-badge">
             <div class="anthem-main-caption">${data.caption || ""}</div>
             <div class="anthem-choir-caption">${data.caption_choir || ""}</div>
@@ -256,7 +256,7 @@ function renderImage(data) {
     container.innerHTML = `
     <div class="image-box">
         <div class="image-bg"></div>
-        <img class="image-logo" src="resources/svg/thepck.svg" alt="logo" />  
+        <img class="image-logo" src="resources/svg/thepck.svg" width="78" height="120" alt="logo" />
         <div class="image-captbox">
             <div class="image-caption">${data.caption || ""}</div>
         </div>

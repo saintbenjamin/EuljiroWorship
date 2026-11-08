@@ -92,6 +92,7 @@
 
     /* Fix the logo height while preserving aspect ratio */
     height: 120px;
+    width: auto;
 
     /* Ensure the logo appears above the background and content */
     z-index: 3;

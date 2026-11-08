@@ -175,6 +175,7 @@
 
     /* Set logo height while preserving aspect ratio */
     height: 120px;
+    width: auto;
 
     /* Ensure the logo appears above the badge and other elements */
     z-index: 3;

@@ -92,6 +92,7 @@
 
     /* Fixed logo height with preserved aspect ratio */
     height: 120px;
+    width: auto;
 
     /* Place above background and below any higher overlays if needed */
     z-index: 3;
